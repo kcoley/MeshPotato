@@ -26,11 +26,13 @@ $(MESHPOTATOSHAREDLIB): $(OBJECTS)
 	$(CC) $(OBJECTS) $(CFLAGS)
 	$(CC) -shared -Wl,-soname,libmeshpotato.so -o $(MESHPOTATOSHAREDLIB) $(OBJECTS)
 
-objplugin: $(PLUGINFILES)
-	$(CC) -fPIC -c -I ./include ./plugins -L./lib plugins/OBJ/*.C -o plugins/OBJ/mpobjplugin.o
-	$(CC) -shared -Wl,-soname,mpobj.so -o plugins/OBJ/mpobj.so plugins/OBJ/*.o
+plugins: $(PLUGINFILES)
+	$(CC) -fPIC -c -I ./include ./plugins -L./lib $(PLUGINFILES) -o plugins/OBJ/mpobjplugin.o
+	$(CC) -shared -Wl,-soname,mpobj.so -o plugins/OBJ/mpobj.so plugins/OBJ/mpobjplugin.o
 clean:
 	rm src/*.o
 	rm lib/*.so
+
+cleanplugins:
 	rm plugins/*/*.o
 	rm plugins/*/*.so
