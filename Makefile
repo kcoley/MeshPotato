@@ -32,3 +32,5 @@ objplugin: $(PLUGINFILES)
 clean:
 	rm src/*.o
 	rm lib/*.so
+	rm plugins/*/*.o
+	rm plugins/*/*.so
