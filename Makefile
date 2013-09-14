@@ -36,6 +36,9 @@ clean:
 	rm src/*.o
 	rm lib/*.so
 
+doc:
+	doxygen Doxyfile
+
 cleanplugins:
 	rm plugins/*/*.o
 	rm plugins/*/*.so
