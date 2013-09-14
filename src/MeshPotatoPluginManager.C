@@ -1,0 +1,2 @@
+#include <MPPlugins/MeshPotatoPluginManager.h>
+

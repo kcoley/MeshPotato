@@ -3,7 +3,7 @@
 #include <MPUtils/Vector.h>
 int main() {
 	//! Create two mesh objects
-	MeshPotato::MPMesh::MPMesh mesh("test");
+	MeshPotato::MPMesh::MPMesh mesh("test.obj");
 
 	MeshPotato::MPMesh::MPMesh mesh2;
 	// OpenVDB Vector

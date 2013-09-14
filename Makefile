@@ -1,9 +1,12 @@
-CC=g++
+#CC=g++
+CC=clang++
 CFLAGS=-c -Wall -fPIC
 LDFLAGS=
 SOURCES=src/MPMesh.C \
 src/Vector.C \
-src/MeshPotato.C 
+src/MeshPotato.C \
+src/MeshPotatoPlugin.C \
+src/MeshPotatoPluginManager.C 
 OBJECTS=$(SOURCES:.C=.o)
 EXECUTABLE=transformer
 PLUGINS=plugins

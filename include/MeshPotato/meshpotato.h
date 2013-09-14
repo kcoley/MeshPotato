@@ -14,8 +14,8 @@ namespace MeshPotato {
 			MeshInput(const MeshInput &mesh);	
 			~MeshInput();
 			//! Attempt to open the mesh file
-			MeshInput *load(const std::string &);
-			virtual bool load(const std::string &, const MeshSpec &newspec) = 0;
+			MeshInput *create(const std::string &);
+			virtual bool create(const std::string &, const MeshSpec &newspec) = 0;
 
 	}; //! Input Mesh
 

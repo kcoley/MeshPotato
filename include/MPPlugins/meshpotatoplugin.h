@@ -5,19 +5,16 @@
 namespace MeshPotato
 {
 	namespace MPPlugins {
-		typedef void *Handle;
+		template<typename Interface>
+		class Factory {
+			virtual Interface *create() = 0;
+		};
+		class InputMesh {
+			virtual void open() = 0;
+			virtual void close() = 0;
 
-		const char *plugin_extension(void);
-
-		Handle open(const char *plugin_filename);
-
-		bool close(Handle plugin_handle);
-
-		void *getsym(Handle plugin_handle, const char *symbol_name);
-
-		std::string geterror(void);
-
-
+		};
+		typedef Factory<InputMesh> InputMeshFactory;
 	}
 }
 #endif //MESHPOTATOPLUGIN_H
