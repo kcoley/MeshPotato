@@ -6,7 +6,9 @@ SOURCES=src/MPMesh.C \
 src/Vector.C \
 src/MeshPotato.C \
 src/MeshPotatoPlugin.C \
-src/MeshPotatoPluginManager.C 
+src/MeshPotatoPluginManager.C \
+src/MyEngine.C \
+src/Plugin.C
 OBJECTS=$(SOURCES:.C=.o)
 EXECUTABLE=transformer
 PLUGINS=plugins
@@ -29,16 +31,18 @@ $(MESHPOTATOSHAREDLIB): $(OBJECTS)
 	$(CC) $(OBJECTS) $(CFLAGS)
 	$(CC) -shared -Wl,-soname,libmeshpotato.so -o $(MESHPOTATOSHAREDLIB) $(OBJECTS)
 
-plugins: $(PLUGINFILES)
-	$(CC) -fPIC -c -I ./include ./plugins -L./lib $(PLUGINFILES) -o plugins/OBJ/mpobjplugin.o
-	$(CC) -shared -Wl,-soname,mpobj.so -o plugins/OBJ/mpobj.so plugins/OBJ/mpobjplugin.o
+#plugins: $(PLUGINFILES)
+#	$(CC) -fPIC -c -I ./include -I ./plugins -L./lib $(PLUGINFILES) -o plugins/OBJInput/mpobjinputplugin.o
+#	$(CC) -shared -Wl,-soname,mpobjinputplugin.so -o plugins/OBJInput/mpobjinputplugin.so plugins/OBJInput/mpobjinputplugin.o
 clean:
 	rm src/*.o
 	rm lib/*.so
 
 doc:
 	doxygen Doxyfile
-
+plugins:
+	cd ./plugins/OBJInput; make
+	cd ./plugins/OBJOutput; make
 cleanplugins:
-	rm plugins/*/*.o
+	cd ./plugins/OBJInput; make
 	rm plugins/*/*.so
