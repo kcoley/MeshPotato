@@ -63,12 +63,17 @@ void listInputMeshDrivers(InputMesh &inputMesh) {
   cout << endl;
 }
 void listOutputMeshDrivers(OutputMesh &outputMesh) {
+  list<vertex> vertices, faces, normals;
+  vertices.push_back(vertex(1,1,1));
+  normals.push_back(vertex(1,1,1));
+  faces.push_back(vertex(1,1,1));
   for(size_t index = 0; index < outputMesh.getDriverCount(); ++index) {
     cout << "\t" << outputMesh.getDriver(index).getName() << endl;
-    outputMesh.getDriver(index).loadMesh("/home/kcoley/Desktop/pluginTest/pluginMesh/cube.obj");
+    outputMesh.getDriver(index).loadMesh( vertices, faces, normals);
     cout << "Num Vertices = " << outputMesh.getDriver(index).getNumberVertices() << endl;
     cout << "Num Normals = " << outputMesh.getDriver(index).getNumberNormals() << endl;
     cout << "Num Faces = " << outputMesh.getDriver(index).getNumberFaces() << endl;
+    outputMesh.getDriver(index).writeMesh("/home/kcoley/Desktop/pluginTest/pluginMesh/cubeTest.obj");
   }
 
   if(outputMesh.getDriverCount() == 0) {
