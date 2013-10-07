@@ -47,10 +47,18 @@ namespace MyEngine {
     /// <summary>Loads a plugin</summary>
     /// <param name="filename">File the plugin will be loaded from</param>
     public: MYENGINE_API void loadPlugin(const std::string &filename) {
-      if(this->loadedPlugins.find(filename) == this->loadedPlugins.end()) {
-        this->loadedPlugins.insert(
-          PluginMap::value_type(filename, Plugin(filename))
-        ).first->second.registerPlugin(*this);
+	Plugin plugin(filename);
+//	std::cout << "Extension = " << std::endl;
+	try {
+	std::cout << "Extension = " << plugin.getExtension() << std::endl;
+	} catch(int e) {
+	std::cout << "could not get extension" << std::endl;
+	}
+      if(this->loadedPlugins.find(plugin.getExtension()) == this->loadedPlugins.end()) {
+//      if(this->loadedPlugins.find(filename) == this->loadedPlugins.end()) {
+//	Plugin plugin(filename);
+        this->loadedPlugins.insert(PluginMap::value_type(plugin.getExtension(), plugin)).first->second.registerPlugin(*this);
+//        this->loadedPlugins.insert(PluginMap::value_type(filename, Plugin(filename))).first->second.registerPlugin(*this);
       }
     }
 

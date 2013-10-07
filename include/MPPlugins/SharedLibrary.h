@@ -28,6 +28,16 @@
 
 #endif
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/algorithm/string.hpp>
+#include <iostream>
+#include <list>
+
+
+
 namespace MyEngine {
 
   // ----------------------------------------------------------------------- //
@@ -98,14 +108,57 @@ namespace MyEngine {
     /// <summary>Handle by which shared objects are referenced</summary>
     public: typedef void * HandleType;
 
+public: MYENGINE_API static bool find_plugin(const boost::filesystem::path &dirpath,
+                const std::string &filename,
+                boost::filesystem::path &pluginfound) {
+        if (!boost::filesystem::exists(dirpath)) return false;
+        boost::filesystem::directory_iterator end_itr;
+        boost::filesystem::path mypath;
+        for (boost::filesystem::directory_iterator itr( dirpath); itr != end_itr; ++itr)
+        {
+                mypath = *itr;
+                if (mypath.filename() == filename) {
+                        pluginfound = mypath;
+                        return true;
+                }
+                if (boost::filesystem::is_directory(*itr)) {
+                        if (find_plugin(*itr, filename, pluginfound)) return true;
+                }
+
+
+        }
+        return false;
+}
+
     /// <summary>Loads the shared object from the specified path</summary>
     /// <param name="path">
     ///   Path of the shared object that will be loaded
     /// </param>
     public: MYENGINE_API static HandleType Load(const std::string &path) {
-      std::string pathWithExtension = std::string("./lib") + path + ".so";
+      std::string pathWithExtension = std::string("lib") + path + ".so";
 
-      void *sharedObject = ::dlopen(pathWithExtension.c_str(), RTLD_NOW);
+	std::list<std::string> paths;
+	std::string libPath = getenv("MESHPOTATO_PLUGIN_PATH");
+	boost::split(paths, libPath, boost::is_any_of(":"));
+	boost::filesystem::path pluginPath;
+	bool found = false;
+	
+      	void *sharedObject = NULL;
+	for (std::list<std::string>::const_iterator iter = paths.begin(); iter != paths.end(); ++iter) {
+		boost::filesystem::path mypath(*iter);
+		found = find_plugin(mypath, pathWithExtension, pluginPath);
+		if (found) {
+			std::cout << "Found plugin " << pluginPath << std::endl;	
+      			sharedObject = ::dlopen(pluginPath.string().c_str(), RTLD_NOW);
+			if (sharedObject != NULL)
+				break;
+		}
+		
+	}
+
+
+
+//      void *sharedObject = ::dlopen(pathWithExtension.c_str(), RTLD_NOW);
       if(sharedObject == NULL) {
         throw std::runtime_error(
           std::string("Could not load '") + pathWithExtension + "'"

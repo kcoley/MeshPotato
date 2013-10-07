@@ -12,7 +12,8 @@
 
 #include <vector>
 #include <string>
-
+#include "Utilities.h"
+#include <map>
 namespace MyEngine {
 
   // ----------------------------------------------------------------------- //
@@ -37,8 +38,11 @@ namespace MyEngine {
       /// <summary>Gets the name of the graphics driver</summary>
       public: virtual void loadMesh(const char *)  = 0;
       public: virtual const size_t getNumberVertices() const = 0;
+      public: virtual const std::list<vertex> getVertices() const = 0;
       public: virtual const size_t getNumberNormals() const = 0;
+      public: virtual const std::list<vertex> getNormals() const = 0;
       public: virtual const size_t getNumberFaces() const = 0;
+      public: virtual const std::list<vertex> getFaces() const = 0;
 //      public: virtual size_t getNumVertices()  = 0;
       /// <summary>Creates a renderer using the driver's rendering API</summary>
       /// <summary>Creates a renderer using the driver's rendering API</summary>
@@ -48,19 +52,21 @@ namespace MyEngine {
 
     /// <summary>A vector of graphics drivers</summary>
 //    private: typedef std::vector<GraphicsDriver *> GraphicsDriverVector;
-    private: typedef std::vector<InputMeshDriver *> InputMeshVector;
+//    private: typedef std::vector<InputMeshDriver *> InputMeshVector;
+    private: typedef std::map<std::string, InputMeshDriver *> InputMeshMap;
 
     /// <summary>Releases the resources of the graphics server</summary>
 //    public: MYENGINE_API ~GraphicsServer() {
     public: MYENGINE_API ~InputMesh() {
       for(
 //        GraphicsDriverVector::const_iterator it = this->graphicsDrivers.begin();
-        InputMeshVector::const_iterator it = this->inputMeshDrivers.begin();
+//        InputMeshVector::const_iterator it = this->inputMeshDrivers.begin();
+        InputMeshMap::const_iterator it = this->inputMeshDrivers.begin();
 //        it != this->graphicsDrivers.end();
         it != this->inputMeshDrivers.end();
         ++it
       ) {
-        delete *it;
+        delete it->second;
       }
     }
 
@@ -68,11 +74,14 @@ namespace MyEngine {
     /// <param name="graphicsDriver">Graphics driver that will be added</param>
 //    public: MYENGINE_API void addGraphicsDriver(
     public: MYENGINE_API void addInputMeshDriver(
+	std::string extension,
 //      std::auto_ptr<GraphicsDriver> graphicsDriver
       std::auto_ptr<InputMeshDriver> inputMeshDriver
     ) {
 //      this->graphicsDrivers.push_back(graphicsDriver.release());
-      this->inputMeshDrivers.push_back(inputMeshDriver.release());
+//      this->inputMeshDrivers.push_back(inputMeshDriver.release());
+      this->inputMeshDrivers[extension] = inputMeshDriver.release();
+//      this->inputMeshDrivers.insert(extension, inputMeshDriver.release());
     }
 
     /// <summary>Gets the total number of registered graphics drivers</summary>
@@ -83,14 +92,15 @@ namespace MyEngine {
 
     /// <summary>Accesses a driver by its index</summary>
 //    public: MYENGINE_API GraphicsDriver &getDriver(size_t Index) {
-    public: MYENGINE_API InputMeshDriver &getDriver(size_t Index) {
+    public: MYENGINE_API InputMeshDriver &getDriver(std::string ext) {
 //      return *this->graphicsDrivers.at(Index);
-      return *this->inputMeshDrivers.at(Index);
+      return *this->inputMeshDrivers.find(ext)->second;
     }
 
     /// <summary>All available graphics drivers</summary>
 //    private: GraphicsDriverVector graphicsDrivers;
-    private: InputMeshVector inputMeshDrivers;
+//    private: InputMeshVector inputMeshDrivers;
+    private: InputMeshMap inputMeshDrivers;
 
   };
 

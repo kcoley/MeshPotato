@@ -20,7 +20,8 @@ namespace MyEngine {
     sharedLibraryHandle(0),
     referenceCount(0),
     getEngineVersionAddress(0),
-    registerPluginAddress(0) {
+    registerPluginAddress(0),
+    getExtensionAddress(0) {
 
     // Try to load the plugin as a shared library
     this->sharedLibraryHandle = SharedLibrary::Load(filename);
@@ -33,6 +34,9 @@ namespace MyEngine {
       this->registerPluginAddress = SharedLibrary::GetFunctionPointer<
         RegisterPluginFunction
       >(this->sharedLibraryHandle, "registerPlugin");
+      this->getExtensionAddress = SharedLibrary::GetFunctionPointer<
+        GetExtensionFunction
+      >(this->sharedLibraryHandle, "getExtension");
 
       // Initialize a new shared library reference counter
       this->referenceCount = new size_t(1);
@@ -53,7 +57,8 @@ namespace MyEngine {
     sharedLibraryHandle(other.sharedLibraryHandle),
     referenceCount(other.referenceCount),
     getEngineVersionAddress(other.getEngineVersionAddress),
-    registerPluginAddress(other.registerPluginAddress) {
+    registerPluginAddress(other.registerPluginAddress),
+    getExtensionAddress(other.getExtensionAddress) {
 
     // Increase DLL reference counter
     if(this->referenceCount) {

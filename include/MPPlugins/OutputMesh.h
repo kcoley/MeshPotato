@@ -12,7 +12,8 @@
 #include "Utilities.h"
 #include <vector>
 #include <string>
-
+#include <algorithm>
+#include <map>
 namespace MyEngine {
 
   // ----------------------------------------------------------------------- //
@@ -49,19 +50,20 @@ namespace MyEngine {
 
     /// <summary>A vector of graphics drivers</summary>
 //    private: typedef std::vector<GraphicsDriver *> GraphicsDriverVector;
-    private: typedef std::vector<OutputMeshDriver *> OutputMeshVector;
+//    private: typedef std::vector<OutputMeshDriver *> OutputMeshVector;
+    private: typedef std::map<std::string, OutputMeshDriver *> OutputMeshMap;
 
     /// <summary>Releases the resources of the graphics server</summary>
 //    public: MYENGINE_API ~GraphicsServer() {
     public: MYENGINE_API ~OutputMesh() {
       for(
 //        GraphicsDriverVector::const_iterator it = this->graphicsDrivers.begin();
-        OutputMeshVector::const_iterator it = this->outputMeshDrivers.begin();
+        OutputMeshMap::const_iterator it = this->outputMeshDrivers.begin();
 //        it != this->graphicsDrivers.end();
         it != this->outputMeshDrivers.end();
         ++it
       ) {
-        delete *it;
+        delete it->second;
       }
     }
 
@@ -69,11 +71,12 @@ namespace MyEngine {
     /// <param name="graphicsDriver">Graphics driver that will be added</param>
 //    public: MYENGINE_API void addGraphicsDriver(
     public: MYENGINE_API void addOutputMeshDriver(
+	std::string extension,
 //      std::auto_ptr<GraphicsDriver> graphicsDriver
       std::auto_ptr<OutputMeshDriver> outputMeshDriver
     ) {
 //      this->graphicsDrivers.push_back(graphicsDriver.release());
-      this->outputMeshDrivers.push_back(outputMeshDriver.release());
+      this->outputMeshDrivers[extension] = outputMeshDriver.release();
     }
 
     /// <summary>Gets the total number of registered graphics drivers</summary>
@@ -84,14 +87,15 @@ namespace MyEngine {
 
     /// <summary>Accesses a driver by its index</summary>
 //    public: MYENGINE_API GraphicsDriver &getDriver(size_t Index) {
-    public: MYENGINE_API OutputMeshDriver &getDriver(size_t Index) {
+    public: MYENGINE_API OutputMeshDriver &getDriver(std::string ext) {
 //      return *this->graphicsDrivers.at(Index);
-      return *this->outputMeshDrivers.at(Index);
+      return *this->outputMeshDrivers.find(ext)->second;
     }
 
     /// <summary>All available graphics drivers</summary>
 //    private: GraphicsDriverVector graphicsDrivers;
-    private: OutputMeshVector outputMeshDrivers;
+//    private: OutputMeshVector outputMeshDrivers;
+    private: OutputMeshMap outputMeshDrivers;
 
   };
 

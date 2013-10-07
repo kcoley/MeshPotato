@@ -2,7 +2,16 @@
 CC=clang++
 CFLAGS=-c -Wall -fPIC
 LDFLAGS=
-SOURCES=src/MPMesh.C \
+SOURCES=$(wildcard src/*.C)
+BOOST_INC = /usr/include
+BOOST_LIB = /usr/lib
+
+PYTHON_VERSION = 2.7
+PYTHON_INCLUDE = /usr/include/python$(PYTHON_VERSION)
+
+
+PYTHON_TARGET = lib/meshpotato_python
+#SOURCES=src/MPMesh.C \
 src/Vector.C \
 src/MeshPotato.C \
 src/MeshPotatoPlugin.C \
@@ -16,8 +25,8 @@ PLUGINS=plugins
 VDBINCLUDE=${HOME}/projects/OpenVDB/include
 VDBLIB=${HOME}/projects/OpenVDB/lib
 
-INCLUDES= -I ./include -I $(VDBINCLUDE)
-LINKS= -L$(VDBLIB) -lopenvdb
+INCLUDES= -I ./include -I $(VDBINCLUDE) -I $(BOOST_INC)
+LINKS= -L$(VDBLIB) -lopenvdb -L$(BOOST_LIB) -lboost_filesystem
 MESHCONVERTERLIB=lib/libmeshpotato.a
 MESHPOTATOSHAREDLIB=lib/libmeshpotato.so
 PLUGINFILES=plugins/*/*.C
@@ -31,9 +40,9 @@ $(MESHPOTATOSHAREDLIB): $(OBJECTS)
 	$(CC) $(OBJECTS) $(CFLAGS)
 	$(CC) -shared -Wl,-soname,libmeshpotato.so -o $(MESHPOTATOSHAREDLIB) $(OBJECTS)
 
-#plugins: $(PLUGINFILES)
-#	$(CC) -fPIC -c -I ./include -I ./plugins -L./lib $(PLUGINFILES) -o plugins/OBJInput/mpobjinputplugin.o
-#	$(CC) -shared -Wl,-soname,mpobjinputplugin.so -o plugins/OBJInput/mpobjinputplugin.so plugins/OBJInput/mpobjinputplugin.o
+python: $(OBJECTS)
+	g++ -shared -Wl,--export-dynamic $(OBJECTS) $(LINKS) -lboost_python -L/usr/lib/python$(PYTHON_VERSION)/config -lboost_python -o $(PYTHON_TARGET).so
+
 clean:
 	rm src/*.o
 	rm lib/*.so

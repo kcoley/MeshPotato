@@ -1,5 +1,10 @@
 #include <vector>
 #include <openvdb/math/Vec3.h>
+#include <openvdb/math/Vec4.h>
+#include <openvdb/util/Util.h>
+#include <openvdb/openvdb.h>
+#include <openvdb/tools/MeshToVolume.h>
+
 #include <OpenEXR/ImathVec.h>
 
 namespace MeshPotato {
@@ -8,6 +13,11 @@ namespace MeshPotato {
 		//! MPUtilities
 		typedef openvdb::math::Vec3<float> Vector3d;
 		typedef Imath::Vec3<float> Vector2;
+	
+		
+		typedef std::vector<openvdb::math::Vec4<uint32_t> > Polys;
+		typedef std::vector<openvdb::math::Vec3<float> >Verts;
+		
 
 	}
 }
