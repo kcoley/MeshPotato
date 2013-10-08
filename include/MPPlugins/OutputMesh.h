@@ -14,6 +14,7 @@
 #include <string>
 #include <algorithm>
 #include <map>
+#include "MeshPotato/meshpotato.h"
 namespace MyEngine {
 
   // ----------------------------------------------------------------------- //
@@ -36,7 +37,7 @@ namespace MyEngine {
       /// <summary>Gets the name of the graphics driver</summary>
       public: virtual const std::string &getName() const = 0;
       /// <summary>Gets the name of the graphics driver</summary>
-      public: virtual void loadMesh(std::list<vertex> &, std::list<vertex> &, std::list<vertex> &)  = 0;
+      public: virtual void loadMesh(std::list<vertex> &, std::list<vertex> &, std::list<vertex> &, MeshPotato::MeshSpec spec = MeshPotato::MeshSpec())  = 0;
       public: virtual bool writeMesh(const char *)  = 0;
       public: virtual const size_t getNumberVertices() const = 0;
       public: virtual const size_t getNumberNormals() const = 0;

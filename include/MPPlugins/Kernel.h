@@ -58,7 +58,7 @@ namespace MyEngine {
 //      if(this->loadedPlugins.find(filename) == this->loadedPlugins.end()) {
 //	Plugin plugin(filename);
         this->loadedPlugins.insert(PluginMap::value_type(plugin.getExtension(), plugin)).first->second.registerPlugin(*this);
-//        this->loadedPlugins.insert(PluginMap::value_type(filename, Plugin(filename))).first->second.registerPlugin(*this);
+	std::cout << "Added plugin " << plugin.getExtension() << " to pluginmap" << std::endl;
       }
     }
 

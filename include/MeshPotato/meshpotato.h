@@ -4,6 +4,9 @@
 #include <string.h>
 namespace MeshPotato {
 	class MeshSpec {
+	public:
+		MeshSpec(): voxelSize(0.05) {}
+		float voxelSize;
 	}; //! Define the specification for mesh data
 
 	struct DeepData {}; //! Define strut for deep data

@@ -27,38 +27,13 @@ namespace MyEngine {
 			}
 
 			/// <summary>Gets the name of the graphics driver</summary>
-		VDBOUTPUTPLUGIN_API void VDBOutputMeshDriver::loadMesh(list<vertex> &vertices, list<vertex> &normals, list<vertex> &faces) {
+		VDBOUTPUTPLUGIN_API void VDBOutputMeshDriver::loadMesh(list<vertex> &vertices, list<vertex> &normals, list<vertex> &faces, MeshPotato::MeshSpec spec) {
 				this->vertices = vertices;
 				this->normals = normals;
 				this->faces = faces;
-				voxelSize = 0.001;
+				voxelSize = spec.voxelSize;
 				grid = openvdb::FloatGrid::create(/*background value */2.0);
 
-				/*
-				   while(std::getline(File, Line)){
-				   if(Line == "" || Line[0] == '#')// Skip everything and continue with the next line
-				   continue;
-
-				   std::istringstream LineStream(Line);
-				   LineStream >> Name;
-
-				   if(Name == "v"){// Vertex
-				   vertex v;
-				   sscanf(Line.c_str(), "%*s %f %f %f", &v.x, &v.y, &v.z);
-				   vertices.push_back(v);
-				   }
-				   else if(Name == "vn"){// Vertex Normal
-				   vertex n;
-				   sscanf(Line.c_str(), "%*s %f %f %f", &n.x, &n.y, &n.z);
-				   normals.push_back(n);
-				   }
-				   else if(Name == "f"){// Vertex Normal
-				   vertex f;
-				   sscanf(Line.c_str(), "%*s %f %f %f", &f.x, &f.y, &f.z);
-				   faces.push_back(f);
-				   }
-				   };
-				 */
 
 			}
 
@@ -126,26 +101,5 @@ namespace MyEngine {
 				//      return auto_ptr<Renderer>(new Renderer());
 				return auto_ptr<Mesh>(new Mesh());
 			}
-//		private:
-
-//			float voxelSize;
-//			list<vertex> vertices;
-//			list<vertex> normals;
-//			list<vertex> faces;
-//			openvdb::FloatGrid::Ptr grid;
-
-			//Implement List here for dynamically growing amount of vertices
-//	};
-
-
-	/// <summary>Register the plugin to an engine kernel</summary>
-	/// <param name="kernel">Kernel the plugin will register to</summary>
-//	extern "C" VDBOUTPUTPLUGIN_API void registerPlugin(Kernel &kernel) {
-		//    kernel.getGraphicsServer().addGraphicsDriver(
-//		kernel.getOutputMesh().addOutputMeshDriver(
-				//      auto_ptr<GraphicsServer::GraphicsDriver>(new OpenGLGraphicsDriver())
-//				auto_ptr<OutputMesh::OutputMeshDriver>(new VDBOutputMeshDriver())
-//				);
-//	}
 
 	} // namespace MyEngine
