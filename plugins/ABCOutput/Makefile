@@ -1,5 +1,5 @@
 #CC=g++
-CC=g++
+CC=clang++
 CFLAGS=-c -Wall -fPIC
 
 INCLUDES= -I ../../include -I /home/kcoley/Downloads/Alembic_150/Alembic_1.5.0_2013072300/lib -I /home/kcoley/projects/usr/local/include/OpenEXR
@@ -12,7 +12,7 @@ PLUGINNAME=libABCOutputPlugin.so
 
 all: $(PLUGINFILES)
 	$(CC) -fPIC -c $(CFLAGS) $(INCLUDES) ABCOutputPlugin.C -o mpabcoutputplugin.o
-	$(CC) -shared -Wl,-soname,$(PLUGINNAME) -o $(PLUGINNAME) mpabcoutputplugin.o
+	$(CC) -shared -Wl,-soname,$(PLUGINNAME) -o $(PLUGINNAME) mpabcoutputplugin.o $(LINKS)
 
 clean:
 	rm *.o

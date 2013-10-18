@@ -161,7 +161,9 @@ public: MYENGINE_API static bool find_plugin(const boost::filesystem::path &dirp
 //      void *sharedObject = ::dlopen(pathWithExtension.c_str(), RTLD_NOW);
       if(sharedObject == NULL) {
         throw std::runtime_error(
-          std::string("Could not load '") + pathWithExtension + "'"
+          std::string("Could not load '") + pathWithExtension + "' \n" +
+		dlerror() + "\n"
+	
         );
       }
 

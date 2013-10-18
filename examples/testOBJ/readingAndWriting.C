@@ -15,6 +15,13 @@
 #include <string>
 
 
+// Alembic Includes
+#include <Alembic/AbcGeom/All.h>
+// This is required to tell Alembic which implementation to use.  In this case,
+// the HDF5 implementation, currently the only one available.
+#include <Alembic/AbcCoreHDF5/All.h>
+#include <assert.h>
+#include <Alembic/Abc/ErrorHandler.h>
 using namespace std;
 using namespace MyEngine;
 class SimData {
@@ -133,6 +140,8 @@ int main(int argc, char **argv) {
     theKernel.loadPlugin("VDBInputPlugin");
     theKernel.loadPlugin("VDBOutputPlugin");
     theKernel.loadPlugin("OBJOutputPlugin");
+//    theKernel.loadPlugin("ABCOutputPlugin");
+    theKernel.loadPlugin("ABCInputPlugin");
     cout << endl;
 
     cout << string(79, '*') << endl;

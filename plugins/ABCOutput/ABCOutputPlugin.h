@@ -37,7 +37,7 @@ namespace MyEngine {
 	ABCOUTPUTPLUGIN_API virtual const std::string &getName() const;
 
 			/// <summary>Gets the name of the graphics driver</summary>
-	ABCOUTPUTPLUGIN_API virtual void loadMesh(std::list<vertex> &vertices, std::list<vertex> &normals, std::list<vertex> &faces, MeshPotato::MeshSpec spec = MeshPotato::MeshSpec());
+	ABCOUTPUTPLUGIN_API virtual void loadMesh(std::list<vertex> &vertices, std::list<vertex> &normals, std::list<vertex> &faces, MeshPotato::MeshSpec spec);
 	ABCOUTPUTPLUGIN_API virtual bool writeMesh(const char *meshName);
 
 	ABCOUTPUTPLUGIN_API virtual const size_t getNumberVertices() const{
@@ -53,9 +53,9 @@ namespace MyEngine {
 
 			/// <summary>Creates a renderer</summary>
 			//    auto_ptr<Mesh> createRenderer() {
-			std::auto_ptr<Mesh> createOutputMesh() {
+			std::auto_ptr<MPMesh> createOutputMesh() {
 				//      return auto_ptr<Renderer>(new Renderer());
-				return std::auto_ptr<Mesh>(new Mesh());
+				return std::auto_ptr<MPMesh>(new MPMesh());
 			}
 	private:
 			std::list<vertex> vertices;

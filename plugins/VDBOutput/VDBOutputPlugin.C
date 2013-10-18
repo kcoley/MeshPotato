@@ -97,9 +97,9 @@ namespace MyEngine {
 			}
 			/// <summary>Creates a renderer</summary>
 			//    auto_ptr<Mesh> createRenderer() {
-			auto_ptr<Mesh> VDBOutputMeshDriver::createOutputMesh() {
+			auto_ptr<MPMesh> VDBOutputMeshDriver::createOutputMesh() {
 				//      return auto_ptr<Renderer>(new Renderer());
-				return auto_ptr<Mesh>(new Mesh());
+				return auto_ptr<MPMesh>(new MPMesh());
 			}
 
 	} // namespace MyEngine

@@ -19,7 +19,7 @@ namespace MyEngine {
 			VDBOUTPUTPLUGIN_API virtual const size_t getNumberFaces() const;
 			VDBOUTPUTPLUGIN_API virtual void setVoxelSize(float );
 
-			auto_ptr<Mesh> createOutputMesh();
+			auto_ptr<MPMesh> createOutputMesh();
 		private:
 			float voxelSize;
 			list<vertex> vertices;

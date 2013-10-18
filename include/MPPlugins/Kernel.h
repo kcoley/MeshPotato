@@ -8,8 +8,6 @@
 #define MYENGINE_KERNEL_H
 
 #include "Config.h"
-#include "StorageServer.h"
-#include "GraphicsServer.h"
 #include "InputMesh.h"
 #include "OutputMesh.h"
 #include "Plugin.h"
@@ -25,15 +23,8 @@ namespace MyEngine {
     /// <summary>Map of plugins by their associated file names</summary>
     typedef std::map<std::string, Plugin> PluginMap;
 
-    /// <summary>Accesses the storage server</summary>
-    public: MYENGINE_API StorageServer &getStorageServer() {
-      return this->storageServer;
-    }
 
     /// <summary>Accesses the graphics server</summary>
-    public: MYENGINE_API GraphicsServer &getGraphicsServer() {
-      return this->graphicsServer;
-    }
 
     /// <summary>Accesses the graphics server</summary>
     public: MYENGINE_API InputMesh &getInputMesh() {
@@ -65,13 +56,10 @@ namespace MyEngine {
     /// <summary>All plugins currently loaded</summary>
     private: PluginMap loadedPlugins;
     /// <summary>Manages storage-related tasks for the engine</summary>
-    private: StorageServer storageServer;
-    /// <summary>Manages storage-related tasks for the engine</summary>
     private: InputMesh inputMesh;
     private: OutputMesh outputMesh;
     /// <summary>Manages graphics-related tasks for the engine</summary>
     /// <summary>Manages graphics-related tasks for the engine</summary>
-    private: GraphicsServer graphicsServer; 
 
   };
 

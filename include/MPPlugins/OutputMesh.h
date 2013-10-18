@@ -20,7 +20,7 @@ namespace MyEngine {
   // ----------------------------------------------------------------------- //
 
 //  class Renderer {}; // Dummy
-//  class Mesh {}; // Dummy
+//  class MPMesh {}; // Dummy
 
   // ----------------------------------------------------------------------- //
 
@@ -46,7 +46,7 @@ namespace MyEngine {
       /// <summary>Creates a renderer using the driver's rendering API</summary>
       /// <summary>Creates a renderer using the driver's rendering API</summary>
 //      public: virtual std::auto_ptr<Renderer> createRenderer() = 0;
-      public: virtual std::auto_ptr<Mesh> createOutputMesh() = 0;
+      public: virtual std::auto_ptr<MPMesh> createOutputMesh() = 0;
     };
 
     /// <summary>A vector of graphics drivers</summary>
