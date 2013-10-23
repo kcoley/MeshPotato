@@ -22,6 +22,8 @@ namespace MyEngine {
 			auto_ptr<MPMesh> createOutputMesh();
 		private:
 			float voxelSize;
+			float exBandWidth;
+			float inBandWidth;
 			list<vertex> vertices;
 			list<vertex> normals;
 			list<vertex> faces;

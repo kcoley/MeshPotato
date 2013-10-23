@@ -13,15 +13,15 @@
 #include <openvdb/io/Stream.h>
 #include <openvdb/tools/VolumeToMesh.h>
 #include <string>
-
+#include "CmdLineFind.h"
 
 // Alembic Includes
-#include <Alembic/AbcGeom/All.h>
+//#include <Alembic/AbcGeom/All.h>
 // This is required to tell Alembic which implementation to use.  In this case,
 // the HDF5 implementation, currently the only one available.
-#include <Alembic/AbcCoreHDF5/All.h>
+//#include <Alembic/AbcCoreHDF5/All.h>
 #include <assert.h>
-#include <Alembic/Abc/ErrorHandler.h>
+//#include <Alembic/Abc/ErrorHandler.h>
 using namespace std;
 using namespace MyEngine;
 class SimData {
@@ -38,13 +38,15 @@ delete [] file2;
 delete instance;
 };
 private:
-SimData() : globalVertices(), globalNormals(), globalFaces(), file1(NULL), file2(NULL), voxelSize(0.05) {}
+SimData() : globalVertices(), globalNormals(), globalFaces(), file1(NULL), file2(NULL), voxelSize(0.05), exBandWidth(3), inBandWidth(3) {}
 std::list<vertex> globalVertices;
 std::list<vertex> globalNormals;
 std::list<vertex> globalFaces;
-char *file1;
-char *file2;
+const char *file1;
+const char *file2;
 float voxelSize;
+float exBandWidth;
+float inBandWidth;
 static SimData* instance;
 };
 
@@ -52,9 +54,11 @@ std::list<vertex> globalVertices;
 std::list<vertex> globalNormals;
 std::list<vertex> globalFaces;
 
-char *file1;
-char *file2;
+const char *file1;
+const char *file2;
 float voxelSize = 0.005;
+float exBandWidth = 3;
+float inBandWidth = 3;
 /// <summary>Example method that tries to open a zip archive</summary>
 /// <param name="storageServer">
 ///   Storage server that will be used to open the zip archive
@@ -85,6 +89,8 @@ void listInputMeshDrivers(InputMesh &inputMesh) {
 void listOutputMeshDrivers(OutputMesh &outputMesh) {
   MeshPotato::MeshSpec spec;
   spec.voxelSize = voxelSize;
+  spec.exBandWidth = exBandWidth;
+  spec.inBandWidth = inBandWidth;
 //  std::string index = "vdb";
     std::string file(file2);
    std::string index = file.substr(file.find(".")+1, file.length());
@@ -113,14 +119,18 @@ void listOutputMeshDrivers(OutputMesh &outputMesh) {
 
 /// <summary>Program entry point</summary>
 int main(int argc, char **argv) {
+  lux::CmdLineFind clf(argc, argv);
+  file1 = clf.find("-i", "mesh.obj", "Name of source mesh").c_str();
+  file2 = clf.find("-o", "newmesh.obj", "Name of resulting mesh").c_str();
+  voxelSize = clf.find("-voxelsize", 0.05f, "Voxel Size (vdb)");
+  exBandWidth = clf.find("-exbandwidth", 3, "External Bandwidth (vdb)");
+  inBandWidth = clf.find("-inbandwidth", 3, "Internal Bandwidth (vdb)");
   if (argc < 3) {
+     clf.usage("-h");
      std::cout << "Invalid number of args" << std::endl;
-  }
-  file1 = argv[1];
-  file2 = argv[2];
-  if (argc == 4)
-  voxelSize = atof(argv[3]);
-  
+     exit(0);
+ } 
+  clf.printFinds(); 
   Kernel theKernel;
 
   try {
@@ -136,12 +146,12 @@ int main(int argc, char **argv) {
 
     // Now load the plugins
     cout << "Loading plugins..." << endl;
+//    theKernel.loadPlugin("ABCInputPlugin");
     theKernel.loadPlugin("OBJInputPlugin");
     theKernel.loadPlugin("VDBInputPlugin");
     theKernel.loadPlugin("VDBOutputPlugin");
     theKernel.loadPlugin("OBJOutputPlugin");
 //    theKernel.loadPlugin("ABCOutputPlugin");
-    theKernel.loadPlugin("ABCInputPlugin");
     cout << endl;
 
     cout << string(79, '*') << endl;

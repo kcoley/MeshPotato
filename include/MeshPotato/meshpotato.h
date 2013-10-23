@@ -5,8 +5,10 @@
 namespace MeshPotato {
 	class MeshSpec {
 	public:
-		MeshSpec(): voxelSize(0.05) {}
+		MeshSpec(): voxelSize(0.05), exBandWidth(3), inBandWidth(3) {}
 		float voxelSize;
+		float exBandWidth;
+		float inBandWidth;
 	}; //! Define the specification for mesh data
 
 	struct DeepData {}; //! Define strut for deep data

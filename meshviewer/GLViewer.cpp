@@ -42,9 +42,14 @@
 */
 
 #include "GLViewer.h"
-
 // Global GLViewer to be used in the class and in main()
 GLViewer *viewer;
+
+void GLViewer::initMeshPotato() {
+//	mpkernel.loadPlugin("OBJInputPlugin");
+
+
+}
 
 // Routine to initialize the state of the program to start-up defaults
 void GLViewer::setInitialState(){

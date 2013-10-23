@@ -32,6 +32,8 @@ namespace MyEngine {
 				this->normals = normals;
 				this->faces = faces;
 				voxelSize = spec.voxelSize;
+				exBandWidth = spec.exBandWidth;
+				inBandWidth = spec.inBandWidth;
 				grid = openvdb::FloatGrid::create(/*background value */2.0);
 
 
@@ -70,7 +72,7 @@ namespace MyEngine {
 
 					std::cout << "after transfom to worldness" << std::endl;
 					openvdb::tools::MeshToVolume<openvdb::FloatGrid> levelset(transform);
-					levelset.convertToLevelSet(verts, polys);
+					levelset.convertToLevelSet(verts, polys, exBandWidth, inBandWidth);
 					// Export Mesh
 					openvdb::io::File file(meshName);
 					grid = levelset.distGridPtr();

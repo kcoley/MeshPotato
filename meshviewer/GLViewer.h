@@ -17,7 +17,9 @@
 #include <istream>
 #include <sstream>
 #include "Face.h"
-
+#include <MPPlugins/Kernel.h>
+#include <MPUtils/Vector.h>
+#include <MeshPotato/meshpotato.h>
 #ifdef __APPLE__
 #  include <GLUT/glut.h>
 #else
@@ -61,7 +63,7 @@ public:
   void handleMotion(int, int);
   void doReshape(int, int);
   void initialize(char*);
-
+  void initMeshPotato();
   const int ORTHO;	             // projection system codes
   const int PERSPECTIVE;
   const int NONE;               // used to indicate no mouse button pressed
@@ -75,6 +77,8 @@ public:
   const float XLATEFACTOR;   // units of translation per pixel of mouse movement
 
 private:
+  // Kernel for Mesh Potato
+//  MyEngine::Kernel mpkernel;
   // Values to calculate center of of the object
   float minX;
   float maxX;
