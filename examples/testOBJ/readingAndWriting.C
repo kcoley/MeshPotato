@@ -16,10 +16,10 @@
 #include "CmdLineFind.h"
 
 // Alembic Includes
-//#include <Alembic/AbcGeom/All.h>
+#include <Alembic/AbcGeom/All.h>
 // This is required to tell Alembic which implementation to use.  In this case,
 // the HDF5 implementation, currently the only one available.
-//#include <Alembic/AbcCoreHDF5/All.h>
+#include <Alembic/AbcCoreHDF5/All.h>
 #include <assert.h>
 //#include <Alembic/Abc/ErrorHandler.h>
 using namespace std;
