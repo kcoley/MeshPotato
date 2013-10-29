@@ -17,9 +17,7 @@
 #include <istream>
 #include <sstream>
 #include "Face.h"
-#include <MPPlugins/Kernel.h>
-#include <MPUtils/Vector.h>
-#include <MeshPotato/meshpotato.h>
+
 #ifdef __APPLE__
 #  include <GLUT/glut.h>
 #else

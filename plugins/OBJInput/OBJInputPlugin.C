@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <list>
 #include <stdlib.h>
+
 //#include "../MyEngine/Utilities.h"
 
 using namespace std;
@@ -33,7 +34,7 @@ std::stringstream ss(line);
                         }
 
                         // if item is not empty, push back
-                        if( item.compare("") != 0 ) result.push_back(item);
+                        if( item.compare("") != 0 && item != "f") result.push_back(item);
 
                 }
 
@@ -88,24 +89,28 @@ void split(const std::string& in, std::vector<std::string>& result){
 					LineStream >> Name;
 
 					if(Name == "v"){// Vertex
-						vertex v;
-						sscanf(Line.c_str(), "%*s %f %f %f", &v.x, &v.y, &v.z);
-						vertices.push_back(v);
+//						vertex v;
+						vector<string> vec = vector<string>(istream_iterator<string>(LineStream), istream_iterator<string>());
+//						sscanf(Line.c_str(), "%*s %f %f %f", &v.x, &v.y, &v.z);
+						
+						vertices.push_back(vec);
 					}
 					else if(Name == "vn"){// Vertex Normal
-						vertex n;
-						sscanf(Line.c_str(), "%*s %f %f %f", &n.x, &n.y, &n.z);
-						normals.push_back(n);
+//						vertex n;
+						vector<std::string> normal = vector<string>(istream_iterator<string>(LineStream), istream_iterator<string>());
+//						sscanf(Line.c_str(), "%*s %f %f %f", &n.x, &n.y, &n.z);
+						normals.push_back(normal);
 					}
 					else if(Name == "f"){// Vertex Normal
-						std::vector<std::string> vect;
-						vertex f;
-						keepFaceVertexOnly(Line, vect);
-						f.x = ::atof(vect[1].c_str());
-						f.y = ::atof(vect[2].c_str());
-						f.z = ::atof(vect[3].c_str());
-						sscanf(Line.c_str(), "%*s %f %f %f", &f.x, &f.y, &f.z);
-						faces.push_back(f);
+//						vector<string> face = vector<string>(istream_iterator<string>(Line), istream_iterator<string>());
+						std::vector<std::string> face;
+//						vertex f;
+						keepFaceVertexOnly(Line, face);
+//						f.x = ::atof(vect[1].c_str());
+//						f.y = ::atof(vect[2].c_str());
+//						f.z = ::atof(vect[3].c_str());
+//						sscanf(Line.c_str(), "%*s %f %f %f", &f.x, &f.y, &f.z);
+						faces.push_back(face);
 					}
 				};
 
@@ -121,13 +126,13 @@ void split(const std::string& in, std::vector<std::string>& result){
 		public: OBJINPUTPLUGIN_API virtual const size_t getNumberFaces() const{
 			return faces.size();
 		}
-		public: OBJINPUTPLUGIN_API virtual const std::list<vertex> getVertices() const{
+		public: OBJINPUTPLUGIN_API virtual const std::list<std::vector<string> > getVertices() const{
 			return vertices;
 		}
-		public: OBJINPUTPLUGIN_API virtual const std::list<vertex> getNormals() const{
+		public: OBJINPUTPLUGIN_API virtual const std::list<std::vector<string> > getNormals() const{
 			return normals;
 		}
-		public: OBJINPUTPLUGIN_API virtual const std::list<vertex> getFaces() const{
+		public: OBJINPUTPLUGIN_API virtual const std::list<std::vector<string> > getFaces() const{
 			return faces;
 		}
 			/// <summary>Creates a renderer</summary>
@@ -139,9 +144,9 @@ void split(const std::string& in, std::vector<std::string>& result){
 		private:
 
 
-			list<vertex> vertices;
-			list<vertex> normals;
-			list<vertex> faces;
+			list<std::vector<string> > vertices;
+			list<std::vector<string> > normals;
+			list<std::vector<string> > faces;
 			std::string file_ext;
 			//Implement List here for dynamically growing amount of vertices
 	};

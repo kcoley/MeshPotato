@@ -39,9 +39,9 @@ delete instance;
 };
 private:
 SimData() : globalVertices(), globalNormals(), globalFaces(), file1(NULL), file2(NULL), voxelSize(0.05), exBandWidth(3), inBandWidth(3) {}
-std::list<vertex> globalVertices;
-std::list<vertex> globalNormals;
-std::list<vertex> globalFaces;
+std::list<std::vector<std::string> > globalVertices;
+std::list<std::vector<std::string> > globalNormals;
+std::list<std::vector<std::string> > globalFaces;
 const char *file1;
 const char *file2;
 float voxelSize;
@@ -50,9 +50,9 @@ float inBandWidth;
 static SimData* instance;
 };
 
-std::list<vertex> globalVertices;
-std::list<vertex> globalNormals;
-std::list<vertex> globalFaces;
+std::list<std::vector<std::string> > globalVertices;
+std::list<std::vector<std::string> > globalNormals;
+std::list<std::vector<std::string> > globalFaces;
 
 const char *file1;
 const char *file2;
@@ -146,7 +146,7 @@ int main(int argc, char **argv) {
 
     // Now load the plugins
     cout << "Loading plugins..." << endl;
-//    theKernel.loadPlugin("ABCInputPlugin");
+    theKernel.loadPlugin("ABCInputPlugin");
     theKernel.loadPlugin("OBJInputPlugin");
     theKernel.loadPlugin("VDBInputPlugin");
     theKernel.loadPlugin("VDBOutputPlugin");

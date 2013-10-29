@@ -27,7 +27,7 @@ namespace MyEngine {
 			}
 
 			/// <summary>Gets the name of the graphics driver</summary>
-		VDBOUTPUTPLUGIN_API void VDBOutputMeshDriver::loadMesh(list<vertex> &vertices, list<vertex> &normals, list<vertex> &faces, MeshPotato::MeshSpec spec) {
+		VDBOUTPUTPLUGIN_API void VDBOutputMeshDriver::loadMesh(list<std::vector<std::string> > &vertices, list<std::vector<std::string> > &normals, list<std::vector<std::string> > &faces, MeshPotato::MeshSpec spec) {
 				this->vertices = vertices;
 				this->normals = normals;
 				this->faces = faces;
@@ -40,6 +40,7 @@ namespace MyEngine {
 			}
 
 		VDBOUTPUTPLUGIN_API bool VDBOutputMeshDriver::writeMesh(const char *meshName) {
+				std::stringstream strm;
 				MeshPotato::MPUtils::Verts verts;
 				MeshPotato::MPUtils::Polys polys;
 				// Open an OBJ file for writing
@@ -47,14 +48,51 @@ namespace MyEngine {
 				std::cout << "Writing vdb mesh" << std::endl;
 					// Write vertices
 					std::cout << "Pushing vertices" << std::endl;
-					for (std::list<vertex>::iterator iter = vertices.begin(); iter != vertices.end(); ++iter) {
-						verts.push_back(openvdb::math::Vec3s(iter->x, iter->y, iter->z));
+					for (std::list<std::vector<std::string> >::iterator iter = vertices.begin(); iter != vertices.end(); ++iter) {
+						float x,y,z;
+						strm << (*iter)[0];
+						strm >> x;
+						strm.str("");
+						strm.clear();
+						strm << (*iter)[1];
+						strm >> y;
+						strm.str("");
+						strm.clear();
+						strm << (*iter)[2];
+						strm >> z;
+						strm.str("");
+						strm.clear();
+						verts.push_back(openvdb::math::Vec3s(x, y, z));
+//						verts.push_back(openvdb::math::Vec3s(iter->x, iter->y, iter->z));
 					}
 
 					// Write faces
 					std::cout << "Pushing faces" << std::endl;
-					for (std::list<vertex>::iterator iter = faces.begin(); iter != faces.end(); ++iter) {
-						polys.push_back(openvdb::math::Vec4<uint32_t>((unsigned int)iter->x - 1, (unsigned int)iter->y - 1, (unsigned int)iter->z - 1, openvdb::util::INVALID_IDX));
+					for (std::list<std::vector<std::string>  >::iterator iter = faces.begin(); iter != faces.end(); ++iter) {
+						unsigned int x,y,z, w;
+						strm << (*iter)[0];
+						strm >> x;
+						strm.str("");
+						strm.clear();
+						strm << (*iter)[1];
+						strm >> y;
+						strm.str("");
+						strm.clear();
+						strm << (*iter)[2];
+						strm >> z;
+						strm.str("");
+						strm.clear();
+						if (iter->size() == 3)
+							polys.push_back(openvdb::math::Vec4<uint32_t>(x - 1, y - 1, z - 1, openvdb::util::INVALID_IDX));
+						else if (iter->size() == 4) {
+							strm << (*iter)[3];
+							strm >> w;
+							strm.str("");
+							strm.clear();
+							polys.push_back(openvdb::math::Vec4<uint32_t>(x - 1, y - 1, z - 1, w - 1));
+							
+						}
+//						polys.push_back(openvdb::math::Vec4<uint32_t>((unsigned int)iter->x - 1, (unsigned int)iter->y - 1, (unsigned int)iter->z - 1, openvdb::util::INVALID_IDX));
 
 					}
 				

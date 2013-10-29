@@ -68,22 +68,88 @@ namespace MyEngine {
 			openvdb::tools::PolygonPoolList *polys = &mesher.polygonPoolList();
 
 			for (size_t i = 0; i < mesher.pointListSize(); ++i) {
+				std::stringstream strm;
+				std::string x,y,z;
 				openvdb::Vec3s &v = (*verts)[i];
-				vertices.push_back(vertex(v[0], v[1], v[2]));
+				std::vector<std::string> vec;
+				vec.reserve(3);
+				strm << v[0];
+				strm >> x;
+				strm.str("");
+				strm.clear();
+				strm << v[1];
+				strm >> y;
+				strm.str("");
+				strm.clear();
+
+				strm << v[2];
+				strm >> z;
+				strm.str("");
+				strm.clear();
+				vec.push_back(x);
+				vec.push_back(y);
+				vec.push_back(z);
+				vertices.push_back(vec);
+//				vertices.push_back(vertex(v[0], v[1], v[2]));
 			}
 			
-
 			for( size_t i = 0; i < mesher.polygonPoolListSize(); ++i ){
 
                 		for( size_t ndx = 0; ndx < (*polys)[i].numTriangles(); ndx++ ){
+				std::stringstream strm;
+				std::string x,y,z;
                         		openvdb::Vec3I *p = &((*polys)[i].triangle(ndx));
-					faces.push_back(vertex(p->x() + 1, p->y() + 1, p->z() + 1));
+					std::vector<std::string> face_vec;
+				strm << p->x() + 1;
+				strm >> x;
+				strm.str("");
+				strm.clear();
+				strm << p->y() + 1;
+				strm >> y;
+				strm.str("");
+				strm.clear();
+
+				strm << p->z() + 1;
+				strm >> z;
+				strm.str("");
+				strm.clear();
+					face_vec.push_back(x);
+					face_vec.push_back(y);
+					face_vec.push_back(z);
+					faces.push_back(face_vec);
+//					faces.push_back(vertex(p->x() + 1, p->y() + 1, p->z() + 1));
 
                 		}
 
 			for( size_t ndx = 0; ndx < (*polys)[i].numQuads(); ndx++ ){
+				std::stringstream strm;
+				std::string x,y,z,w;
                  	       openvdb::Vec4I *p = &((*polys)[i].quad(ndx));
-				faces.push_back(vertex(p->x() + 1, p->y() + 1, p->z() + 1, p->w() + 1));
+					std::vector<std::string> face_vec;
+				strm << p->x() + 1;
+				strm >> x;
+				strm.str("");
+				strm.clear();
+				strm << p->y() + 1;
+				strm >> y;
+				strm.str("");
+				strm.clear();
+
+				strm << p->z() + 1;
+				strm >> z;
+				strm.str("");
+				strm.clear();
+				strm << p->w() + 1;
+				strm >> w;
+				strm.str("");
+				strm.clear();
+					face_vec.push_back(x);
+					face_vec.push_back(y);
+					face_vec.push_back(z);
+					face_vec.push_back(w);
+					faces.push_back(face_vec);
+				
+//				faces.push_back(vertex(p->x() + 1, p->y() + 1, p->z() + 1, p->w() + 1));
                 	}
 
 
@@ -105,13 +171,13 @@ namespace MyEngine {
 		public: VDBINPUTPLUGIN_API virtual const size_t getNumberFaces() const{
 			return faces.size();
 		}
-		public: VDBINPUTPLUGIN_API virtual const std::list<vertex> getVertices() const{
+		public: VDBINPUTPLUGIN_API virtual const std::list<std::vector<std::string> > getVertices() const{
 			return vertices;
 		}
-		public: VDBINPUTPLUGIN_API virtual const std::list<vertex> getNormals() const{
+		public: VDBINPUTPLUGIN_API virtual const std::list<std::vector<std::string> > getNormals() const{
 			return normals;
 		}
-		public: VDBINPUTPLUGIN_API virtual const std::list<vertex> getFaces() const{
+		public: VDBINPUTPLUGIN_API virtual const std::list<std::vector<std::string> > getFaces() const{
 			return faces;
 		}
 			/// <summary>Creates a renderer</summary>
@@ -123,9 +189,9 @@ namespace MyEngine {
 		private:
 
 
-			list<vertex> vertices;
-			list<vertex> normals;
-			list<vertex> faces;
+			list<std::vector<std::string> > vertices;
+			list<std::vector<std::string> > normals;
+			list<std::vector<std::string> > faces;
 			//Implement List here for dynamically growing amount of vertices
 	};
 

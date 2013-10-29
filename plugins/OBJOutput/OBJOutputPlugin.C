@@ -31,7 +31,7 @@ namespace MyEngine {
 	}
 
 			/// <summary>Gets the name of the graphics driver</summary>
-	OBJOUTPUTPLUGIN_API virtual void loadMesh(std::list<vertex> &vertices, std::list<vertex> &normals, std::list<vertex> &faces, MeshPotato::MeshSpec spec = MeshPotato::MeshSpec()) {
+	OBJOUTPUTPLUGIN_API virtual void loadMesh(std::list<std::vector<std::string> > &vertices, std::list<std::vector<std::string> > &normals, std::list<std::vector<std::string> > &faces, MeshPotato::MeshSpec spec = MeshPotato::MeshSpec()) {
 				this->vertices = vertices;
 				this->normals = normals;
 				this->faces = faces;
@@ -44,23 +44,33 @@ namespace MyEngine {
 					// Write metadata
 
 					// Write vertices
-					for (std::list<vertex>::iterator iter = vertices.begin(); iter != vertices.end(); ++iter) {
-						objFile << "v " << iter->x << " " << iter->y << " " << iter->z << std::endl;
+					for (std::list<std::vector<std::string> >::iterator iter = vertices.begin(); iter != vertices.end(); ++iter) {
+						objFile << "v ";
+						for (std::vector<std::string>::iterator ptr = iter->begin(); ptr != iter->end(); ++ptr) {
+						 	objFile << *ptr << " ";
+						}
+						objFile << std::endl;
 					}
 					objFile << std::endl;
 					// Write normals
-					for (std::list<vertex>::iterator iter = normals.begin(); iter != normals.end(); ++iter) {
-						objFile << "vn " << iter->x << " " << iter->y << " " << iter->z << std::endl;
+					for (std::list<std::vector<std::string> >::iterator iter = normals.begin(); iter != normals.end(); ++iter) {
+						objFile << "vn ";
+						for (std::vector<std::string>::iterator ptr = iter->begin(); ptr != iter->end(); ++ptr) {
+						 	objFile << *ptr << " ";
+						}
+						objFile << std::endl;
 					}
 					objFile << std::endl;
 
 					// Write faces
-					for (std::list<vertex>::iterator iter = faces.begin(); iter != faces.end(); ++iter) {
-						if (iter->w == 0)
-						objFile << "f " << iter->x << " " << iter->y << " " << iter->z << std::endl;
-						else
-						objFile << "f " << iter->x << " " << iter->y << " " << iter->z << " " << iter->w << std::endl;
+					for (std::list<std::vector<std::string> >::iterator iter = faces.begin(); iter != faces.end(); ++iter) {
+						objFile << "f ";
+						for (std::vector<std::string>::iterator ptr = iter->begin(); ptr != iter->end(); ++ptr) {
+						 	objFile << *ptr << " ";
+						}
+						objFile << std::endl;
 					}
+					objFile << std::endl;
 				}
 				else {
 					return false;
@@ -87,9 +97,9 @@ namespace MyEngine {
 				return std::auto_ptr<MPMesh>(new MPMesh());
 			}
 	private:
-			std::list<vertex> vertices;
-			std::list<vertex> normals;
-			std::list<vertex> faces;
+			std::list<std::vector<std::string> > vertices;
+			std::list<std::vector<std::string> > normals;
+			std::list<std::vector<std::string> > faces;
 			//Implement List here for dynamically growing amount of vertices
 	};
 

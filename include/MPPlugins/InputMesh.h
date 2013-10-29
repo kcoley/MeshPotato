@@ -40,11 +40,11 @@ namespace MyEngine {
       /// <summary>Gets the name of the graphics driver</summary>
       public: virtual void loadMesh(const char *)  = 0;
       public: virtual const size_t getNumberVertices() const = 0;
-      public: virtual const std::list<vertex> getVertices() const = 0;
+      public: virtual const std::list<std::vector<std::string> > getVertices() const = 0;
       public: virtual const size_t getNumberNormals() const = 0;
-      public: virtual const std::list<vertex> getNormals() const = 0;
+      public: virtual const std::list<std::vector<std::string> > getNormals() const = 0;
       public: virtual const size_t getNumberFaces() const = 0;
-      public: virtual const std::list<vertex> getFaces() const = 0;
+      public: virtual const std::list<std::vector<std::string> > getFaces() const = 0;
 //      public: virtual size_t getNumVertices()  = 0;
       /// <summary>Creates a renderer using the driver's rendering API</summary>
       /// <summary>Creates a renderer using the driver's rendering API</summary>
