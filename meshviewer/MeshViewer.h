@@ -1,12 +1,8 @@
 /*
 *  Tim Curtis
-*  CpSc 405
-*  Dr. House
-*  10/19/09
-*  Project 5 - Object Viewer
-*   GLViewer.h
+*  MeshViewer.h
 *
-*  Header file for the GLViewer class.
+*  Header file for the MeshViewer class.
 */
 
 #include <cstdlib>
@@ -17,6 +13,7 @@
 #include <istream>
 #include <sstream>
 #include "Face.h"
+#include "Camera.h"
 
 #ifdef __APPLE__
 #  include <GLUT/glut.h>
@@ -27,21 +24,21 @@
 // Initial Window Dimesions
 const int WIDTH = 1280;
 const int HEIGHT = 720;
-const float ASPECT = 1.778;
+const float ASPECT = 16.0/9.0;
 
 // Container for pixel values
 typedef unsigned char RGBA[4];
 
 using namespace std;
 
-class GLViewer {
+class MeshViewer {
 public:
   // Initializing constant values relative to the class
-  GLViewer() : ORTHO(0), PERSPECTIVE(1), NONE(-1), NEAR(0.1), FAR(5000), 
-     YANGLE(40), ROTFACTOR(0.2), XLATEFACTOR(0.1) 
-     { wireframe = TRUE;  minX = maxX = minY = maxY = minZ = maxZ = 0;
-       Width = WIDTH;  Height = HEIGHT; }
-  ~GLViewer() {}
+  MeshViewer() { 
+    wireframe = TRUE;  minX = maxX = minY = maxY = minZ = maxZ = 0;
+    Width = WIDTH;  Height = HEIGHT; Aspect = ASPECT;
+  }
+  ~MeshViewer() {}
 
   void setInitialState();
   void updateProjection();
@@ -57,22 +54,9 @@ public:
   // The 5 Callback functions used in the event loops
   void doDisplay();
   void handleKey(unsigned char, int, int);
-  void handleButtons(int, int, int, int);
-  void handleMotion(int, int);
   void doReshape(int, int);
   void initialize(char*);
   void initMeshPotato();
-  const int ORTHO;	             // projection system codes
-  const int PERSPECTIVE;
-  const int NONE;               // used to indicate no mouse button pressed
-
-  const float NEAR;             // distance of near clipping plane
-  const float FAR;	             // distance of far clipping plane
-
-  const int YANGLE;
-
-  const float ROTFACTOR;     // degrees rotation per pixel of mouse movement
-  const float XLATEFACTOR;   // units of translation per pixel of mouse movement
 
 private:
   // Kernel for Mesh Potato
@@ -86,8 +70,7 @@ private:
   float maxZ;
 
   // Viewing parameters
-  int Projection;
-  int Depth;
+  float Depth;
 
   // Booleans for toggle keys
   float axisLength;
@@ -97,23 +80,10 @@ private:
   // Variable for switching between wireframe and shaded
   int mode;
 
-  // Camera position and orientation
-  double Pan;
-  double Tilt;
-  double Approach;
-
-  // model orientation
-  double ThetaX;
-  double ThetaY;
-
   // Viewport dimensions
   int Width;
   int Height;
-
-  // variables to track mouse and shift key
-  int MouseX;
-  int MouseY;
-  int Button;
+  double Aspect;
 
   // vectors to hold the vertices and faces of the model
   vector<Vertex> vertices;

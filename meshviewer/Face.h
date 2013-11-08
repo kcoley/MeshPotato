@@ -1,10 +1,6 @@
 /*
 *  Tim Curtis
-*  CpSc 405
-*  Dr. House
-*  10/19/09
-*  Project 5 - Object Viewer
-*   Face.h
+*  Face.h
 *
 *  Header file for the Face class.
 */

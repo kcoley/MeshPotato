@@ -1,10 +1,6 @@
 /*
 *  Tim Curtis
-*  CpSc 405
-*  Dr. House
-*  10/19/09
-*  Project 5 - Object Viewer
-*    GLViewer.cpp
+*  MeshViewer.cpp
 *
 * A good deal of the source code here is credited to:
 *   BIHE Computer Graphics    Donald H. House     12/12/06
@@ -27,81 +23,58 @@
 * Keyboard keypresses have the following effects:
 *   a		- toggle drawing coordinate axes
 *   i   - reinitialize (reset program to initial default state)
-*   p		- toggle between orthographic and perspective view
 *   z   - toggle between wireframe and shaded viewing
 *   w   - write the file out to 'image.ppm'
 *   q or Esc	- quit
 *
 * Camera and model controls following the mouse:
-*   model yaw   - left-button, horizontal motion, rotation of the model around the y axis
-*   model tilt  - left-button, vertical motion, rotation of the model about the x axis
-*   camera yaw  - middle-button, horizontal motion, rotation of the camera about the y axis
-*   camera tilt	- middle-button, vertical motion, rotation of the camera about the x axis
-*   approach    - right-button, vertical or horizontal motion, translation of camera along z axis
-*
+*   Left   button - Rotate camera about aim (usually the model)
+*   Right  button - Zoom in/out
+*   Middle button - (Scroll) Zoom/in out
+*                    (Press)  Pan camera
 */
 
-#include "GLViewer.h"
-// Global GLViewer to be used in the class and in main()
-GLViewer *viewer;
+#include "MeshViewer.h"
 
-void GLViewer::initMeshPotato() {
+// Global Objects
+MeshViewer *viewer;
+Camera     *cam;
+
+void MeshViewer::initMeshPotato() {
 //	mpkernel.loadPlugin("OBJInputPlugin");
-
-
 }
 
 // Routine to initialize the state of the program to start-up defaults
-void GLViewer::setInitialState(){
+void MeshViewer::setInitialState(){
 
   // initial camera viewing controls
-  Projection = ORTHO;
   glDisable(GL_LIGHTING);
 
   Axes = FALSE;
-  Button = NONE;
+  wireframe = TRUE;
 
   // initial camera orientation and position
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-
-  Pan = 0;
-  Tilt = 0;
-  Approach = Depth;
-
-  // initial model orientation
-  ThetaX = 0;
-  ThetaY = 0;
 }
 
 /*
 *  Routine to build the viewport and projection matrices and to
 *  save the projection matrix
 */
-void GLViewer::updateProjection() {
+void MeshViewer::updateProjection() {
   // initialize the projection matrixp
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
 
-  float h, w;
-
-  // determine the projection system and drawing coordinates
-  if(Projection == ORTHO){
-    // make screen size match perspective at the nominal depth of the object
-    h = Depth * sin(PI * (YANGLE / 2.0) / 180);
-    w = ASPECT * h;
-    glOrtho(-w, w, -h, h, NEAR, FAR);
-  }
-  else {
-    gluPerspective(YANGLE, ASPECT, NEAR, FAR);
-  }
+  cam->perspectiveDisplay(Width, Height, Aspect);
 
   // restore modelview matrix as the one being updated
   glMatrixMode(GL_MODELVIEW);
 }
 
 // Routine to draw a set of coordinate axes centered at the origin
-void GLViewer::drawAxes(float size){
+void MeshViewer::drawAxes(float size){
   glBegin(GL_LINES);
     glColor3f(1, 0, 0);		  // x axis drawn in red
     glVertex3f(0, 0, 0);
@@ -118,7 +91,7 @@ void GLViewer::drawAxes(float size){
 }
 
 // Routine to draw the model
-void GLViewer::drawModel(){
+void MeshViewer::drawModel(){
 
   if(wireframe)
     mode = GL_LINE_LOOP;
@@ -168,7 +141,7 @@ void GLViewer::drawModel(){
 *  Routine to read in data from the specified .mtl file
 *  Will populate the respective vectors with the data for later displaying
 */
-void GLViewer::readMaterialFile(string inName) {
+void MeshViewer::readMaterialFile(string inName) {
   ifstream inFile(inName.c_str(), ifstream::in);
 
   if(!inFile) {
@@ -223,7 +196,7 @@ void GLViewer::readMaterialFile(string inName) {
   inFile.close();
 }
 
-int GLViewer::findMatIndex(string matName) {
+int MeshViewer::findMatIndex(string matName) {
   unsigned int i;
   for(i = 0; i < mats.size(); i++) {
     if(mats.at(i).name == matName)
@@ -237,7 +210,7 @@ int GLViewer::findMatIndex(string matName) {
 *  Routine to read in data from the specified .obj file
 *  Will populate the respective vectors with the data for later displaying
 */
-void GLViewer::readFile(char* inName) {
+void MeshViewer::readFile(char* inName) {
   cout << "Opening " << inName << " ... " << endl;
   ifstream inFile(inName, ifstream::in);
 
@@ -332,7 +305,7 @@ void GLViewer::readFile(char* inName) {
 *  This function will write the data read from the OpenGL frame buffer to
 *  image.ppm (can be changed in the code)
 */
-void GLViewer::writeFile() {
+void MeshViewer::writeFile() {
   FILE *out;
   out = fopen("image.ppm", "w");
 
@@ -358,11 +331,10 @@ void GLViewer::writeFile() {
   }
 
   fclose(out);  
-
 }
 
 // Display callback
-void GLViewer::doDisplay(){
+void MeshViewer::doDisplay(){
   // create a white light which will come from the upper left
   const float light_direction[4] = {-1, 1, 1, 0};
   const float light_color[4] = {1, 1, 1, 1};
@@ -388,15 +360,6 @@ void GLViewer::doDisplay(){
   glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color);
   glLightfv(GL_LIGHT0, GL_SPECULAR, light_color);
 
-  // establish camera coordinates
-  glRotatef(Tilt, 1, 0, 0);	    // tilt - rotate camera about x axis
-  glRotatef(Pan, 0, 1, 0);	    // pan - rotate camera about y axis
-  glTranslatef(0, 0, -Approach);    // approach - translate camera along z axis
-
-  // rotate the model
-  glRotatef(ThetaY, 0, 1, 0);       // rotate model about x axis
-  glRotatef(ThetaX, 1, 0, 0);       // rotate model about y axis
-
   // draw axes if required
   glDisable(GL_LIGHTING);
   if(Axes)
@@ -416,23 +379,30 @@ void GLViewer::doDisplay(){
 }
 
 /*
+*  Reshape Callback
+*  Keep viewport, modelview and projection matrices the same as they were,
+*  even though window resizes
+*/
+void MeshViewer::doReshape(int width, int height) {
+  glViewport(0, 0, width, height);
+  Width = width;
+  Height = height;
+
+  updateProjection();
+}
+
+/*
 *  Keyboard callback routine. 
 *  Set various modes or take actions based on key presses
 */
-void GLViewer::handleKey(unsigned char key, int x, int y){
+void MeshViewer::handleKey(unsigned char key, int x, int y){
 
   switch(key){
-
-  case 'p':			// P -- toggle between ortho and perspective
-  case 'P':
-    Projection = !Projection;
-    updateProjection();
-    glutPostRedisplay();
-    break;
 
   case 'i':			// I -- reinitialize 
   case 'I':
     setInitialState();
+    cam->reset();
     updateProjection();
     glutPostRedisplay();
     break;
@@ -464,79 +434,22 @@ void GLViewer::handleKey(unsigned char key, int x, int y){
 }
 
 /*
-*  Mouse Button Callback
-*  on button press, record mouse position and which button is pressed
-*/
-void GLViewer::handleButtons(int button, int state, int x, int y){
-
-  if(state == GLUT_UP)
-    Button = NONE;		  // no button pressed
-  else{
-    MouseY = -y;		    // invert y window coordinate to correspond with OpenGL
-    MouseX = x;
-    Button = button;		// store which button pressed
-  }
-}
-
-/*
-*  Mouse Motion Callback
-*  when mouse moves with a button down, update appropriate camera parameter
-*/
-void GLViewer::handleMotion(int x, int y){
-  int delta;
-  
-  y = -y;
-  int dy = y - MouseY;
-  int dx = x - MouseX;
-
-  switch(Button){
-  case GLUT_LEFT_BUTTON:
-    ThetaX -= ROTFACTOR * dy;
-    ThetaY += ROTFACTOR * dx;
-    glutPostRedisplay();
-    break;
-  case GLUT_MIDDLE_BUTTON:
-    Pan -= ROTFACTOR * dx;
-    Tilt += ROTFACTOR * dy;
-    glutPostRedisplay();
-    break;
-  case GLUT_RIGHT_BUTTON:
-    delta = (Abs(dx) > Abs(dy)? dx: dy);
-    Approach += XLATEFACTOR * delta;
-    glutPostRedisplay();
-    break;
-  }
-
-  MouseX = x;
-  MouseY = y;
-}
-
-/*
-*  Reshape Callback
-*  Keep viewport, modelview and projection matrices the same as they were,
-*  even though window resizes
-*/
-void GLViewer::doReshape(int width, int height) {
-  glViewport(0, 0, width, height);
-  Width = width;
-  Height = height;
-
-  updateProjection();
-}
-
-/*
 *  Initialize OpenGL to establish lighting and colors
 *  and initialize viewing and model parameters
 */
-void GLViewer::initialize(char* inName){
+void MeshViewer::initialize(char* inName){
 
   readFile(inName);
   axisLength = ((abs(maxX - minX) + abs(maxY - minY) + abs(maxZ - minZ))/3) * 1.2;
   Depth = ((fabs(maxX - minX) + fabs(maxY - minY) + fabs(maxZ - minZ))/3) * 2;
 
+  Vector3d center((maxX + minX)/2.0, (maxY + minY)/2.0, (maxZ + minZ)/2.0);
   cout << "Model Coordinates -" << endl;
-  cout << "Center x: " << (maxX + minX)/2 << " Center y: " <<
-    (maxY + minY)/2 << " Center z: " << (maxZ + minZ)/2 << endl;
+  cout << center << endl;
+
+  Vector3d pos = center + Vector3d(0, 0, Depth);
+  Vector3d up(0, 1, 0);
+  cam = new Camera(pos, center, up);
   
   // initialize modelview matrix to identity
   glMatrixMode(GL_MODELVIEW);
@@ -552,7 +465,7 @@ void GLViewer::initialize(char* inName){
 
 /*
 *  The following 5 functions are simply dummy functions that are used
-*  to invoke the callback routines found in the GLViewer class
+*  to invoke the callback routines found in the MeshViewer class
 */
 void myDisplay() {
   viewer->doDisplay();
@@ -566,19 +479,31 @@ void myHandleKey(unsigned char key, int x, int y) {
   viewer->handleKey(key, x, y);
 }
 
+/*
+*  Mouse Button Callback
+*  Pass mouse button information to camera
+*/
 void myHandleButtons(int button, int state, int x, int y) {
-  viewer->handleButtons(button, state, x, y);
+  cam->handleMouseEvent(button, state, x, y);
+  viewer->updateProjection();
+  glutPostRedisplay();
 }
 
+/*
+*  Mouse Motion Callback
+*  Pass mouse motion to camera
+*/
 void myHandleMotion(int x, int y) {
-  viewer->handleMotion(x, y);
+  cam->handleMouseMotion(x, y);
+  viewer->updateProjection();
+  glutPostRedisplay();
 }
 
 // Main program to create window, setup callbacks, and initiate GLUT
 int main(int argc, char* argv[]) {
 
   if(argc < 2) {
-    cout << "Usage: ./objview [filename.obj]"  << endl;
+    cout << "Usage: ./meshview [filename.obj]"  << endl;
     exit(0);
   }
 
@@ -589,7 +514,7 @@ int main(int argc, char* argv[]) {
     exit(0);
   }
 
-  viewer = new GLViewer();
+  viewer = new MeshViewer();
 
   // start up the glut utilities
   glutInit(&argc, argv);
@@ -598,7 +523,7 @@ int main(int argc, char* argv[]) {
   // and establish double buffering, RGBA color
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
   glutInitWindowSize(WIDTH, HEIGHT);
-  glutCreateWindow("Object Viewer");
+  glutCreateWindow("Mesh Viewer");
 
   // register callback to draw graphics when window needs updating
   glutDisplayFunc(myDisplay);

@@ -4,8 +4,10 @@ else
   CXX = g++
 endif
 
+C = cpp
+
 # Warnings frequently signal eventual errors:
-CXXFLAGS=`sdl-config --cflags` -g -W -Wall -Weffc++ -Wextra -pedantic -O0 -I ../include
+CXXFLAGS  = `sdl-config --cflags` -g -Wall -Weffc++ -Wextra -O2
 
 ifeq ("$(shell uname)", "Darwin")
   LDFLAGS = -framework Foundation -framework GLUT -framework OpenGL -lm
@@ -15,18 +17,31 @@ else
   endif
 endif
 
-OBJS = \
-	GLViewer.o
-EXEC = meshviewer
+HFILES 	= MeshViewer.h Camera.h Face.h Vertex.h Material.h Matrix.h Vector.h Utility.h 
+OFILES 	= Camera.o Matrix.o Vector.o Utility.o
 
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+PROJECT = MeshViewer
+EXEC    = meshviewer
 
-$(EXEC): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LDFLAGS)
+$(PROJECT): $(PROJECT).o $(OFILES)
+	$(CXX) $(CXXFLAGS) -o $(EXEC) $(PROJECT).o $(OFILES) $(LDFLAGS)
 
-GLViewer.o: GLViewer.cpp
+$(PROJECT).o: $(PROJECT).$(C) $(HFILES)
+	$(CC) $(CFLAGS) -c $(PROJECT).$(C)
+
+Camera.o: Camera.$(C) Camera.h Matrix.h Vector.h Utility.h 
+	$(CC) $(CFLAGS) -c Camera.$(C)
+
+Matrix.o: Matrix.$(C) Matrix.h Vector.h Utility.h 
+	$(CC) $(CFLAGS) -c Matrix.$(C)
+
+Vector.o: Vector.$(C) Vector.h Utility.h 
+	$(CC) $(CFLAGS) -c Vector.$(C)
+
+Utility.o: Utility.$(C) Utility.h
+	$(CC) $(CFLAGS) -c Utility.$(C)
 
 clean:
-	rm -rf $(OBJS)
+	rm -rf *.o
 	rm -rf $(EXEC)
+	rm -rf *~
