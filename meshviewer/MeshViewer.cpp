@@ -23,6 +23,7 @@
 * Keyboard keypresses have the following effects:
 *   a		- toggle drawing coordinate axes
 *   i   - reinitialize (reset program to initial default state)
+*   t   - do a turntable of the model at resting position
 *   z   - toggle between wireframe and shaded viewing
 *   w   - write the file out to 'image.ppm'
 *   q or Esc	- quit
@@ -138,75 +139,6 @@ void MeshViewer::drawModel(){
 }
 
 /* 
-*  Routine to read in data from the specified .mtl file
-*  Will populate the respective vectors with the data for later displaying
-*/
-void MeshViewer::readMaterialFile(string inName) {
-  ifstream inFile(inName.c_str(), ifstream::in);
-
-  if(!inFile) {
-    cout << "Error opening the specified file, exiting." << endl;
-    exit(0);
-  }
-
-  char skip[256];
-  string key;
-  float i, x, y, z;
-  string matName;
-
-  inFile >> key;
-  while (inFile.good()) {
-    if(key == "newmtl") {
-
-      Material m;
-      inFile >> matName;
-
-      while(inFile.good() && inFile >> key) {
-        if(key == "newmtl") {
-          break;
-        }
-
-        if(key == "illum") {
-            inFile >> i;
-            m.illum = i;
-        } else if(key == "Kd") {
-            inFile >> x >> y >> z;
-            m.Kd[0] = x; m.Kd[1] = y; m.Kd[2] = z;
-        } else if(key == "Ka") {
-            inFile >> x >> y >> z;
-            m.Ka[0] = x; m.Ka[1] = y; m.Ka[2] = z;
-        } else if(key == "Ks") {
-            inFile >> x >> y >> z;
-            m.Ks[0] = x; m.Ks[1] = y; m.Ks[2] = z;
-        } else if(key == "Tf") {
-            inFile >> x >> y >> z;
-            m.Tf[0] = x; m.Tf[1] = y; m.Tf[2] = z;
-        } else if(key == "Ni") {
-            inFile >> i;
-            m.Ni = i;
-        }
-      }
-      m.name = matName;
-      mats.push_back(m);
-    // Skip the line if the cases aren't satisfied above
-    } else {
-      inFile.getline(skip, 256);
-    }
-  }
-  inFile.close();
-}
-
-int MeshViewer::findMatIndex(string matName) {
-  unsigned int i;
-  for(i = 0; i < mats.size(); i++) {
-    if(mats.at(i).name == matName)
-      return i;
-  }
-  
-  return -1;
-}
-
-/* 
 *  Routine to read in data from the specified .obj file
 *  Will populate the respective vectors with the data for later displaying
 */
@@ -298,7 +230,214 @@ void MeshViewer::readFile(char* inName) {
     }
   }
 
+  cout << "Number of Vertices: " << vertices.size() << endl;
+  cout << "Number of Normals:  " << vertNorms.size() << endl;
+  cout << "Number of Faces:    " << faces.size() << endl;
+
   inFile.close();
+  buildVBOs();
+}
+
+/* 
+*  Routine to read in data from the specified .mtl file
+*  Will populate the respective vectors with the data for later displaying
+*/
+void MeshViewer::readMaterialFile(string inName) {
+  ifstream inFile(inName.c_str(), ifstream::in);
+
+  if(!inFile) {
+    cout << "Error opening the specified file, exiting." << endl;
+    exit(0);
+  }
+
+  char skip[256];
+  string key;
+  float i, x, y, z;
+  string matName;
+
+  inFile >> key;
+  while (inFile.good()) {
+    if(key == "newmtl") {
+
+      Material m;
+      inFile >> matName;
+
+      while(inFile.good() && inFile >> key) {
+        if(key == "newmtl") {
+          break;
+        }
+
+        if(key == "illum") {
+            inFile >> i;
+            m.illum = i;
+        } else if(key == "Kd") {
+            inFile >> x >> y >> z;
+            m.Kd[0] = x; m.Kd[1] = y; m.Kd[2] = z;
+        } else if(key == "Ka") {
+            inFile >> x >> y >> z;
+            m.Ka[0] = x; m.Ka[1] = y; m.Ka[2] = z;
+        } else if(key == "Ks") {
+            inFile >> x >> y >> z;
+            m.Ks[0] = x; m.Ks[1] = y; m.Ks[2] = z;
+        } else if(key == "Tf") {
+            inFile >> x >> y >> z;
+            m.Tf[0] = x; m.Tf[1] = y; m.Tf[2] = z;
+        } else if(key == "Ni") {
+            inFile >> i;
+            m.Ni = i;
+        }
+      }
+      m.name = matName;
+      mats.push_back(m);
+    // Skip the line if the cases aren't satisfied above
+    } else {
+      inFile.getline(skip, 256);
+    }
+  }
+  inFile.close();
+}
+
+int MeshViewer::findMatIndex(string matName) {
+  unsigned int i;
+  for(i = 0; i < mats.size(); i++) {
+    if(mats.at(i).name == matName)
+      return i;
+  }
+  
+  return -1;
+}
+
+// Routine to create Vertex Buffer Objects to hold mesh data
+void MeshViewer::buildVBOs() {
+  verts = norms = tex = NULL;
+  unsigned int i = 0, j = 0;
+  bool warning = FALSE;
+
+  // Assume that this model is either all quads or all triangles
+  polySize = faces.begin()->vIndexes.size();
+  vertCount = polySize * faces.size();
+
+  verts = new float[3 * vertCount];
+  j = 0;
+  list<Face>::const_iterator f;
+  list<int>::const_iterator v;
+  for(f = faces.begin(); f != faces.end(); f++) {
+    i = 0;
+    if(f->vIndexes.size() != polySize) {
+      if(!warning) {
+        cout << endl << "********" << endl;
+        cout << "WARNING! Mesh varies between triangles and quads!" << endl;
+        cout << "You are likely to encounter rendering problems with shading!" << endl;
+        cout << "********" << endl << endl;
+        warning = !warning;
+      }
+    }
+    for(v = f->vIndexes.begin(); v != f->vIndexes.end(); v++) {
+      verts[j*(polySize*3)+i] = vertices[(*v)].x;
+      verts[j*(polySize*3)+i+1] = vertices[(*v)].y;
+      verts[j*(polySize*3)+i+2] = vertices[(*v)].z;
+      i+=3;
+    }
+    j++;
+  }
+  cout << j*polySize << " vertices have been copied into an array ..." << endl;
+
+  norms = new float[3 * vertCount];
+  if(vertNorms.size() > 0) {
+    j = 0;
+    for(f = faces.begin(); f != faces.end(); f++) {
+      i = 0;
+      for(v = f->nIndexes.begin(); v != f->nIndexes.end(); v++) {
+        norms[j*(polySize*3)+i] = vertNorms[(*v)].x;
+        norms[j*(polySize*3)+i+1] = vertNorms[(*v)].y;
+        norms[j*(polySize*3)+i+2] = vertNorms[(*v)].z;
+        i+=3;
+      }
+      j++;
+    }
+    cout << j*polySize << " normals have been copied into an array ..." << endl;
+  } else {
+    // If there is no texture data, map RGBA colors to light grey
+    for(i = 0; i < vertCount*3; i+=3) {
+      norms[i]   = 0;
+      norms[i+1] = 1;
+      norms[i+2] = 0;
+    }
+    cout << "Default normals (0,1,0) have been loaded into array ..." << endl;
+
+    /*
+    glGenBuffers(1, &texVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, texVBO);
+    glBufferData(GL_ARRAY_BUFFER, vertCount*4*sizeof(float), tex, GL_STATIC_DRAW);
+    cout << "Default colors bound to array buffer ..." << endl;
+    */
+  }
+
+  /* TODO: Needs extra work to grab and map correct texture values to a buffer
+  if(vertTex.size() > 0 && vertTex.size() == vertCount) {
+    tex = new float[2 * vertCount];
+    for(i = 0; i < vertCount; i++) {
+      tex[i]   = vertTex[i].x;
+      tex[i+1] = vertTex[i].y;
+    }
+    cout << "Texture Coords have been copied into VBO..." << endl;
+  }
+  */
+
+  /* We won't be doing any buffer binding....
+  glGenBuffers(1, &vertsVBO);
+  glBindBuffer(GL_ARRAY_BUFFER, vertsVBO);
+  glBufferData(GL_ARRAY_BUFFER, vertCount*3*sizeof(float), verts, GL_STATIC_DRAW);
+  cout << "Vertices bound to array buffer ..." << endl;
+
+  if(norms != NULL) {
+    glGenBuffers(1, &normsVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, normsVBO);
+    glBufferData(GL_ARRAY_BUFFER, vertCount*3*sizeof(float), norms, GL_STATIC_DRAW);
+    cout << "Normals bound to array buffer ..." << endl;
+  }
+  */
+
+  if(tex != NULL) {
+    // If texture exists, load it into OpenGL
+    /* TODO: Extra work needed, as mentioned above
+    glGenTextures(1, &texID);
+    glBindTexture(GL_TEXTURE_2D, texID);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, m_pTextureImage->sizeX, m_pTextureImage->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, m_pTextureImage->data);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+
+    glGenBuffers(1, &texVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, texVBO);
+    glBufferData(GL_ARRAY_BUFFER, vertCount*2*sizeof(float), tex, GL_STATIC_DRAW);
+    */
+  } else {
+    // If there is no texture data, map RGBA colors to light grey
+    tex = new float[4 * vertCount];
+    for(i = 0; i < vertCount*4; i+=4) {
+      tex[i]   = 0.8;
+      tex[i+1] = 0.8;
+      tex[i+2] = 0.8;
+      tex[i+3] = 1.0;
+    }
+    cout << "Default color (light grey) has been loaded into an array ..." << endl;
+
+    /*
+    glGenBuffers(1, &texVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, texVBO);
+    glBufferData(GL_ARRAY_BUFFER, vertCount*4*sizeof(float), tex, GL_STATIC_DRAW);
+    cout << "Default colors bound to array buffer ..." << endl;
+    */
+  }
+}
+
+void turntable() {
+  // TODO: Implement a frame by frame rotation (120 frames, 3 degree rotations)
+  // TODO: Only rotate about the Z axis
+  unsigned int f;
+  for(f = 0; f < 120; f++) {
+    // TODO: Rotate camera 3 degrees, sleep
+  }
 }
 
 /*
@@ -366,15 +505,40 @@ void MeshViewer::doDisplay(){
     drawAxes(axisLength);
   
   // if shaded drawing is required, turn on lighting
-  if(wireframe){
+  if(wireframe) {
     glDisable(GL_LIGHTING);
+    glDisable(GL_LIGHT0);
   }
   else {
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);    
   }
+///*
+  glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+  glEnable(GL_COLOR_MATERIAL);
+  glEnableClientState(GL_NORMAL_ARRAY);
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_COLOR_ARRAY);
+  glNormalPointer(GL_FLOAT, 0, norms);
+  glVertexPointer(3, GL_FLOAT, 0, verts);
+  glColorPointer(4, GL_FLOAT, 0, tex);
 
-  drawModel();
+  if(wireframe) {
+    glDrawArrays(GL_POINTS, 0, vertCount);
+  } else {
+    if(polySize == 3) glDrawArrays(GL_TRIANGLES, 0, vertCount);
+    else if(polySize == 4) glDrawArrays(GL_QUADS, 0, vertCount);
+    else {
+      cout << "Program expects full-triangle or full-quad meshes! Exiting ..." << endl;
+      exit(0);
+    }
+  }
+
+  glDisableClientState(GL_NORMAL_ARRAY);
+  glDisableClientState(GL_VERTEX_ARRAY);
+  glDisableClientState(GL_COLOR_ARRAY);
+//*/
+  //drawModel();
   glutSwapBuffers();
 }
 
@@ -413,6 +577,11 @@ void MeshViewer::handleKey(unsigned char key, int x, int y){
     glutPostRedisplay();
     break;
 
+  case 't':			// T -- do a turntable
+  case 'T':
+    turntable();
+    break;
+
   case 'w':     // R -- write current display to file
   case 'W':
     pixmap = new RGBA[Width * Height];
@@ -444,8 +613,7 @@ void MeshViewer::initialize(char* inName){
   Depth = ((fabs(maxX - minX) + fabs(maxY - minY) + fabs(maxZ - minZ))/3) * 2;
 
   Vector3d center((maxX + minX)/2.0, (maxY + minY)/2.0, (maxZ + minZ)/2.0);
-  cout << "Model Coordinates -" << endl;
-  cout << center << endl;
+  cout << "Model Center - " << center << endl;
 
   Vector3d pos = center + Vector3d(0, 0, Depth);
   Vector3d up(0, 1, 0);

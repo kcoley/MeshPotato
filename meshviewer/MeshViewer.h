@@ -16,8 +16,10 @@
 #include "Camera.h"
 
 #ifdef __APPLE__
+#  include <GL/glew.h>
 #  include <GLUT/glut.h>
 #else
+#  include <GL/glew.h>
 #  include <GL/glut.h>
 #endif
 
@@ -38,8 +40,13 @@ public:
     wireframe = TRUE;  minX = maxX = minY = maxY = minZ = maxZ = 0;
     Width = WIDTH;  Height = HEIGHT; Aspect = ASPECT;
   }
-  ~MeshViewer() {}
+  ~MeshViewer() {
+    if(verts != NULL) delete [] verts;
+    if(norms != NULL) delete [] norms;
+    if(tex   != NULL) delete [] tex;  
+  }
 
+  void initMeshPotato();
   void setInitialState();
   void updateProjection();
   void drawAxes(float);
@@ -49,14 +56,14 @@ public:
   void readFile(char*);
   void readMaterialFile(string);
   int  findMatIndex(string);
+  void buildVBOs();
   void writeFile();
 
-  // The 5 Callback functions used in the event loops
+  // Callback functions used in the event loops
   void doDisplay();
   void handleKey(unsigned char, int, int);
   void doReshape(int, int);
   void initialize(char*);
-  void initMeshPotato();
 
 private:
   // Kernel for Mesh Potato
@@ -84,6 +91,20 @@ private:
   int Width;
   int Height;
   double Aspect;
+
+  // VBO variables
+  /*
+  unsigned int vertsVBO;
+  unsigned int normsVBO;
+  unsigned int texVBO;
+  unsigned int texID;
+  unsigned int meshVAO;
+  */
+  unsigned int vertCount;
+  unsigned int polySize;
+  float *verts;
+  float *norms;
+  float *tex;
 
   // vectors to hold the vertices and faces of the model
   vector<Vertex> vertices;

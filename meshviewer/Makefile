@@ -13,7 +13,7 @@ ifeq ("$(shell uname)", "Darwin")
   LDFLAGS = -framework Foundation -framework GLUT -framework OpenGL -lm
 else
   ifeq ("$(shell uname)", "Linux")
-  LDFLAGS = `sdl-config --libs` -lm -lSDL_ttf -lSDL_image -lexpat -lX11 -lGL -lGLU -lglut -lGLEW 
+  LDFLAGS = `sdl-config --libs` -lm -lX11 -lGL -lGLU -lglut -lGLEW
   endif
 endif
 

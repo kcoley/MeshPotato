@@ -16,5 +16,5 @@ public:
   list<int> vIndexes;     // These two vectors will hold vertex and normal
   list<int> nIndexes;     // information for the face
   list<int> tIndexes;
-  int mat;                  // Represents index of material to be used
+  int mat;                // Represents index of material to be used
 };
