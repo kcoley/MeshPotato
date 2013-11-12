@@ -10,7 +10,8 @@ C = cpp
 CXXFLAGS  = `sdl-config --cflags` -g -Wall -Weffc++ -Wextra -O2
 
 ifeq ("$(shell uname)", "Darwin")
-  LDFLAGS = -framework Foundation -framework GLUT -framework OpenGL -lm
+  LDFLAGS = -L/opt/local/lib -framework Foundation -framework GLUT -framework OpenGL -lGLEW -lm
+  CFLAGS  = -I/opt/local/include
 else
   ifeq ("$(shell uname)", "Linux")
   LDFLAGS = `sdl-config --libs` -lm -lX11 -lGL -lGLU -lglut -lGLEW
