@@ -9,9 +9,11 @@
 #include <cstdio>
 #include <cmath>
 #include <vector>
+#include <iostream>
 #include <fstream>
 #include <istream>
 #include <sstream>
+#include <time.h>
 #include "Face.h"
 #include "Camera.h"
 
@@ -22,6 +24,10 @@
 #  include <GL/glew.h>
 #  include <GL/glut.h>
 #endif
+
+#define POINTS    0
+#define WIREFRAME 1
+#define SHADED    2
 
 // Initial Window Dimesions
 const int WIDTH = 1280;
@@ -37,13 +43,20 @@ class MeshViewer {
 public:
   // Initializing constant values relative to the class
   MeshViewer() { 
-    wireframe = TRUE;  minX = maxX = minY = maxY = minZ = maxZ = 0;
+    minX = maxX = minY = maxY = minZ = maxZ = 0;
     Width = WIDTH;  Height = HEIGHT; Aspect = ASPECT;
   }
   ~MeshViewer() {
-    if(verts != NULL) delete [] verts;
-    if(norms != NULL) delete [] norms;
-    if(tex   != NULL) delete [] tex;  
+    destructArrays();
+  }
+
+  void destructArrays() {
+    if(vertTris  != NULL) delete [] vertTris;
+    if(vertQuads != NULL) delete [] vertQuads;
+    if(normTris  != NULL) delete [] normTris;
+    if(normQuads != NULL) delete [] normQuads;
+    if(texTris   != NULL) delete [] texTris;
+    if(texQuads  != NULL) delete [] texQuads;
   }
 
   void initMeshPotato();
@@ -57,6 +70,7 @@ public:
   void readMaterialFile(string);
   int  findMatIndex(string);
   void buildVBOs();
+  void turntable();
   void writeFile();
 
   // Callback functions used in the event loops
@@ -67,7 +81,8 @@ public:
 
 private:
   // Kernel for Mesh Potato
-//  MyEngine::Kernel mpkernel;
+  // MyEngine::Kernel mpkernel;
+
   // Values to calculate center of of the object
   float minX;
   float maxX;
@@ -78,13 +93,14 @@ private:
 
   // Viewing parameters
   float Depth;
+  float angle;
 
   // Booleans for toggle keys
   float axisLength;
   bool Axes;
-  bool wireframe;
 
-  // Variable for switching between wireframe and shaded
+  // Variable for switching between points, wireframe and shaded
+  unsigned int shadingMode;
   int mode;
 
   // Viewport dimensions
@@ -93,18 +109,21 @@ private:
   double Aspect;
 
   // VBO variables
-  /*
-  unsigned int vertsVBO;
-  unsigned int normsVBO;
-  unsigned int texVBO;
-  unsigned int texID;
-  unsigned int meshVAO;
-  */
-  unsigned int vertCount;
-  unsigned int polySize;
-  float *verts;
-  float *norms;
-  float *tex;
+  unsigned int vertQuadsVBO;
+  unsigned int vertTrisVBO;
+  unsigned int normQuadsVBO;
+  unsigned int normTrisVBO;
+  unsigned int texQuadsVBO;
+  unsigned int texTrisVBO;
+
+  unsigned int triCount;
+  unsigned int quadCount;
+  float *vertQuads;
+  float *vertTris;
+  float *normQuads;
+  float *normTris;
+  float *texQuads;
+  float *texTris;
 
   // vectors to hold the vertices and faces of the model
   vector<Vertex> vertices;

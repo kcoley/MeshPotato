@@ -4,17 +4,19 @@ else
   CXX = g++
 endif
 
-C = cpp
+CC = g++
+C  = cpp
 
 # Warnings frequently signal eventual errors:
 CXXFLAGS  = `sdl-config --cflags` -g -Wall -Weffc++ -Wextra -O2
 
 ifeq ("$(shell uname)", "Darwin")
   LDFLAGS = -L/opt/local/lib -framework Foundation -framework GLUT -framework OpenGL -lGLEW -lm
-  CFLAGS  = -I/opt/local/include
+  CFLAGS  = -I/opt/local/include -g
 else
   ifeq ("$(shell uname)", "Linux")
   LDFLAGS = `sdl-config --libs` -lm -lX11 -lGL -lGLU -lglut -lGLEW
+  CFLAGS  = -g
   endif
 endif
 

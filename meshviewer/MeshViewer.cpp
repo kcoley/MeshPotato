@@ -24,7 +24,7 @@
 *   a		- toggle drawing coordinate axes
 *   i   - reinitialize (reset program to initial default state)
 *   t   - do a turntable of the model at resting position
-*   z   - toggle between wireframe and shaded viewing
+*   z   - toggle between points, wireframe and shaded viewing
 *   w   - write the file out to 'image.ppm'
 *   q or Esc	- quit
 *
@@ -52,7 +52,8 @@ void MeshViewer::setInitialState(){
   glDisable(GL_LIGHTING);
 
   Axes = FALSE;
-  wireframe = TRUE;
+  shadingMode = POINTS;
+  angle = 0;
 
   // initial camera orientation and position
   glMatrixMode(GL_MODELVIEW);
@@ -94,7 +95,7 @@ void MeshViewer::drawAxes(float size){
 // Routine to draw the model
 void MeshViewer::drawModel(){
 
-  if(wireframe)
+  if(shadingMode != SHADED)
     mode = GL_LINE_LOOP;
   else
     mode = GL_POLYGON;
@@ -102,13 +103,13 @@ void MeshViewer::drawModel(){
   list<Face>::const_iterator face_iter;
   list<int>::const_iterator v_iter;
   list<int>::const_iterator n_iter;
-  const float lightgrey[3] = {0.1, 0.1, 0.1};
+  const float lightgrey[3] = {0.8, 0.8, 0.8};
   const float grey[3] = {0.5, 0.5, 0.5};
   const float white[3] = {1, 1, 1};
 
   for(face_iter = faces.begin(); face_iter != faces.end(); face_iter++) {  
     glBegin(mode);
-      if(!wireframe) {
+      if(shadingMode == SHADED) {
         if(face_iter->mat != -1) {
           glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mats.at(face_iter->mat).Ka);
           glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mats.at(face_iter->mat).Kd);
@@ -309,61 +310,111 @@ int MeshViewer::findMatIndex(string matName) {
 
 // Routine to create Vertex Buffer Objects to hold mesh data
 void MeshViewer::buildVBOs() {
-  verts = norms = tex = NULL;
-  unsigned int i = 0, j = 0;
+  vertQuads = vertTris = normQuads = normTris = texQuads = texTris = NULL;
+  unsigned int i = 0, t, q;
+  quadCount = triCount = 0;
   bool warning = FALSE;
+  string answer;
 
-  // Assume that this model is either all quads or all triangles
-  polySize = faces.begin()->vIndexes.size();
-  vertCount = polySize * faces.size();
-
-  verts = new float[3 * vertCount];
-  j = 0;
   list<Face>::const_iterator f;
   list<int>::const_iterator v;
   for(f = faces.begin(); f != faces.end(); f++) {
-    i = 0;
-    if(f->vIndexes.size() != polySize) {
-      if(!warning) {
-        cout << endl << "********" << endl;
-        cout << "WARNING! Mesh varies between triangles and quads!" << endl;
-        cout << "You are likely to encounter rendering problems with shading!" << endl;
-        cout << "********" << endl << endl;
+    if(f->vIndexes.size() == 3)
+      triCount += 3;
+    else if(f->vIndexes.size() == 4)
+      quadCount += 4;
+    else if(!warning) {
+      cout << endl << "********" << endl;
+      cout << "WARNING! Non-triangle or non-quad polygons encountered!" << endl;
+      cout << f->vIndexes.size() << " vertices on this polygon!" << endl;
+      cout << "You are likely to see rendering problems with shading!" << endl;
+      cout << "********" << endl << endl;
+      cout << "Would you like to suppress future warnings? (y/n) >> ";
+      cin >> answer;
+      if(answer == "y") {
+        cout << endl << "Future warnings will be suppressed..." << endl;
         warning = !warning;
-      }
+      } else
+        cout << endl << "Next warning will not be suppressed..." << endl;
     }
-    for(v = f->vIndexes.begin(); v != f->vIndexes.end(); v++) {
-      verts[j*(polySize*3)+i] = vertices[(*v)].x;
-      verts[j*(polySize*3)+i+1] = vertices[(*v)].y;
-      verts[j*(polySize*3)+i+2] = vertices[(*v)].z;
-      i+=3;
-    }
-    j++;
   }
-  cout << j*polySize << " vertices have been copied into an array ..." << endl;
 
-  norms = new float[3 * vertCount];
-  if(vertNorms.size() > 0) {
-    j = 0;
-    for(f = faces.begin(); f != faces.end(); f++) {
+  if(triCount > 0) {
+    vertTris  = new float[3 * triCount];
+    normTris  = new float[3 * triCount];
+    texTris  = new float[4 * triCount];
+  }
+  if(quadCount > 0) {
+    vertQuads = new float[3 * quadCount];
+    normQuads = new float[3 * quadCount];
+    texQuads = new float[4 * quadCount];
+  }
+
+  t = 0;
+  q = 0;
+  for(f = faces.begin(); f != faces.end(); f++) {
+    if(f->vIndexes.size() == 3) {
       i = 0;
-      for(v = f->nIndexes.begin(); v != f->nIndexes.end(); v++) {
-        norms[j*(polySize*3)+i] = vertNorms[(*v)].x;
-        norms[j*(polySize*3)+i+1] = vertNorms[(*v)].y;
-        norms[j*(polySize*3)+i+2] = vertNorms[(*v)].z;
+      for(v = f->vIndexes.begin(); v != f->vIndexes.end(); v++) {
+        vertTris[t*9+i]   = vertices[(*v)].x;
+        vertTris[t*9+i+1] = vertices[(*v)].y;
+        vertTris[t*9+i+2] = vertices[(*v)].z;
         i+=3;
       }
-      j++;
+      t++;
+    } else if(f->vIndexes.size() == 4) {
+      i = 0;
+      for(v = f->vIndexes.begin(); v != f->vIndexes.end(); v++) {
+        vertQuads[q*12+i]   = vertices[(*v)].x;
+        vertQuads[q*12+i+1] = vertices[(*v)].y;
+        vertQuads[q*12+i+2] = vertices[(*v)].z;
+        i+=3;
+      }
+      q++;
     }
-    cout << j*polySize << " normals have been copied into an array ..." << endl;
+  }
+  cout << t*3 << " vertices have been copied into triangle array ..." << endl;
+  cout << q*4 << " vertices have been copied into quad array ..." << endl;
+
+  if(vertNorms.size() > 0) {
+    t = 0;
+    q = 0;
+    for(f = faces.begin(); f != faces.end(); f++) {
+      if(f->nIndexes.size() == 3) {
+        i = 0;
+        for(v = f->nIndexes.begin(); v != f->nIndexes.end(); v++) {
+          normTris[t*9+i]   = vertNorms[(*v)].x;
+          normTris[t*9+i+1] = vertNorms[(*v)].y;
+          normTris[t*9+i+2] = vertNorms[(*v)].z;
+          i+=3;
+        }
+        t++;
+      } else if(f->nIndexes.size() == 4) {
+        i = 0;
+        for(v = f->nIndexes.begin(); v != f->nIndexes.end(); v++) {
+          normQuads[q*12+i]   = vertNorms[(*v)].x;
+          normQuads[q*12+i+1] = vertNorms[(*v)].y;
+          normQuads[q*12+i+2] = vertNorms[(*v)].z;
+          i+=3;
+        }
+        q++;
+      }
+    }
+    cout << t*3 << " normals have been copied into triangle array ..." << endl;
+    cout << q*4 << " normals have been copied into quad array ..." << endl;
   } else {
-    // If there is no texture data, map RGBA colors to light grey
-    for(i = 0; i < vertCount*3; i+=3) {
-      norms[i]   = 0;
-      norms[i+1] = 1;
-      norms[i+2] = 0;
+    // If there are no normals, create them all as (0,1,0)
+    for(i = 0; i < triCount*3; i+=3) {
+      normTris[i]   = 0;
+      normTris[i+1] = 1;
+      normTris[i+2] = 0;
     }
-    cout << "Default normals (0,1,0) have been loaded into array ..." << endl;
+    for(i = 0; i < quadCount*3; i+=3) {
+      normQuads[i]   = 0;
+      normQuads[i+1] = 1;
+      normQuads[i+2] = 0;
+    }
+    cout << "Default normals (0,1,0) have been loaded into arrays ..." << endl;
 
     /*
     glGenBuffers(1, &texVBO);
@@ -384,60 +435,68 @@ void MeshViewer::buildVBOs() {
   }
   */
 
-  /* We won't be doing any buffer binding....
-  glGenBuffers(1, &vertsVBO);
-  glBindBuffer(GL_ARRAY_BUFFER, vertsVBO);
-  glBufferData(GL_ARRAY_BUFFER, vertCount*3*sizeof(float), verts, GL_STATIC_DRAW);
-  cout << "Vertices bound to array buffer ..." << endl;
-
-  if(norms != NULL) {
-    glGenBuffers(1, &normsVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, normsVBO);
-    glBufferData(GL_ARRAY_BUFFER, vertCount*3*sizeof(float), norms, GL_STATIC_DRAW);
-    cout << "Normals bound to array buffer ..." << endl;
+  // If there is no texture data, map RGBA colors to light grey
+  for(i = 0; i < triCount*4; i+=4) {
+    texTris[i]   = 0.8;
+    texTris[i+1] = 0.8;
+    texTris[i+2] = 0.8;
+    texTris[i+3] = 1.0;
   }
-  */
-
-  if(tex != NULL) {
-    // If texture exists, load it into OpenGL
-    /* TODO: Extra work needed, as mentioned above
-    glGenTextures(1, &texID);
-    glBindTexture(GL_TEXTURE_2D, texID);
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, m_pTextureImage->sizeX, m_pTextureImage->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, m_pTextureImage->data);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-
-    glGenBuffers(1, &texVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, texVBO);
-    glBufferData(GL_ARRAY_BUFFER, vertCount*2*sizeof(float), tex, GL_STATIC_DRAW);
-    */
-  } else {
-    // If there is no texture data, map RGBA colors to light grey
-    tex = new float[4 * vertCount];
-    for(i = 0; i < vertCount*4; i+=4) {
-      tex[i]   = 0.8;
-      tex[i+1] = 0.8;
-      tex[i+2] = 0.8;
-      tex[i+3] = 1.0;
-    }
-    cout << "Default color (light grey) has been loaded into an array ..." << endl;
-
-    /*
-    glGenBuffers(1, &texVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, texVBO);
-    glBufferData(GL_ARRAY_BUFFER, vertCount*4*sizeof(float), tex, GL_STATIC_DRAW);
-    cout << "Default colors bound to array buffer ..." << endl;
-    */
+  for(i = 0; i < quadCount*4; i+=4) {
+    texQuads[i]   = 0.8;
+    texQuads[i+1] = 0.8;
+    texQuads[i+2] = 0.8;
+    texQuads[i+3] = 1.0;
   }
+  cout << "Default color (light grey) has been loaded into an arrays ..." << endl;
+
+  glGenBuffers(1, &vertTrisVBO);
+  glBindBuffer(GL_ARRAY_BUFFER, vertTrisVBO);
+  glBufferData(GL_ARRAY_BUFFER, triCount*3*sizeof(float), vertTris, GL_STATIC_DRAW);
+  cout << "Triangle Vertices bound to array buffer ..." << endl;
+
+  glGenBuffers(1, &normTrisVBO);
+  glBindBuffer(GL_ARRAY_BUFFER, normTrisVBO);
+  glBufferData(GL_ARRAY_BUFFER, triCount*3*sizeof(float), normTris, GL_STATIC_DRAW);
+  cout << "Triangle Normals bound to array buffer ..." << endl;
+
+  glGenBuffers(1, &texTrisVBO);
+  glBindBuffer(GL_ARRAY_BUFFER, texTrisVBO);
+  glBufferData(GL_ARRAY_BUFFER, triCount*4*sizeof(float), texTris, GL_STATIC_DRAW);
+  cout << "Triangle Colors bound to array buffer ..." << endl;
+
+  glGenBuffers(1, &vertQuadsVBO);
+  glBindBuffer(GL_ARRAY_BUFFER, vertQuadsVBO);
+  glBufferData(GL_ARRAY_BUFFER, quadCount*3*sizeof(float), vertQuads, GL_STATIC_DRAW);
+  cout << "Quad Vertices bound to array buffer ..." << endl;
+
+  glGenBuffers(1, &normQuadsVBO);
+  glBindBuffer(GL_ARRAY_BUFFER, normQuadsVBO);
+  glBufferData(GL_ARRAY_BUFFER, quadCount*3*sizeof(float), normQuads, GL_STATIC_DRAW);
+  cout << "Quad Normals bound to array buffer ..." << endl;
+
+  glGenBuffers(1, &texQuadsVBO);
+  glBindBuffer(GL_ARRAY_BUFFER, texQuadsVBO);
+  glBufferData(GL_ARRAY_BUFFER, quadCount*4*sizeof(float), texQuads, GL_STATIC_DRAW);
+  cout << "Quad Colors bound to array buffer ..." << endl;
+
+  destructArrays();
 }
 
-void turntable() {
-  // TODO: Implement a frame by frame rotation (120 frames, 3 degree rotations)
-  // TODO: Only rotate about the Z axis
-  unsigned int f;
-  for(f = 0; f < 120; f++) {
-    // TODO: Rotate camera 3 degrees, sleep
+void MeshViewer::turntable() {
+  struct timespec frameTime, frameRem;
+  frameTime.tv_sec  = 0;
+  frameTime.tv_nsec = 40000000L;
+
+  for(int f = 0; f < 120; f++) {
+    angle = f*3;
+    doDisplay();
+
+    nanosleep(&frameTime, &frameRem);
   }
+
+  angle = 0;
+  glutPostRedisplay();
 }
 
 /*
@@ -480,7 +539,7 @@ void MeshViewer::doDisplay(){
   const float ambient_color[4] = {0.1, 0.1, 0.1, 1};
 
   // clear window to background color and clear depth buffer if shading
-  if(wireframe) {
+  if(shadingMode != SHADED) {
     glDisable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT);
     glShadeModel(GL_FLAT);
@@ -494,6 +553,9 @@ void MeshViewer::doDisplay(){
    // light is positioned in camera space so it does not move with object
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
+
+  glRotatef(angle, 0, 1, 0);
+
   glLightfv(GL_LIGHT0, GL_POSITION, light_direction);
   glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_color);
   glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color);
@@ -505,7 +567,7 @@ void MeshViewer::doDisplay(){
     drawAxes(axisLength);
   
   // if shaded drawing is required, turn on lighting
-  if(wireframe) {
+  if(shadingMode != SHADED) {
     glDisable(GL_LIGHTING);
     glDisable(GL_LIGHT0);
   }
@@ -514,24 +576,45 @@ void MeshViewer::doDisplay(){
     glEnable(GL_LIGHT0);    
   }
 ///*
-  glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-  glEnable(GL_COLOR_MATERIAL);
+
+  if(shadingMode == POINTS)
+    glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+  else if(shadingMode == WIREFRAME)
+    glPolygonMode(GL_FRONT, GL_LINE);
+  else
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+  //glColor3f(0.8f, 0.8f, 0.8f);
+  //glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+  //glEnable(GL_COLOR_MATERIAL);
   glEnableClientState(GL_NORMAL_ARRAY);
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_COLOR_ARRAY);
-  glNormalPointer(GL_FLOAT, 0, norms);
-  glVertexPointer(3, GL_FLOAT, 0, verts);
-  glColorPointer(4, GL_FLOAT, 0, tex);
 
-  if(wireframe) {
-    glDrawArrays(GL_POINTS, 0, vertCount);
-  } else {
-    if(polySize == 3) glDrawArrays(GL_TRIANGLES, 0, vertCount);
-    else if(polySize == 4) glDrawArrays(GL_QUADS, 0, vertCount);
-    else {
-      cout << "Program expects full-triangle or full-quad meshes! Exiting ..." << endl;
-      exit(0);
-    }
+  if(triCount > 0) {
+    glBindBuffer(GL_ARRAY_BUFFER, normTrisVBO);
+    glNormalPointer(GL_FLOAT, 0, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, vertTrisVBO);
+    glVertexPointer(3, GL_FLOAT, 0, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, texTrisVBO);
+    glColorPointer(4, GL_FLOAT, 0, 0);
+    if(shadingMode == POINTS)
+      glDrawArrays(GL_POINTS, 0, triCount);
+    else
+      glDrawArrays(GL_TRIANGLES, 0, triCount);
+  }
+
+  if(quadCount > 0) {
+    glBindBuffer(GL_ARRAY_BUFFER, normQuadsVBO);
+    glNormalPointer(GL_FLOAT, 0, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, vertQuadsVBO);
+    glVertexPointer(3, GL_FLOAT, 0, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, texQuadsVBO);
+    glColorPointer(4, GL_FLOAT, 0, 0);
+    if(shadingMode == POINTS)
+      glDrawArrays(GL_POINTS, 0, quadCount);
+    else
+      glDrawArrays(GL_QUADS, 0, quadCount);
   }
 
   glDisableClientState(GL_NORMAL_ARRAY);
@@ -581,18 +664,24 @@ void MeshViewer::handleKey(unsigned char key, int x, int y){
   case 'T':
     turntable();
     break;
-
-  case 'w':     // R -- write current display to file
+/*
+  case 'w':     // W -- write current display to file
   case 'W':
     pixmap = new RGBA[Width * Height];
     glReadPixels(0, 0, Width, Height, GL_RGBA, GL_UNSIGNED_BYTE, pixmap);
     writeFile();
     delete [] pixmap;
     break;
-
-  case 'z':     // W -- toggle between shaded and wireframe views
+*/
+  case 'z':     // Z -- toggle between points, wireframe and shaded views
   case 'Z':
-    wireframe = !wireframe;
+    shadingMode = (shadingMode+1)%3;
+    if(shadingMode == POINTS)
+      cout << "Shading mode: POINTS" << endl;
+    else if(shadingMode == WIREFRAME)
+      cout << "Shading mode: WIREFRAME" << endl;
+    else
+      cout << "Shading mode: SHADED" << endl;
     glutPostRedisplay();
     break;
     
@@ -671,7 +760,7 @@ void myHandleMotion(int x, int y) {
 int main(int argc, char* argv[]) {
 
   if(argc < 2) {
-    cout << "Usage: ./meshview [filename.obj]"  << endl;
+    cout << "Usage: ./meshviewer [filename.obj]"  << endl;
     exit(0);
   }
 
@@ -692,6 +781,7 @@ int main(int argc, char* argv[]) {
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
   glutInitWindowSize(WIDTH, HEIGHT);
   glutCreateWindow("Mesh Viewer");
+  glewInit();
 
   // register callback to draw graphics when window needs updating
   glutDisplayFunc(myDisplay);
