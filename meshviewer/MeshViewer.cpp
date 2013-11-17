@@ -484,6 +484,21 @@ void MeshViewer::buildVBOs() {
 }
 
 void MeshViewer::turntable() {
+
+  string answer;
+  string base, ext;
+  bool imageFlag = FALSE;
+
+  cout << "Would you like to output turntable to image files? (y/n) > ";
+  cin  >> answer;
+  if(answer == "y") {
+    imageFlag = TRUE;
+    cout << endl << "Enter basename for output image:  ";
+    cin  >> base;
+    cout << "Enter extension for output image: ";
+    cin  >> ext;
+  }
+
   struct timespec frameTime, frameRem;
   frameTime.tv_sec  = 0;
   frameTime.tv_nsec = 40000000L;
@@ -492,7 +507,9 @@ void MeshViewer::turntable() {
     angle = f*3;
     doDisplay();
 
-    nanosleep(&frameTime, &frameRem);
+    // Write image to file
+    if(imageFlag) writeFile(base, ext, f+1);
+    else nanosleep(&frameTime, &frameRem);
   }
 
   angle = 0;
@@ -503,32 +520,99 @@ void MeshViewer::turntable() {
 *  This function will write the data read from the OpenGL frame buffer to
 *  image.ppm (can be changed in the code)
 */
-void MeshViewer::writeFile() {
-  FILE *out;
-  out = fopen("image.ppm", "w");
+void MeshViewer::writeFile(string basename, string ext, int frame) {
 
-  if(out == NULL) {
-    cout << "Unable to open file for writing, exiting." << endl;
-    exit(0);
-  }
+  int width  = glutGet(GLUT_WINDOW_WIDTH);
+  int height = glutGet(GLUT_WINDOW_HEIGHT);
 
-  // Write header for new file.
-  fprintf(out, "P6\n");     
-  fprintf(out, "%d %d %d\n", WIDTH, HEIGHT, 255);
+  if(ext == "exr") {
+    float *image = new float[width * height * 4];
+    float *flip  = new float[width * height * 4];
+    int linesize = width * 4 * sizeof(float);
 
-  int row, col;
+    glReadPixels(0, 0, width, height, GL_RGBA, GL_FLOAT, flip);
 
-  // Write pixels out, starting from bottom row.  Do this since they were stored
-  // as so for the GL rendering.
-  for(row = HEIGHT - 1; row >= 0; row--) {
-    for(col = 0; col < WIDTH; col++) {
-      fputc(pixmap[row * WIDTH + col][0], out);
-      fputc(pixmap[row * WIDTH + col][1], out);
-      fputc(pixmap[row * WIDTH + col][2], out);
+    string filename  = basename;
+    string frameNum;
+    if(frame < 10)        frameNum = "000" + to_string(frame);
+    else if(frame < 100)  frameNum = "00"  + to_string(frame);
+    else if(frame < 1000) frameNum = "0"   + to_string(frame);
+
+    filename += "." + frameNum;
+    filename += "." + ext;
+
+    cout << "Writing " << filename << " ..." << endl;
+
+    // Flip the image manually
+    for(int h = 0; h < height; h++)
+      memcpy(&image[h*width*4], &flip[(height-h-1)*width*4], linesize);
+
+    delete [] flip;
+
+    ImageOutput *out = ImageOutput::create(filename.c_str()); 
+    if(!out) {
+      cout << "Not able to write an image to file " << filename << endl;
+    } else {
+      ImageSpec spec(width, height, 4, TypeDesc::FLOAT);
+      spec.channelnames.clear();
+      spec.channelnames.push_back("R");
+      spec.channelnames.push_back("G");
+      spec.channelnames.push_back("B");
+      spec.channelnames.push_back("A");
+      spec.alpha_channel = 3;
+
+      out->open(filename.c_str(), spec);
+      out->write_image(TypeDesc::FLOAT, image);
+      out->close(); 
+      delete out;
     }
-  }
 
-  fclose(out);  
+    delete [] image;
+
+  } else {
+    unsigned char *image = new unsigned char[width * height * 4];
+    unsigned char *flip  = new unsigned char[width * height * 4];
+    int linesize = width * 4 * sizeof(unsigned char);
+
+    glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, flip);
+
+    string filename  = basename;
+    string frameNum;
+    if(frame < 10)        frameNum = "000" + to_string(frame);
+    else if(frame < 100)  frameNum = "00"  + to_string(frame);
+    else if(frame < 1000) frameNum = "0"   + to_string(frame);
+
+    filename += "." + frameNum;
+    filename += "." + ext;
+
+    cout << "Writing " << filename << " ..." << endl;
+
+    // Flip the image manually
+    for(int h = 0; h < height; h++)
+      memcpy(&image[h*width*4], &flip[(height-h-1)*width*4], linesize);
+
+    delete [] flip;
+
+    ImageOutput *out = ImageOutput::create(filename.c_str()); 
+    if(!out) {
+      cout << "Not able to write an image to file " << filename << endl;
+    } else {
+      ImageSpec spec(width, height, 4, TypeDesc::UCHAR);
+      spec.channelnames.clear();
+      spec.channelnames.push_back("R");
+      spec.channelnames.push_back("G");
+      spec.channelnames.push_back("B");
+      spec.channelnames.push_back("A");
+      spec.alpha_channel = 3;
+
+      out->open(filename.c_str(), spec);
+      out->write_image(TypeDesc::UCHAR, image);
+      out->close(); 
+      delete out;
+    }
+
+    delete [] image;
+  }
 }
 
 // Display callback
@@ -644,6 +728,7 @@ void MeshViewer::doReshape(int width, int height) {
 */
 void MeshViewer::handleKey(unsigned char key, int x, int y){
 
+  string base, ext;
   switch(key){
 
   case 'i':			// I -- reinitialize 
@@ -664,15 +749,16 @@ void MeshViewer::handleKey(unsigned char key, int x, int y){
   case 'T':
     turntable();
     break;
-/*
+
   case 'w':     // W -- write current display to file
   case 'W':
-    pixmap = new RGBA[Width * Height];
-    glReadPixels(0, 0, Width, Height, GL_RGBA, GL_UNSIGNED_BYTE, pixmap);
-    writeFile();
-    delete [] pixmap;
+    cout << endl << "Enter basename for output image:  ";
+    cin  >> base;
+    cout << "Enter extension for output image: ";
+    cin  >> ext;
+    writeFile(base, ext);
     break;
-*/
+
   case 'z':     // Z -- toggle between points, wireframe and shaded views
   case 'Z':
     shadingMode = (shadingMode+1)%3;

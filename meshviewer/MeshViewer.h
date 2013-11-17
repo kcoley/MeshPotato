@@ -8,12 +8,14 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
+#include <string>
 #include <vector>
 #include <iostream>
 #include <fstream>
 #include <istream>
 #include <sstream>
 #include <time.h>
+#include <OpenImageIO/imageio.h>
 #include "Face.h"
 #include "Camera.h"
 
@@ -29,15 +31,16 @@
 #define WIREFRAME 1
 #define SHADED    2
 
+using namespace std;
+OIIO_NAMESPACE_USING
+
 // Initial Window Dimesions
 const int WIDTH = 1280;
 const int HEIGHT = 720;
 const float ASPECT = 16.0/9.0;
 
 // Container for pixel values
-typedef unsigned char RGBA[4];
-
-using namespace std;
+typedef float RGBA[4];
 
 class MeshViewer {
 public:
@@ -71,7 +74,7 @@ public:
   int  findMatIndex(string);
   void buildVBOs();
   void turntable();
-  void writeFile();
+  void writeFile(string basename, string ext, int frame=1);
 
   // Callback functions used in the event loops
   void doDisplay();
