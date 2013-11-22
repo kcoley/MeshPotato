@@ -1,15 +1,16 @@
 #CC=g++
 CC=clang++
 CFLAGS=-c -Wall -fPIC
-
-INCLUDES= -I ../../include
-LINKS= -L$(VDBLIB) -lopenvdb
+VDBINCLUDE= /group/dpa/local/include
+VDBLIB= /group/dpa/local/openvdb/lib
+INCLUDES= -I ../../include -I $(VDBINCLUDE)
+LINKS= -L$(VDBLIB) -lopenvdb 
 PLUGINFILES=$(*.C)
 PLUGINNAME=libVDBInputPlugin.so
 
 
 all: $(PLUGINFILES)
-	$(CC) -fPIC -c $(INCLUDES) VDBInputPlugin.C -o mpvdbinputplugin.o
+	$(CC) $(CFLAGS) $(INCLUDES) VDBInputPlugin.C -o mpvdbinputplugin.o
 	$(CC) -shared -Wl,-soname,$(PLUGINNAME) -o $(PLUGINNAME) mpvdbinputplugin.o $(LINKS)
 
 clean:

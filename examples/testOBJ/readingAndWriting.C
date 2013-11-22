@@ -134,13 +134,6 @@ int main(int argc, char **argv) {
   Kernel theKernel;
 
   try {
-    // Try to open the archive without the required plugins
-    cout << "Available input mesh drivers:" << endl;
-    listInputMeshDrivers(theKernel.getInputMesh());
-    cout << "Available output mesh drivers:" << endl;
-    listOutputMeshDrivers(theKernel.getOutputMesh());
-
-
     cout << string(79, '*') << endl;
     cout << endl;
 
