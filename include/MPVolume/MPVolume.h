@@ -1,6 +1,9 @@
+#ifndef __MPVOLUME_H__
+#define __MPVOLUME_H__
 #include "MPUtils/Vector.h"
 namespace MeshPotato {
-
+//! Handles Volumetric Operations on Meshes
+namespace MPVolume {
 template<typename T>
 struct GradType {
 	typedef int GType;
@@ -17,10 +20,10 @@ struct GradType<MeshPotato::MPUtils::MPVec3> {
 };
 
 template < typename T>
-class MPVolume {
+class Volume {
 	public:
-	MPVolume() {}
-	virtual ~MPVolume();
+	Volume() {}
+	virtual ~Volume();
 	typedef T volumeDataType;
 	typedef typename GradType<T>::GType volumeGradType;
 	virtual const volumeDataType eval(const MeshPotato::MPUtils::MPVec3& P) const = 0;
@@ -28,9 +31,10 @@ class MPVolume {
 
 };
 
-typedef MPVolume<float>* MPVolumeFloatPtr;
+typedef Volume<float>* VolumeFloatPtr;
 //typedef MPVolume<Color>* VolumeColorPtr;
-typedef MPVolume<MeshPotato::MPUtils::MPVec3>* MPVolumeVectorPtr;
-typedef MPVolume<MeshPotato::MPUtils::MPMat3>* MPVolumeMatrixPtr;
-
+typedef Volume<MeshPotato::MPUtils::MPVec3>* VolumeVectorPtr;
+typedef Volume<MeshPotato::MPUtils::MPMat3>* VolumeMatrixPtr;
 }
+}
+#endif // __MPVOLUME_H__

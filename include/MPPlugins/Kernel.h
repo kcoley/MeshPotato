@@ -46,20 +46,17 @@ namespace MyEngine {
 	std::cout << "could not get extension" << std::endl;
 	}
       if(this->loadedPlugins.find(plugin.getExtension()) == this->loadedPlugins.end()) {
-//      if(this->loadedPlugins.find(filename) == this->loadedPlugins.end()) {
-//	Plugin plugin(filename);
         this->loadedPlugins.insert(PluginMap::value_type(plugin.getExtension(), plugin)).first->second.registerPlugin(*this);
 	std::cout << "Added plugin " << plugin.getExtension() << " to pluginmap" << std::endl;
       }
     }
 
     /// <summary>All plugins currently loaded</summary>
-    private: PluginMap loadedPlugins;
+    private:
+    PluginMap loadedPlugins;
     /// <summary>Manages storage-related tasks for the engine</summary>
-    private: InputMesh inputMesh;
-    private: OutputMesh outputMesh;
-    /// <summary>Manages graphics-related tasks for the engine</summary>
-    /// <summary>Manages graphics-related tasks for the engine</summary>
+    InputMesh inputMesh;
+    OutputMesh outputMesh;
 
   };
 

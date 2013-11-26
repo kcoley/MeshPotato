@@ -1,5 +1,13 @@
-#ifndef MESHPOTATO_H
-#define MESHPOTATO_H
+/*! \mainpage MeshPotato
+ *
+ * \section intro_sec Introduction
+ * This is MeshPotato.
+ * \section install_sec Installation
+ * \subsection step1 Step1: Ask Kacey...
+ *
+ */
+#ifndef __MESHPOTATO_H__
+#define __MESHPOTATO_H__
 #include <iostream>
 #include <string.h>
 namespace MeshPotato {
@@ -9,9 +17,9 @@ namespace MeshPotato {
 		float voxelSize;
 		float exBandWidth;
 		float inBandWidth;
-	}; //! Define the specification for mesh data
+	}; //!< Define the specification for mesh data
 
-	struct DeepData {}; //! Define strut for deep data
+	struct DeepData {}; //!< Strut for deep data
 
 	class MeshInput {
 		public:
@@ -19,6 +27,10 @@ namespace MeshPotato {
 			MeshInput(const MeshInput &mesh);	
 			~MeshInput();
 			//! Attempt to open the mesh file
+			/*!
+			 \param const std::string & - Mesh Name
+			 \return an input Mesh handle
+			*/
 			MeshInput *create(const std::string &);
 			virtual bool create(const std::string &, const MeshSpec &newspec) = 0;
 
@@ -30,4 +42,4 @@ namespace MeshPotato {
 
 
 }
-#endif // MESHPOTATO_H
+#endif // __MESHPOTATO_H__
