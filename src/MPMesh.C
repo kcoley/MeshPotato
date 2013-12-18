@@ -19,13 +19,14 @@ namespace MPMesh {
 		//! Destructor
 		MPMesh::~MPMesh() {
 		}
-		const std::string MPMesh::GetName() const {
-			return name;
-		}
 
 		//! Set Name
 		void MPMesh::SetName(std::string n) {
 			name = n;
+		}
+		//! Set Name
+		const std::string MPMesh::GetName() const {
+			return name;
 		}
 		//! Output operator
 		std::ostream& operator<<(std::ostream& out, const MPMesh& mesh) {

@@ -8,6 +8,7 @@
 #include <MPUtils/Vector.h>
 #include <iostream>
 #include <stdexcept>
+#include <MPMesh/MeshObject.h>
 #include <MeshPotato/meshpotato.h>
 #include <openvdb/openvdb.h>
 #include <openvdb/io/Stream.h>
@@ -24,6 +25,7 @@
 //#include <Alembic/Abc/ErrorHandler.h>
 using namespace std;
 using namespace MyEngine;
+
 class SimData {
 public:
 static SimData* getInstance() {

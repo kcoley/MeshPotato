@@ -53,11 +53,11 @@ namespace MyEngine {
 			// Get the vertices and faces from the levelset
 			// Identify the grid as a level set.
 		        baseGrid->setGridClass(openvdb::GRID_LEVEL_SET);
-			openvdb::io::File file2("testingGrid.vdb");
-        openvdb::GridPtrVec gridsToWrite;
-        gridsToWrite.push_back(baseGrid);
-        file2.write(gridsToWrite);
-        file2.close();
+//			openvdb::io::File file2("testingGrid.vdb");
+///        openvdb::GridPtrVec gridsToWrite;
+//        gridsToWrite.push_back(baseGrid);
+//        file2.write(gridsToWrite);
+//        file2.close();
 			grid = openvdb::gridPtrCast<openvdb::FloatGrid>(baseGrid);
 			openvdb::tools::VolumeToMesh mesher;
 			mesher.operator()<openvdb::FloatGrid>(grid.operator*());	
