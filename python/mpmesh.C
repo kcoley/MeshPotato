@@ -4,6 +4,8 @@
 #include <MPMesh/MeshObject.h>
 #include <MPMesh/MPMesh.h>
 #include <MPPlugins/InputMesh.h>
+#include "pymeshpotato.h"
+#include <MeshPotato/meshpotato.h>
 using namespace boost::python;
 object processGrid(object inObj) {
 	object outObj;
@@ -49,6 +51,11 @@ object mpmesh2() {
 
 BOOST_PYTHON_MODULE(mpmesh) {
 	openvdb::initialize();
+	class_<std::list<std::vector<std::string> > >("list_vec_str")
+                .def("getPythonList", &getPythonList)
+        ;
+	class_<MeshPotato::MeshSpec>("MeshSpec", init<>())
+	;
 	boost::python::def("processGrid", &processGrid, "grid");
 	boost::python::def("mpmesh", &mpmesh2);
 	class_<MeshPotato::MPMesh::MPMesh>("MPMesh", init<>())
@@ -61,6 +68,8 @@ BOOST_PYTHON_MODULE(mpmesh) {
 		.def("loadMesh", pure_virtual(&MyEngine::InputMesh::InputMeshDriver::loadMesh))
 		.def("getNumberVertices", pure_virtual(&MyEngine::InputMesh::InputMeshDriver::getNumberVertices))
 		;
+
+	def("getPythonList", &getPythonList);
 //	class_<MeshPotato::MPMesh::MPMesh>("MPMesh", no_init)
 //		.def("SetName", &MeshPotato::MPMesh::MPMesh::SetName)
 //	;

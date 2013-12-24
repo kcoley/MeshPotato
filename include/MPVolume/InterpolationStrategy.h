@@ -7,7 +7,6 @@ template <typename T>
 class InterpolationStrategy {
 public:
 	virtual const T eval(const MPVec3 &P) const = 0;
-private:
 };
 template <typename T>
 class TrilinearInterpolationStrategy: public InterpolationStrategy<T> {

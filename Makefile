@@ -30,11 +30,11 @@ $(MESHPOTATOSHAREDLIB): $(OBJECTS)
 
 pympmesh: $(OBJECTS)
 	$(CC) $(CFLAGS) -I $(PYTHON_INCLUDE) $(PYMPMESH).C -o $(PYMPMESH).o
-	$(CC) -shared -Wl,-soname,mpmesh.so $(PYMPMESH).o -lpython2.7 -lboost_python -lboost_thread -lboost_system -lboost_filesystem -L./lib -L/group/dpa/local/openvdb/lib -lmeshpotato -lopenvdb /group/dpa/local/openvdb/python/lib/python2.7/pyopenvdb.so -lboost_system -o pymeshpotato/mpmesh.so
+	$(CC) -shared -Wl,-soname,mpmesh.so $(PYMPMESH).o -lpython2.7 -lboost_python -lboost_thread -lboost_system -lboost_filesystem -L./lib -L/group/dpa/local/openvdb/lib -lmeshpotato -lopenvdb /group/dpa/local/openvdb/python/lib/python2.7/pyopenvdb.so -lboost_system -o pymeshpotato/mpmesh.so 
 
 pympvolume: $(OBJECTS)
-	$(CC) $(CFLAGS) -I$(PYTHON_INCLUDE) -c $(PYMPVOLUME).C -o $(PYMPVOLUME).o
-	$(CC) -shared -Wl,-soname,mpmesh.so -o pymeshpotato/mpvolume.so $(PYMPVOLUME).o -lpython2.7 -lboost_python -L./lib -lmeshpotato 
+	$(CC) $(CFLAGS) -I$(PYTHON_INCLUDE) $(PYMPVOLUME).C -o $(PYMPVOLUME).o
+	$(CC) -shared -Wl,-soname,mpvolume.so $(PYMPVOLUME).o -lpython2.7 -lboost_python -lboost_thread -lboost_system -lboost_filesystem -L./lib -L/group/dpa/local/openvdb/lib -lmeshpotato -lopenvdb /group/dpa/local/openvdb/python/lib/python2.7/pyopenvdb.so -lboost_system -o pymeshpotato/mpvolume.so 
 clean:
 	rm src/*.o
 	rm python/*.o

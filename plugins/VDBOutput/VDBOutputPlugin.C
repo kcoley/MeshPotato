@@ -13,10 +13,6 @@
 using namespace std;
 namespace MyEngine {
 
-	/// OpenGL graphics drver
-	//  class OpenGLGraphicsDriver : public GraphicsServer::GraphicsDriver {
-//	class VDBOutputMeshDriver : public OutputMesh::OutputMeshDriver {
-
 		/// <summary>Destroys an OpenGL graphics driver</summary>
 		VDBOUTPUTPLUGIN_API VDBOutputMeshDriver:: ~VDBOutputMeshDriver() {}
 

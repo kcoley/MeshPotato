@@ -1,6 +1,8 @@
 #include <boost/python.hpp>
 #include "OBJInputPlugin.h"
-
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include <list>
+#include <vector>
 using namespace boost::python;
 using namespace MyEngine;
 struct InputMeshWrap: MyEngine::InputMesh, wrapper<MyEngine::InputMesh> {
@@ -21,6 +23,9 @@ BOOST_PYTHON_MODULE(pyOBJInputPlugin) {
 	class_<OBJInputMeshDriver, bases<InputMeshWrap> >("OBJInputMesh")
 		.def("loadMesh", &OBJInputMeshDriver::loadMesh)
 		.def("getNumberVertices", &OBJInputMeshDriver::getNumberVertices)
+		.def("getVertices", &OBJInputMeshDriver::getVertices)
+		.def("getNormals", &OBJInputMeshDriver::getNormals)
+		.def("getFaces", &OBJInputMeshDriver::getFaces)
 		; 
 }
 

@@ -23,7 +23,7 @@ template < typename T>
 class Volume {
 	public:
 	Volume() {}
-	virtual ~Volume();
+	virtual ~Volume() {}
 	typedef T volumeDataType;
 	typedef typename GradType<T>::GType volumeGradType;
 	virtual const volumeDataType eval(const MeshPotato::MPUtils::MPVec3& P) const = 0;

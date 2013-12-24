@@ -13,8 +13,12 @@ namespace MeshPotato {
 		virtual ~VolumeGrid() {}
 		// Should use strategy pattern to be able to 
 		// Change the interpolation scheme
-		virtual const T eval(const MPUtils::MPVec3 &P) const = 0;
-		virtual const T defaultValue() const;
+		typedef T volumeDataType;
+	        typedef typename GradType<T>::GType volumeGradType;
+
+		virtual const volumeDataType eval(const MPUtils::MPVec3 &P) const{};
+		const T defaultValue() const {};
+		virtual const volumeGradType grad(const MeshPotato::MPUtils::MPVec3& P) const {};
 	private:
 		std::vector<InterpolationStrategy<T> > interpolationStrategy;
 		MPVec3 llc, urc;
