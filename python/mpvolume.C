@@ -50,7 +50,7 @@ BOOST_PYTHON_MODULE(mpvolume) {
 	;
 	class_<VDBVolumeGrid, boost::shared_ptr<VDBVolumeGrid>, bases<MPVolumeWrap> >("VDBVolumeGrid", init<>())
 		.def(init<openvdb::GridBase::Ptr>())
-		.def("ptr", &VDBVolumeGrid::create)
+		.def("ptr", &VDBVolumeGrid::Ptr)
 		.staticmethod("ptr")
 		.def("eval", &VDBVolumeGrid::eval)
 		.def("grad", &VDBVolumeGrid::grad)
