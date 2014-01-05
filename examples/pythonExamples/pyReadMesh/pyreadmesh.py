@@ -37,7 +37,7 @@ def WriteMesh(imesh, path):
 		return omesh
 		
 
-print "Example 1: ajax obj to ajax vdb"
+print "Example 1: agripa obj to agripa vdb"
 #imesh = LoadMesh("/home/kcoley/projects/MeshPotato/examples/testOBJ/ajax.obj")
 #omesh = WriteMesh(imesh, "vdbtest.vdb")
 print "Done Conversion!"

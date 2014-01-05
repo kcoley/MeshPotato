@@ -6,14 +6,14 @@ namespace MPVolume {
 template <typename T>
 class InterpolationStrategy {
 public:
-	virtual const T eval(const MPVec3 &P) const = 0;
+	virtual const T eval(const MPVec3 &P) const {};
 };
 template <typename T>
 class TrilinearInterpolationStrategy: public InterpolationStrategy<T> {
 public:
 	TrilinearInterpolationStrategy() {}
 	//! Implements Trilinear Interpolation on a Volume Grid
-	virtual const T eval(const MPUtils::MPVec3 &P) const {
+	virtual const T eval(const MPVec3 &P) const {
 		MPVec3 p = P - volumeGrid->llc/volumeGrid->delta; 	
 		MPVec3 lowerLeft(floor(p.x()), floor(p.y()), floor(p.z()));
 		if (lowerLeft.x() >= volumeGrid->llc.x() && (lowerLeft.y() >= volumeGrid->llc.z()) && (lowerLeft.z() >= volumeGrid->llc.z())) {

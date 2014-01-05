@@ -29,8 +29,8 @@ struct InputMeshWrap: MyEngine::InputMesh, wrapper<MyEngine::InputMesh> {
 	const size_t getNumberVertices() const {
 		return this->get_override("getNumberVertices")();
 	}
-
 };
+
 object mpmesh() { 
 	object outObj = (	
       class_<MeshPotato::MeshObject>("MeshObject", no_init)
