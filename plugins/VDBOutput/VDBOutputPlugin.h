@@ -12,7 +12,7 @@ namespace MyEngine {
 		public:
 			VDBOUTPUTPLUGIN_API virtual ~VDBOutputMeshDriver();
 			VDBOUTPUTPLUGIN_API virtual const std::string &getName() const;
-			VDBOUTPUTPLUGIN_API virtual void loadMesh(list<std::vector<std::string> > &vertices, list<std::vector<std::string> >&normals, list<std::vector<std::string> > &faces, MeshPotato::MeshSpec spec = MeshPotato::MeshSpec());
+			VDBOUTPUTPLUGIN_API virtual void loadMesh(list<std::vector<std::string> > &vertices, list<std::vector<std::string> >&normals, list<std::vector<std::string> > &faces, MeshPotato::MeshSpec &spec);
 			VDBOUTPUTPLUGIN_API virtual bool writeMesh(const char *meshName);
 			VDBOUTPUTPLUGIN_API virtual const size_t getNumberVertices() const;
 			VDBOUTPUTPLUGIN_API virtual const size_t getNumberNormals() const;

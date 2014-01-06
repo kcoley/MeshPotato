@@ -23,7 +23,7 @@ namespace MyEngine {
 			}
 
 			/// <summary>Gets the name of the graphics driver</summary>
-		VDBOUTPUTPLUGIN_API void VDBOutputMeshDriver::loadMesh(list<std::vector<std::string> > &vertices, list<std::vector<std::string> > &normals, list<std::vector<std::string> > &faces, MeshPotato::MeshSpec spec) {
+		VDBOUTPUTPLUGIN_API void VDBOutputMeshDriver::loadMesh(list<std::vector<std::string> > &vertices, list<std::vector<std::string> > &normals, list<std::vector<std::string> > &faces, MeshPotato::MeshSpec &spec) {
 				this->vertices = vertices;
 				this->normals = normals;
 				this->faces = faces;

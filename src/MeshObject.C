@@ -37,7 +37,8 @@ void MeshObject::writeMesh(std::string &name) {
     std::cout << "getting output driver..." << std::endl;
     std::cout << "\t" << outputMesh->getDriver(index).getName() << std::endl;
     std::cout << "done getting output driver..." << std::endl;
-    outputMesh->getDriver(index).loadMesh( globalVertices, globalNormals, globalFaces);
+	MeshPotato::MeshSpec spec = MeshPotato::MeshSpec();
+    outputMesh->getDriver(index).loadMesh( globalVertices, globalNormals, globalFaces, spec);
     std::cout << "Num Vertices = " << outputMesh->getDriver(index).getNumberVertices() << std::endl;
     std::cout << "Num Normals = " << outputMesh->getDriver(index).getNumberNormals() << std::endl;
     std::cout << "Num Faces = " << outputMesh->getDriver(index).getNumberFaces() << std::endl;

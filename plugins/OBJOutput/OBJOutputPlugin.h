@@ -31,7 +31,7 @@ namespace MyEngine {
 	}
 
 			/// <summary>Gets the name of the graphics driver</summary>
-	OBJOUTPUTPLUGIN_API virtual void loadMesh(std::list<std::vector<std::string> > &vertices, std::list<std::vector<std::string> > &normals, std::list<std::vector<std::string> > &faces, MeshPotato::MeshSpec spec = MeshPotato::MeshSpec()) {
+	OBJOUTPUTPLUGIN_API virtual void loadMesh(std::list<std::vector<std::string> > &vertices, std::list<std::vector<std::string> > &normals, std::list<std::vector<std::string> > &faces, MeshPotato::MeshSpec &spec) {
 				this->vertices = vertices;
 				this->normals = normals;
 				this->faces = faces;

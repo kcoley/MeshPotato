@@ -33,7 +33,7 @@ struct InputMeshWrap: MyEngine::InputMesh, wrapper<MyEngine::InputMesh> {
 
 object mpmesh() { 
 	object outObj = (	
-      class_<MeshPotato::MeshObject>("MeshObject", no_init)
+      class_<MeshPotato::MeshObject>("MeshObject", init<>())
               .def("loadMesh", &MeshPotato::MeshObject::loadMesh)
               .def("writeMesh", &MeshPotato::MeshObject::writeMesh)
 	);
@@ -55,6 +55,10 @@ BOOST_PYTHON_MODULE(mpmesh) {
                 .def("getPythonList", &getPythonList)
         ;
 	class_<MeshPotato::MeshSpec>("MeshSpec", init<>())
+		.def(init<float, float, float>())
+		.def_readwrite("voxelSize", &MeshPotato::MeshSpec::voxelSize)
+		.def_readwrite("exBandWidth", &MeshPotato::MeshSpec::exBandWidth)
+		.def_readwrite("inBandWidth", &MeshPotato::MeshSpec::inBandWidth)
 	;
 	boost::python::def("processGrid", &processGrid, "grid");
 	boost::python::def("mpmesh", &mpmesh2);

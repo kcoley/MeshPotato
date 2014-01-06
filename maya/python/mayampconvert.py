@@ -52,5 +52,7 @@ def particleFillSelection(  ):
 		return [pointList, normalList, faceList]
 listing = particleFillSelection()
 omesh_cube = vdbout.VDBOutputMesh()
-omesh_cube.loadMesh(mepo.getPythonList(listing[0]), mepo.getPythonList(listing[1]), mepo.getPythonList(listing[2]), mepo.MeshSpec())
+meshspec = mepo.MeshSpec()
+meshspec.voxelSize = 0.005
+omesh_cube.loadMesh(mepo.getPythonList(listing[0]), mepo.getPythonList(listing[1]), mepo.getPythonList(listing[2]), meshspec)
 omesh_cube.writeMesh("/home/kcoley/Desktop/cubeMaya.vdb")

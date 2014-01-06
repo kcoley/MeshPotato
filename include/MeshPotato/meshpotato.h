@@ -14,6 +14,7 @@ namespace MeshPotato {
 	class MeshSpec {
 	public:
 		MeshSpec(): voxelSize(0.05), exBandWidth(3), inBandWidth(3) {}
+		MeshSpec(const float &vs, const float &eb, const float &ib) : voxelSize(vs), exBandWidth(eb), inBandWidth(ib) {}
 		float voxelSize;
 		float exBandWidth;
 		float inBandWidth;
