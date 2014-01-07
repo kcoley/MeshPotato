@@ -2,6 +2,7 @@ import maya.OpenMaya as OpenMaya
 import pyopenvdb as vdb
 import pymeshpotato.mpmesh as mepo
 import pymeshpotato.pyVDBOutputPlugin as vdbout
+import maya.cmds as cmds
  
 def particleFillSelection(  ):
 	print "running particleFillSelection" 
@@ -50,9 +51,35 @@ def particleFillSelection(  ):
 			pointList.append( [str(inMeshMPointArray[i][0]), str(inMeshMPointArray[i][1]), str(inMeshMPointArray[i][2])] )
 
 		return [pointList, normalList, faceList]
-listing = particleFillSelection()
-omesh_cube = vdbout.VDBOutputMesh()
-meshspec = mepo.MeshSpec()
-meshspec.voxelSize = 0.005
-omesh_cube.loadMesh(mepo.getPythonList(listing[0]), mepo.getPythonList(listing[1]), mepo.getPythonList(listing[2]), meshspec)
-omesh_cube.writeMesh("/home/kcoley/Desktop/cubeMaya.vdb")
+def runExample(voxelSize, filePath):
+	print "running example"
+	listing = particleFillSelection()
+	omesh_cube = vdbout.VDBOutputMesh()
+	meshspec = mepo.MeshSpec()
+	meshspec.voxelSize = voxelSize
+	omesh_cube.loadMesh(mepo.getPythonList(listing[0]), mepo.getPythonList(listing[1]), mepo.getPythonList(listing[2]), meshspec)
+	omesh_cube.writeMesh(filePath)
+
+
+
+
+def printMessage(*args):
+	print "Hello World"
+
+
+## Define path to ui file
+pathToFile = '/home/kcoley/projects/MeshPotato/maya/python/mpconvertForMaya/ui/mpconvertForMaya.ui'
+
+## Load our window and put it into a variable.
+qtWin = cmds.loadUI(uiFile=pathToFile)
+ 
+#cmds.deleteUI("qtWin", window=True)
+## Open our window
+cmds.showWindow(qtWin)
+
+# Resize the main window
+#
+def convert():
+	voxelSize = cmds.textField("voxelSizeField", query = True, text = True)
+	filePath = cmds.textField("filePathField", query = True, text = True)
+	runExample(float(voxelSize), str(filePath))
