@@ -10,3 +10,5 @@ import mayampconvert as main
 reload(main)
 
 main.main()
+def closeWindow():
+	main.closeWindow()
