@@ -66,11 +66,11 @@ def runExample(voxelSize, filePath):
 
 def printMessage(*args):
 	print "Hello World"
-
-
-if cmds.window(qtWin, exists=True):
-	cmds.deleteUI(qtWin)
-
+try:
+	if cmds.window(qtWin, exists=True):
+		cmds.deleteUI(qtWin)
+except ValueError:
+	pass
 meshpotato_dir = os.environ['MESHPOTATO_DIR']
 ## Define path to ui file
 pathToFile = meshpotato_dir + '/maya/python/mpconvertForMaya/ui/mpconvertForMaya.ui'
@@ -80,10 +80,13 @@ qtWin = cmds.loadUI(uiFile=pathToFile)
  
 #cmds.deleteUI("qtWin", window=True)
 ## Open our window
-cmds.showWindow(qtWin)
+def main():
+	cmds.showWindow(qtWin)
 
 # Resize the main window
 #
+def closeWindow():
+	cmds.deleteUI(qtWin)
 def convert():
 	voxelSize = cmds.textField("voxelSizeField", query = True, text = True)
 	filePath = cmds.textField("filePathField", query = True, text = True)
