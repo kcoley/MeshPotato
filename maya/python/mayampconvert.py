@@ -3,6 +3,7 @@ import pyopenvdb as vdb
 import pymeshpotato.mpmesh as mepo
 import pymeshpotato.pyVDBOutputPlugin as vdbout
 import maya.cmds as cmds
+import os
  
 def particleFillSelection(  ):
 	print "running particleFillSelection" 
@@ -67,8 +68,12 @@ def printMessage(*args):
 	print "Hello World"
 
 
+if cmds.window(qtWin, exists=True):
+	cmds.deleteUI(qtWin)
+
+meshpotato_dir = os.environ['MESHPOTATO_DIR']
 ## Define path to ui file
-pathToFile = '/home/kcoley/projects/MeshPotato/maya/python/mpconvertForMaya/ui/mpconvertForMaya.ui'
+pathToFile = meshpotato_dir + '/maya/python/mpconvertForMaya/ui/mpconvertForMaya.ui'
 
 ## Load our window and put it into a variable.
 qtWin = cmds.loadUI(uiFile=pathToFile)
