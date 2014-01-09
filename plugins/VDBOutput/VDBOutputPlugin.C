@@ -41,9 +41,6 @@ namespace MyEngine {
 				MeshPotato::MPUtils::Polys polys;
 				// Open an OBJ file for writing
 					// Write metadata
-				std::cout << "Writing vdb mesh" << std::endl;
-					// Write vertices
-					std::cout << "Pushing vertices" << std::endl;
 					for (std::list<std::vector<std::string> >::iterator iter = vertices.begin(); iter != vertices.end(); ++iter) {
 						float x,y,z;
 						strm << (*iter)[0];
@@ -63,7 +60,6 @@ namespace MyEngine {
 					}
 
 					// Write faces
-					std::cout << "Pushing faces" << std::endl;
 					for (std::list<std::vector<std::string>  >::iterator iter = faces.begin(); iter != faces.end(); ++iter) {
 						unsigned int x,y,z, w;
 						strm << (*iter)[0];
@@ -93,18 +89,15 @@ namespace MyEngine {
 					}
 				
 
-					std::cout << "Transforming voxelSize" << std::endl;
 					openvdb::math::Transform::Ptr transform = openvdb::math::Transform::createLinearTransform(voxelSize);
 
 
 					
 //					#pragma omp parallel for
-					std::cout << "Converting verts to index space" << std::endl;
 				        for( size_t i = 0; i < verts.size(); ++i ){
                 				verts[i] = transform->worldToIndex(verts[i]);
         				}
 
-					std::cout << "after transfom to worldness" << std::endl;
 					openvdb::tools::MeshToVolume<openvdb::FloatGrid> levelset(transform);
 					levelset.convertToLevelSet(verts, polys, exBandWidth, inBandWidth);
 					// Export Mesh

@@ -212,6 +212,19 @@
      <string>MPConvert</string>
     </property>
    </widget>
+   <widget class="QCheckBox" name="vdbViewCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>160</y>
+      <width>181</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Open with vdb_view</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
