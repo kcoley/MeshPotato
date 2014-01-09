@@ -91,3 +91,7 @@ def convert():
 	voxelSize = cmds.textField("voxelSizeField", query = True, text = True)
 	filePath = cmds.textField("filePathField", query = True, text = True)
 	runExample(float(voxelSize), str(filePath))
+
+def browse():
+	newfilepath = cmds.fileDialog2(fm=0, okc='Save file as')
+	cmds.textField("filePathField", e=1, text=str(newfilepath[0]))

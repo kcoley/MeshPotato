@@ -12,3 +12,7 @@ reload(main)
 main.main()
 def closeWindow():
 	main.closeWindow()
+def convert():
+	main.convert()
+def browse():
+	main.browse()

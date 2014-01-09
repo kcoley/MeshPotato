@@ -71,6 +71,9 @@
     <property name="text">
      <string>Browse</string>
     </property>
+    <property name="+c" stdset="0">
+     <string>&quot;browse()&quot;</string>
+    </property>
    </widget>
    <widget class="QGroupBox" name="radioGroupBox">
     <property name="geometry">
