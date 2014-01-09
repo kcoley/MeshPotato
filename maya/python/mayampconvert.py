@@ -69,7 +69,7 @@ def printMessage(*args):
 try:
 	if cmds.window(qtWin, exists=True):
 		cmds.deleteUI(qtWin)
-except ValueError:
+except NameError:
 	pass
 meshpotato_dir = os.environ['MESHPOTATO_DIR']
 ## Define path to ui file
