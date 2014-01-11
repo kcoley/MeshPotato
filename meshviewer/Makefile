@@ -29,7 +29,7 @@ EXEC    = meshviewer
 
 $(PROJECT): $(PROJECT).o $(OFILES)
 	$(CXX) $(CXXFLAGS) -o $(EXEC) $(PROJECT).o $(OFILES) $(LDFLAGS)
-
+	cp $(EXEC) ../bin
 $(PROJECT).o: $(PROJECT).$(C) $(HFILES)
 	$(CC) $(CFLAGS) -c $(PROJECT).$(C)
 
