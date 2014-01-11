@@ -1,8 +1,9 @@
 #include "MPMesh/MeshObject.h"
-
+  
 namespace MeshPotato {
+  
 MeshObject::MeshObject() : theKernel(), inputMesh(), outputMesh() {
-//    theKernel.loadPlugin("ABCInputPlugin");
+   std::cout << "Default constructor" << std::endl;
     theKernel.loadPlugin("OBJInputPlugin");
     theKernel.loadPlugin("VDBInputPlugin");
     theKernel.loadPlugin("VDBOutputPlugin");
@@ -11,7 +12,7 @@ MeshObject::MeshObject() : theKernel(), inputMesh(), outputMesh() {
     outputMesh = &theKernel.getOutputMesh();
 }
 MeshObject::~MeshObject() {
-
+ 
 }
 void MeshObject::loadMesh(std::string &name) {
 	std::string index = name.substr(name.find(".")+1, name.length());

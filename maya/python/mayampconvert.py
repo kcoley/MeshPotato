@@ -97,3 +97,37 @@ def convert():
 def browse():
 	newfilepath = cmds.fileDialog2(fm=0, okc='Save file as')
 	cmds.textField("filePathField", e=1, text=str(newfilepath[0]))
+
+class MPConvert:
+	def __init__(self, filePath):
+		MPConvert.use = self
+		
+		if cmds.window(self.qtWin, exists=True):
+			cmds.deleteUI(self.qtWin)
+		self.qtWin = cmds.loadUI(uiFile=filePath)
+	def create(self, verbose=False):
+		if cmds.window(self.window, exists = True):
+			cmds.deleteUI(self.window)
+		self.window = cmds.loadUI(uiFile=self.uiFile, verbose=verbose)
+		cmds.showWindow(self.window)
+	def showUI(cls, uiFile):
+		win = cls(uiFile)
+		win.create()
+		return win
+	def closeWindow():
+		cmds.deleteUI(self.qtWin)
+	def convert():
+		voxelSize = self.getVoxelSize()
+		filePath = self.getFilePath()
+		runExample(voxelSize, filePath)
+		if useVDBView():
+			os.system("vdb_view " + filePath + " & ")
+	def browse():
+		newfilepath = cmds.fileDialog2(fm=0, okc='Save file as')
+		cmds.textField("filePathField", e=1, text=str(newfilepath[0]))
+	def getVoxelSize():
+		return float(cmds.textField("voxelSizeField", query = True, text = True))
+	def getFilePath():
+		return cmds.textField("filePathField", query = True, text = True)
+	def useVDBView():
+		return cmds.checkBox("vdbViewCheckBox", query = True, value = True)	

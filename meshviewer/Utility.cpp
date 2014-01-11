@@ -11,6 +11,7 @@
 using namespace std;
 
 #include "Utility.h"
+#include <sstream>
 
 /*
   computes sqrt(a^2 + b^2) without destructive underflow or overflow
@@ -19,13 +20,13 @@ double pythag(double a, double b)
 {
   double absa, absb;
 
-  absa = Abs(a);
-  absb = Abs(b);
+  absa = AbsMV(a);
+  absb = AbsMV(b);
 
   if(absa > absb)
-    return absa * sqrt(1.0 + Sqr(absb / absa));
+    return absa * sqrt(1.0 + SqrMV(absb / absa));
   else if(absb > 0)
-    return absb * sqrt(1.0 + Sqr(absa / absb));
+    return absb * sqrt(1.0 + SqrMV(absa / absb));
   else
     return 0;
 }
@@ -70,3 +71,5 @@ void abort(char *s1, char *s2, char *s3)
   error(s1, s2, s3);
   exit(1);
 }
+
+

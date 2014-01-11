@@ -13,7 +13,6 @@
  
  *********************************************************************/
 
-using namespace std;
 
 #include "Matrix.h"
 
@@ -369,8 +368,8 @@ void Matrix2x2::print(int w, int p) const
 	int i;
 	
 	for(i = 0; i < 2; i++){
-		cout << setw(w) << setprecision(p) << Round(row[i].x, p) << " ";
-		cout << setw(w) << setprecision(p) << Round(row[i].y, p);
+		cout << setw(w) << setprecision(p) << RoundMV(row[i].x, p) << " ";
+		cout << setw(w) << setprecision(p) << RoundMV(row[i].y, p);
 		cout << endl;
 	}
 }
@@ -380,9 +379,9 @@ void Matrix3x3::print(int w, int p) const
 	int i;
 	
 	for(i = 0; i < 3; i++){
-		cout << setw(w) << setprecision(p) << Round(row[i].x, p) << " ";
-		cout << setw(w) << setprecision(p) << Round(row[i].y, p) << " ";
-		cout << setw(w) << setprecision(p) << Round(row[i].z, p);
+		cout << setw(w) << setprecision(p) << RoundMV(row[i].x, p) << " ";
+		cout << setw(w) << setprecision(p) << RoundMV(row[i].y, p) << " ";
+		cout << setw(w) << setprecision(p) << RoundMV(row[i].z, p);
 		cout << endl;
 	}
 }
@@ -392,10 +391,10 @@ void Matrix4x4::print(int w, int p) const
 	int i;
 	
 	for(i = 0; i < 4; i++){
-		cout << setw(w) << setprecision(p) << Round(row[i].x, p) << " ";
-		cout << setw(w) << setprecision(p) << Round(row[i].y, p) << " ";
-		cout << setw(w) << setprecision(p) << Round(row[i].z, p) << " ";
-		cout << setw(w) << setprecision(p) << Round(row[i].w, p);
+		cout << setw(w) << setprecision(p) << RoundMV(row[i].x, p) << " ";
+		cout << setw(w) << setprecision(p) << RoundMV(row[i].y, p) << " ";
+		cout << setw(w) << setprecision(p) << RoundMV(row[i].z, p) << " ";
+		cout << setw(w) << setprecision(p) << RoundMV(row[i].w, p);
 		cout << endl;
 	}
 }
@@ -406,7 +405,7 @@ void Matrix::print(int w, int p) const
 	
 	for(i = 0; i < Nrows; i++){
 		for(j = 0; j < Ncols; j++)
-			cout << setw(w) << setprecision(p) << Round(row[i][j], p) << " ";
+			cout << setw(w) << setprecision(p) << RoundMV(row[i][j], p) << " ";
 		cout << endl;
 	}
 }
@@ -904,7 +903,7 @@ void Matrix::svd(Matrix &U, Vector &W, Matrix &V) const
 			if(scale != 0){
 				for(k = i; k < m; k++){
 					U[k][i] /= scale;
-					s += Sqr(U[k][i]);
+					s += SqrMV(U[k][i]);
 				}
 				f = U[i][i];
 				g = -ApplySign(sqrt(s), f);
@@ -931,7 +930,7 @@ void Matrix::svd(Matrix &U, Vector &W, Matrix &V) const
 			if(scale != 0){
 				for(k = l; k < n; k++){
 					U[i][k] /= scale;
-					s += Sqr(U[i][k]);
+					s += SqrMV(U[i][k]);
 				}
 				f = U[i][l];
 				g = -ApplySign(sqrt(s), f);
@@ -949,7 +948,7 @@ void Matrix::svd(Matrix &U, Vector &W, Matrix &V) const
 					U[i][k] *= scale;
 			}
 		}
-		anorm = Max(anorm, (fabs(W[i]) + fabs(rv1[i])));
+		anorm = MaxMV(anorm, (fabs(W[i]) + fabs(rv1[i])));
 	}
 	
 	// accumulation of hight-hand transformation
@@ -974,7 +973,7 @@ void Matrix::svd(Matrix &U, Vector &W, Matrix &V) const
 	}
 	
 	// accumulation of left-hand transformation
-	for(i = Min(m, n) - 1; i >= 0; i--){
+	for(i = MinMV(m, n) - 1; i >= 0; i--){
 		l = i + 1;
 		g = W[i];
 		for(j = l; j < n; j++)
@@ -1179,7 +1178,7 @@ ostream& operator<< (ostream& os, const Matrix2x2& m){
 	
 	for(i = 0; i < 2; i++){
 		for(j = 0; j < 2; j++)
-			os << setw(7) << setprecision(3) << Round(m.row[i][j], 3) << " ";
+			os << setw(7) << setprecision(3) << RoundMV(m.row[i][j], 3) << " ";
 		os << endl;
 	}
 	
@@ -1255,7 +1254,7 @@ ostream& operator<< (ostream& os, const Matrix3x3& m){
 	
 	for(i = 0; i < 3; i++){
 		for(j = 0; j < 3; j++)
-			os << setw(7) << setprecision(3) << Round(m.row[i][j], 3) << " ";
+			os << setw(7) << setprecision(3) << RoundMV(m.row[i][j], 3) << " ";
 		os << endl;
 	}
 	
@@ -1331,7 +1330,7 @@ ostream& operator<< (ostream& os, const Matrix4x4& m){
 	
 	for(i = 0; i < 4; i++){
 		for(j = 0; j < 4; j++)
-			os << setw(7) << setprecision(3) << Round(m.row[i][j], 3) << " ";
+			os << setw(7) << setprecision(3) << RoundMV(m.row[i][j], 3) << " ";
 		os << endl;
 	}
 	
@@ -1415,7 +1414,7 @@ ostream& operator<< (ostream& os, const Matrix& m){
 	
 	for(i = 0; i < m.Nrows; i++){
 		for(j = 0; j < m.Ncols; j++)
-			os << setw(7) << setprecision(3) << Round(m.row[i][j], 3) << " ";
+			os << setw(7) << setprecision(3) << RoundMV(m.row[i][j], 3) << " ";
 		os << endl;
 	}
 	

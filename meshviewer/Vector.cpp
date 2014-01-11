@@ -485,8 +485,8 @@ void Vector2d::print() const
 }
 void Vector2d::print(int w, int p) const
 {
-  cout << "[" << setw(w) << setprecision(p) << Round(x, p) << " ";
-  cout << setw(w) << setprecision(p) << Round(y, p) << "]";
+  cout << "[" << setw(w) << setprecision(p) << RoundMV(x, p) << " ";
+  cout << setw(w) << setprecision(p) << RoundMV(y, p) << "]";
 }
 void Vector3d::print() const
 {
@@ -494,9 +494,9 @@ void Vector3d::print() const
 }
 void Vector3d::print(int w, int p) const
 {
-  cout << "[" << setw(w) << setprecision(p) << Round(x, p) << " ";
-  cout << setw(w) << setprecision(p) << Round(y, p) << " ";
-  cout << setw(w) << setprecision(p) << Round(z, p) << "]";
+  cout << "[" << setw(w) << setprecision(p) << RoundMV(x, p) << " ";
+  cout << setw(w) << setprecision(p) << RoundMV(y, p) << " ";
+  cout << setw(w) << setprecision(p) << RoundMV(z, p) << "]";
 }
 void Vector4d::print() const
 {
@@ -504,10 +504,10 @@ void Vector4d::print() const
 }
 void Vector4d::print(int w, int p) const
 {
-  cout << "[" << setw(w) << setprecision(p) << Round(x, p) << " ";
-  cout << setw(w) << setprecision(p) << Round(y, p) << " ";
-  cout << setw(w) << setprecision(p) << Round(z, p) << " ";
-  cout << setw(w) << setprecision(p) << Round(w, p) << "]";
+  cout << "[" << setw(w) << setprecision(p) << RoundMV(x, p) << " ";
+  cout << setw(w) << setprecision(p) << RoundMV(y, p) << " ";
+  cout << setw(w) << setprecision(p) << RoundMV(z, p) << " ";
+  cout << setw(w) << setprecision(p) << RoundMV(w, p) << "]";
 }
 void Vector::print() const
 {
@@ -527,9 +527,9 @@ void Vector::print(int w, int p) const
     cout << "[]";
   else{
     int i;
-    cout << "[" << setw(w) << setprecision(p) << Round(v[0], p);
+    cout << "[" << setw(w) << setprecision(p) << RoundMV(v[0], p);
     for(i = 1; i < N; i++)
-      cout << " " << setw(w) << setprecision(p) << Round(v[i], p);
+      cout << " " << setw(w) << setprecision(p) << RoundMV(v[i], p);
     cout << "]";
   }
 }
@@ -555,22 +555,22 @@ double Vector::norm() const
 // Compute the squared magnitude of a vector.
 double Vector2d::normsqr() const
 {
-  return Sqr(x) + Sqr(y);
+  return SqrMV(x) + SqrMV(y);
 }
 double Vector3d::normsqr() const
 {
-  return Sqr(x) + Sqr(y) + Sqr(z);
+  return SqrMV(x) + SqrMV(y) + SqrMV(z);
 }
 double Vector4d::normsqr() const
 {
-  return Sqr(x) + Sqr(y) + Sqr(z) + Sqr(w);
+  return SqrMV(x) + SqrMV(y) + SqrMV(z) + SqrMV(w);
 }
 double Vector::normsqr() const
 {
   int i;
   double sumsqr = 0;
   for(i = 0; i < N; i++)
-    sumsqr += Sqr(v[i]);
+    sumsqr += SqrMV(v[i]);
 
   return sumsqr;
 }

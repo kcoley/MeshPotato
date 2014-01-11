@@ -1,22 +1,23 @@
 ifeq ("$(shell whoami)", "kcoley")
-  CXX = clang++
+  CXX = g++
 else
   CXX = g++
 endif
 
-CC = g++
+CC = $(CXX)
 C  = cpp
 
 # Warnings frequently signal eventual errors:
-CXXFLAGS  = `sdl-config --cflags` -g -Wall -Weffc++ -Wextra -O2
-
+#CXXFLAGS  = `sdl-config --cflags` -g -Wall -Weffc++ -Wextra -O2
+CXXFLAGS = -g -Wall
 ifeq ("$(shell uname)", "Darwin")
   LDFLAGS = -L/opt/local/lib -framework Foundation -framework GLUT -framework OpenGL -lGLEW -lm -L/group/dpa/lib -lOpenImageIO
   CFLAGS  = -I/opt/local/include -I/group/dpa/include -g -std=c++0x
 else
   ifeq ("$(shell uname)", "Linux")
-  LDFLAGS = `sdl-config --libs` -lm -lX11 -lGL -lGLU -lglut -lGLEW -L/group/dpa/lib -lOpenImageIO
-  CFLAGS  = -I/group/dpa/include -g -std=c++0x
+  LDFLAGS =  -lm -lX11 -lGL -lGLU -lglut -lGLEW -L/group/dpa/lib -lOpenImageIO -L$(MESHPOTATO_DIR)/lib -lmeshpotato -L/group/dpa/local/openvdb/lib -lopenvdb -lboost_system -lboost_filesystem
+  CFLAGS  = -I/group/dpa/include -g -I $(MESHPOTATO_DIR)/include  
+#  CFLAGS  = -I/group/dpa/include -g -std=c++0x -I $(MESHPOTATO_DIR)/include
   endif
 endif
 

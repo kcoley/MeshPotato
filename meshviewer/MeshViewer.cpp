@@ -36,14 +36,11 @@
 */
 
 #include "MeshViewer.h"
-
+#include "Utility.h"
 // Global Objects
 MeshViewer *viewer;
 Camera     *cam;
 
-void MeshViewer::initMeshPotato() {
-//	mpkernel.loadPlugin("OBJInputPlugin");
-}
 
 // Routine to initialize the state of the program to start-up defaults
 void MeshViewer::setInitialState(){
@@ -143,7 +140,7 @@ void MeshViewer::drawModel(){
 *  Routine to read in data from the specified .obj file
 *  Will populate the respective vectors with the data for later displaying
 */
-void MeshViewer::readFile(char* inName) {
+void MeshViewer::readFile(const char* inName) {
   cout << "Opening " << inName << " ... " << endl;
   ifstream inFile(inName, ifstream::in);
 
@@ -237,6 +234,54 @@ void MeshViewer::readFile(char* inName) {
 
   inFile.close();
   buildVBOs();
+}
+void MeshViewer::readFile(std::string &inName) {
+  Vertex v;
+  mpmesh.loadMesh(inName);
+  std::list<std::vector<std::string> > verts = mpmesh.getVertices();
+  std::list<std::vector<std::string> > norms = mpmesh.getNormals();
+  std::list<std::vector<std::string> > facs  = mpmesh.getFaces();
+  for (std::list<std::vector<std::string> >::iterator iter = verts.begin(); iter != verts.end(); ++iter) {
+	for (std::vector<std::string>::iterator ptr = iter->begin(); ptr != iter->end(); ptr = ptr + 3) {
+		v.x = stringToType<float>(*ptr);
+		v.y = stringToType<float>(*(ptr+1));
+		v.z = stringToType<float>(*(ptr + 2));
+
+	if(v.x > maxX)  maxX = v.x;
+      	if(v.x < minX)  minX = v.x;
+      	if(v.y > maxY)  maxY = v.y;
+      	if(v.y < minY)  minY = v.y;
+      	if(v.z > maxZ)  maxZ = v.z;
+      	if(v.z < minZ)  minZ = v.z;
+	
+		vertices.push_back(v);
+	}
+  }
+  for (std::list<std::vector<std::string> >::iterator iter = norms.begin(); iter != norms.end(); ++iter) {
+	for (std::vector<std::string>::iterator ptr = iter->begin(); ptr != iter->end(); ptr = ptr + 3) {
+		v.x = stringToType<float>(*ptr);
+		v.y = stringToType<float>(*(ptr+1));
+		v.z = stringToType<float>(*(ptr + 2));
+		vertNorms.push_back(v);	
+	}
+  }
+  for (std::list<std::vector<std::string> >::iterator iter = facs.begin(); iter != facs.end(); ++iter) {
+  	Face face;
+	for (std::vector<std::string>::iterator ptr = iter->begin(); ptr != iter->end(); ++ptr) {
+		int index = stringToType<int>(*ptr);
+	        if (filetype == "vdb")	
+		face.vIndexes.push_back(index);	
+		else
+		face.vIndexes.push_back(index - 1);	
+	}
+	faces.push_back(face);
+  }
+  cout << "Number of Vertices: " << vertices.size() << endl;
+  cout << "Number of Normals:  " << vertNorms.size() << endl;
+  cout << "Number of Faces:    " << faces.size() << endl;
+
+  buildVBOs();
+
 }
 
 /* 
@@ -521,7 +566,6 @@ void MeshViewer::turntable() {
 *  image.ppm (can be changed in the code)
 */
 void MeshViewer::writeFile(string basename, string ext, int frame) {
-
   int width  = glutGet(GLUT_WINDOW_WIDTH);
   int height = glutGet(GLUT_WINDOW_HEIGHT);
 
@@ -534,9 +578,9 @@ void MeshViewer::writeFile(string basename, string ext, int frame) {
 
     string filename  = basename;
     string frameNum;
-    if(frame < 10)        frameNum = "000" + to_string(frame);
-    else if(frame < 100)  frameNum = "00"  + to_string(frame);
-    else if(frame < 1000) frameNum = "0"   + to_string(frame);
+    if(frame < 10)        frameNum = "000" + typeToString<int>(frame);
+    else if(frame < 100)  frameNum = "00"  + typeToString<int>(frame);
+    else if(frame < 1000) frameNum = "0"   + typeToString<int>(frame);
 
     filename += "." + frameNum;
     filename += "." + ext;
@@ -578,9 +622,9 @@ void MeshViewer::writeFile(string basename, string ext, int frame) {
 
     string filename  = basename;
     string frameNum;
-    if(frame < 10)        frameNum = "000" + to_string(frame);
-    else if(frame < 100)  frameNum = "00"  + to_string(frame);
-    else if(frame < 1000) frameNum = "0"   + to_string(frame);
+    if(frame < 10)        frameNum = "000" + typeToString(frame);
+    else if(frame < 100)  frameNum = "00"  + typeToString(frame);
+    else if(frame < 1000) frameNum = "0"   + typeToString(frame);
 
     filename += "." + frameNum;
     filename += "." + ext;
@@ -782,8 +826,12 @@ void MeshViewer::handleKey(unsigned char key, int x, int y){
 *  and initialize viewing and model parameters
 */
 void MeshViewer::initialize(char* inName){
+  std::string strFile(inName);
 
-  readFile(inName);
+//  readFile(inName);
+  if (strFile.find("obj")) filetype = "obj";
+  else if (strFile.find("vdb")) filetype = "vdb";
+  readFile(strFile);
   axisLength = ((abs(maxX - minX) + abs(maxY - minY) + abs(maxZ - minZ))/3) * 1.2;
   Depth = ((fabs(maxX - minX) + fabs(maxY - minY) + fabs(maxZ - minZ))/3) * 2;
 
@@ -844,18 +892,17 @@ void myHandleMotion(int x, int y) {
 
 // Main program to create window, setup callbacks, and initiate GLUT
 int main(int argc, char* argv[]) {
-
+  
   if(argc < 2) {
     cout << "Usage: ./meshviewer [filename.obj]"  << endl;
     exit(0);
   }
 
   string arg(argv[1]);
-
-  if(arg.find(".obj") == string::npos) {
-    cout << "Please provide a .obj file to read in." << endl;
-    exit(0);
-  }
+//  if(arg.find(".obj") == string::npos) {
+//    cout << "Please provide a .obj file to read in." << endl;
+//    exit(0);
+//  }
 
   viewer = new MeshViewer();
 
