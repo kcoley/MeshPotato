@@ -1,6 +1,7 @@
 #ifndef __MPVOLUME_H__
 #define __MPVOLUME_H__
 #include "MPUtils/Vector.h"
+#include "MPUtils/Color.h"
 #include <boost/shared_ptr.hpp>
 namespace MeshPotato {
 //! Handles Volumetric Operations on Meshes
@@ -33,10 +34,10 @@ class Volume {
 };
 
 
-typedef MeshPotato::MPVolume::Volume<float>* VolumeFloatPtr;
-//typedef MPVolume<Color>* VolumeColorPtr;
-typedef MeshPotato::MPVolume::Volume<MeshPotato::MPUtils::MPVec3>* VolumeVectorPtr;
-typedef MeshPotato::MPVolume::Volume<MeshPotato::MPUtils::MPMat3>* VolumeMatrixPtr;
+typedef boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > VolumeFloatPtr;
+typedef boost::shared_ptr<MeshPotato::MPVolume::Volume<MeshPotato::MPUtils::Color> > VolumeColorPtr;
+typedef boost::shared_ptr<MeshPotato::MPVolume::Volume<MeshPotato::MPUtils::MPVec3> > VolumeVectorPtr;
+typedef boost::shared_ptr<MeshPotato::MPVolume::Volume<MeshPotato::MPUtils::MPMat3> > VolumeMatrixPtr;
 }
 }
 #endif // __MPVOLUME_H__

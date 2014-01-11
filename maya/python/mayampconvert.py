@@ -93,6 +93,9 @@ def convert():
 	runExample(float(voxelSize), str(filePath))
 	if cmds.checkBox("vdbViewCheckBox", query = True, value = True):
 		os.system("vdb_view " + str(filePath) + " & ")
+	if cmds.checkBox("meshViewerCheckBox", query = True, value = True):
+		os.system("meshviewer " + str(filePath) + " & ")
+
 
 def browse():
 	newfilepath = cmds.fileDialog2(fm=0, okc='Save file as')
@@ -120,8 +123,13 @@ class MPConvert:
 		voxelSize = self.getVoxelSize()
 		filePath = self.getFilePath()
 		runExample(voxelSize, filePath)
+		print "Done conversion"
 		if useVDBView():
+			print "Using vdb_view"
 			os.system("vdb_view " + filePath + " & ")
+		if useMeshViewer():
+			print "Using meshviewer"
+			os.system("meshviewer " + filePath + " & ")
 	def browse():
 		newfilepath = cmds.fileDialog2(fm=0, okc='Save file as')
 		cmds.textField("filePathField", e=1, text=str(newfilepath[0]))
@@ -131,3 +139,5 @@ class MPConvert:
 		return cmds.textField("filePathField", query = True, text = True)
 	def useVDBView():
 		return cmds.checkBox("vdbViewCheckBox", query = True, value = True)	
+	def useMeshViewer():
+		return cmds.checkBox("meshViewerCheckBox", query = True, value = True)	
