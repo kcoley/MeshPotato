@@ -1,3 +1,5 @@
+#ifndef __FIELD_ALGEBRA_H__
+#define __FIELD_ALGEBRA_H__
 #include "MPVolume.h"
 
 namespace MeshPotato {
@@ -6,7 +8,7 @@ template <typename T, typename FieldType>
 class AddVolume: public MeshPotato::MPVolume::Volume<T> {
 public:
 AddVolume(const boost::shared_ptr<FieldType> _f1, const boost::shared_ptr<FieldType> _f2) : f1(_f1), f2(_f2) {}
-	static boost::shared_ptr<Volume<float> > create(const boost::shared_ptr<FieldType> _f1, const boost::shared_ptr<FieldType> _f2) {
+	static boost::shared_ptr<Volume<float> > Ptr(const boost::shared_ptr<FieldType> _f1, const boost::shared_ptr<FieldType> _f2) {
                                         return boost::shared_ptr<Volume<float> >(new AddVolume<T, FieldType>(_f1, _f2));
         }
 
@@ -18,3 +20,4 @@ private:
 
 }
 }
+#endif // __FIELD_ALGEBRA_H__

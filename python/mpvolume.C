@@ -57,20 +57,20 @@ BOOST_PYTHON_MODULE(mpvolume) {
 	;
 	class_<AddVolume<float, Volume<float> >,  bases<MPVolumeWrap> >("AddVolume", no_init)
 		.def(init<boost::shared_ptr<Volume<float> >, boost::shared_ptr<Volume<float> > >())
-		.def("ptr", &AddVolume<float, Volume<float> >::create)
+		.def("ptr", &AddVolume<float, Volume<float> >::Ptr)
 		.staticmethod("ptr")
 		.def("eval", &AddVolume<float, Volume<float> >::eval)
 		.def("grad", &AddVolume<float, Volume<float> >::grad)
 	;
 	class_<ImplicitSphere, bases<MPVolumeWrap> >("ImplicitSphere", no_init)
 		.def(init<float, MeshPotato::MPUtils::MPVec3>() )
-		.def("ptr", &ImplicitSphere::create)
+		.def("ptr", &ImplicitSphere::Ptr)
 		.staticmethod("ptr")
 		.def("eval", &ImplicitSphere::eval)
 	;
 	class_<Clamp<float>, bases<MPVolumeWrap> >("Clamp", no_init)
 		.def(init<boost::shared_ptr<Volume<float> >, float, float>())
-		.def("ptr", &MeshPotato::MPVolume::Clamp<float>::create)
+		.def("ptr", &MeshPotato::MPVolume::Clamp<float>::Ptr)
 		.staticmethod("ptr")
 		.def("eval", &MeshPotato::MPVolume::Clamp<float>::eval)
 		.def("grad", &MeshPotato::MPVolume::Clamp<float>::grad)

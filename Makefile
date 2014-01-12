@@ -13,8 +13,8 @@ OBJECTS=$(SOURCES:.C=.o)
 PLUGINS=plugins
 VDBINCLUDE=/group/dpa/local/include
 VDBLIB=/group/dpa/local/openvdb/lib
-INCLUDES= -I ./include -I $(VDBINCLUDE) -I $(BOOST_INC) 
-LINKS= -L$(VDBLIB) -lopenvdb -L$(BOOST_LIB) -lboost_filesystem 
+INCLUDES= -I ./include -I $(VDBINCLUDE) -I $(BOOST_INC) -I /group/dpa/include 
+LINKS= -L$(VDBLIB) -lopenvdb -L$(BOOST_LIB) -lboost_filesystem -L/group/dpa/lib -lOpenImageIO 
 MESHCONVERTERLIB=lib/libmeshpotato.a
 MESHPOTATOSHAREDLIB=lib/libmeshpotato.so
 PLUGINFILES=plugins/*/*.C

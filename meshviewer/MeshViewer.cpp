@@ -42,6 +42,63 @@ MeshViewer *viewer;
 Camera     *cam;
 
 
+void do_lights()
+{
+float light_ambient[] = { 0.0, 0.0, 0.0, 0.0 };
+float light_diffuse[] = { 1.0, 1.0, 1.0, 0.0 };
+float light_specular[] = { 1.0, 1.0, 1.0, 0.0 };
+float light_position[] = { 1.5, 2.0, 2.0, 1.0 };
+float light_position1[] = { -10.5, 2.0, 2.0, 1.0 };
+float light_position2[] = { 1.5, 2.0, -2.0, 1.0 };
+float light_direction[] = { -1.5, -2.0, -2.0, 1.0};
+float light_direction1[] = { 1.5, 2.0, 2.0, 1.0};
+
+glLightModelfv(GL_LIGHT_MODEL_AMBIENT,light_ambient);
+
+glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,1);
+
+glLightfv(GL_LIGHT0,GL_AMBIENT,light_ambient);
+glLightfv(GL_LIGHT0,GL_DIFFUSE,light_diffuse);
+glLightfv(GL_LIGHT0,GL_SPECULAR,light_specular);
+glLightf(GL_LIGHT0,GL_SPOT_EXPONENT,1.0);
+glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,180.0);
+glLightf(GL_LIGHT0,GL_CONSTANT_ATTENUATION,0.5);
+glLightf(GL_LIGHT0,GL_LINEAR_ATTENUATION,0.0);
+glLightf(GL_LIGHT0,GL_QUADRATIC_ATTENUATION,0.4);
+glLightfv(GL_LIGHT0,GL_POSITION,light_position);
+glLightfv(GL_LIGHT0,GL_SPOT_DIRECTION,light_direction);
+
+glLightfv(GL_LIGHT1,GL_AMBIENT,light_ambient);
+glLightfv(GL_LIGHT1,GL_DIFFUSE,light_diffuse);
+glLightfv(GL_LIGHT1,GL_SPECULAR,light_specular);
+glLightf(GL_LIGHT1,GL_SPOT_EXPONENT,1.0);
+glLightf(GL_LIGHT1,GL_SPOT_CUTOFF,180.0);
+glLightf(GL_LIGHT1,GL_CONSTANT_ATTENUATION,0.5);
+glLightf(GL_LIGHT1,GL_LINEAR_ATTENUATION,0.0);
+glLightf(GL_LIGHT1,GL_QUADRATIC_ATTENUATION,0.4);
+glLightfv(GL_LIGHT1,GL_POSITION,light_position1);
+glLightfv(GL_LIGHT1,GL_SPOT_DIRECTION,light_direction);
+
+glLightfv(GL_LIGHT2,GL_AMBIENT,light_ambient);
+glLightfv(GL_LIGHT2,GL_DIFFUSE,light_diffuse);
+glLightfv(GL_LIGHT2,GL_SPECULAR,light_specular);
+glLightf(GL_LIGHT2,GL_SPOT_EXPONENT,1.0);
+glLightf(GL_LIGHT2,GL_SPOT_CUTOFF,180.0);
+glLightf(GL_LIGHT2,GL_CONSTANT_ATTENUATION,0.5);
+glLightf(GL_LIGHT2,GL_LINEAR_ATTENUATION,0.0);
+glLightf(GL_LIGHT2,GL_QUADRATIC_ATTENUATION,0.4);
+glLightfv(GL_LIGHT2,GL_POSITION,light_position2);
+glLightfv(GL_LIGHT2,GL_SPOT_DIRECTION,light_direction);
+
+glEnable(GL_LIGHTING);
+glEnable(GL_LIGHT0);
+glEnable(GL_LIGHT1);
+glEnable(GL_LIGHT2);
+}
+
+
+
+
 // Routine to initialize the state of the program to start-up defaults
 void MeshViewer::setInitialState(){
 
@@ -662,9 +719,9 @@ void MeshViewer::writeFile(string basename, string ext, int frame) {
 // Display callback
 void MeshViewer::doDisplay(){
   // create a white light which will come from the upper left
-  const float light_direction[4] = {-1, 1, 1, 0};
-  const float light_color[4] = {1, 1, 1, 1};
-  const float ambient_color[4] = {0.1, 0.1, 0.1, 1};
+//  const float light_direction[4] = {-1, 1, 1, 0};
+//  const float light_color[4] = {1, 1, 1, 1};
+//  const float ambient_color[4] = {0.1, 0.1, 0.1, 1};
 
   // clear window to background color and clear depth buffer if shading
   if(shadingMode != SHADED) {
@@ -684,10 +741,10 @@ void MeshViewer::doDisplay(){
 
   glRotatef(angle, 0, 1, 0);
 
-  glLightfv(GL_LIGHT0, GL_POSITION, light_direction);
-  glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_color);
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color);
-  glLightfv(GL_LIGHT0, GL_SPECULAR, light_color);
+//  glLightfv(GL_LIGHT0, GL_POSITION, light_direction);
+//  glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_color);
+//  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color);
+//  glLightfv(GL_LIGHT0, GL_SPECULAR, light_color);
 
   // draw axes if required
   glDisable(GL_LIGHTING);
@@ -698,10 +755,13 @@ void MeshViewer::doDisplay(){
   if(shadingMode != SHADED) {
     glDisable(GL_LIGHTING);
     glDisable(GL_LIGHT0);
+    glDisable(GL_LIGHT1);
   }
   else {
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);    
+    glEnable(GL_LIGHT1);    
+    do_lights();
   }
 ///*
 
@@ -845,7 +905,6 @@ void MeshViewer::initialize(char* inName){
   // initialize modelview matrix to identity
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-
   // specify window clear (background) color to be black
   glClearColor(0, 0, 0, 1);
 
