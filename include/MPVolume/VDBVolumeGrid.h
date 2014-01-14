@@ -8,19 +8,14 @@ namespace MeshPotato {
 	namespace MPVolume {
 		class VDBVolumeGrid: public MeshPotato::MPVolume::Volume<float> {
 			public:
-				static boost::shared_ptr<Volume<float> > Ptr(const openvdb::GridBase::Ptr& _grid) {
+				static boost::shared_ptr<Volume<float> > Ptr(const openvdb::FloatGrid::Ptr _grid) {
 					return boost::shared_ptr<Volume<float> >(new VDBVolumeGrid(_grid)); 
 				}
-				VDBVolumeGrid(const openvdb::GridBase::Ptr& _grid) : grid(_grid) {
-				}
-				VDBVolumeGrid() : grid() {
-					grid = openvdb::FloatGrid::create(2.0);
-				}
+				VDBVolumeGrid(const openvdb::FloatGrid::Ptr _grid) : grid(_grid), interpolator(grid->constTree(), grid->transform()) {}
+
 				openvdb::GridBase::Ptr getVDBGrid() const { return grid; }
 				~VDBVolumeGrid() {}
 				virtual const float eval(const MPUtils::MPVec3 &P) const {
-					openvdb::FloatGrid::Ptr inputGrid = openvdb::gridPtrCast<openvdb::FloatGrid>(grid);
-					openvdb::tools::GridSampler<openvdb::FloatTree, openvdb::tools::QuadraticSampler> interpolator(inputGrid->constTree(), inputGrid->transform());			
 					return -interpolator.wsSample(P);
 
 				}
@@ -28,7 +23,8 @@ namespace MeshPotato {
 				}
 				virtual const float defaultValue() const {}
 			private:
-				openvdb::GridBase::Ptr grid;
+				openvdb::FloatGrid::Ptr grid;
+				openvdb::tools::GridSampler<openvdb::FloatTree, openvdb::tools::QuadraticSampler> interpolator;			
 
 		};
 	}

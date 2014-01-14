@@ -19,7 +19,7 @@ all: $(PLUGINFILES)
 	$(CC) -fPIC -c -I ../../include OBJInputPlugin.C -o mpobjinputplugin.o
 	$(CC) -shared -Wl,-soname,$(PLUGINNAME) -o $(PLUGINNAME) mpobjinputplugin.o
 
-pyobjplugin: $(PYOBJMESH).C
+python: $(PYOBJMESH).C
 	$(CC) $(CFLAGS) -I $(PYTHON_INCLUDE) $(PYOBJMESH).C -o $(PYOBJMESH).o
 	$(CC) -shared -Wl,-soname,$(PYOBJMESH).so $(PYOBJMESH).o -lpython2.7 -lboost_python -lboost_thread -lboost_system -lboost_filesystem -L./lib -L/group/dpa/local/openvdb/lib -L$(HOME)/projects/MeshPotato/lib -lmeshpotato -lopenvdb /group/dpa/local/openvdb/python/lib/python2.7/pyopenvdb.so -lboost_system -o $(PYOBJMESH).so
 	cp $(PYOBJMESH).so ../../pymeshpotato/
