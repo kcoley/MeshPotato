@@ -13,8 +13,15 @@ std::list<std::vector<std::string> > getPythonList(boost::python::list& ls) {
                         vec.push_back(result);
                 }
                 items.push_back(vec);
-                std::cout << "###################################################" << std::endl;
         }
         return items;
 }
-
+template <typename T>
+std::list<T> getListFromPython(boost::python::list& ls) {
+        std::list<T> items;
+        for (unsigned int i = 0; i < len(ls); ++i) {
+                T listing = (boost::python::extract<T>(ls[i]));
+		items.push_back(listing);
+        }
+        return items;
+}

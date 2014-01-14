@@ -51,6 +51,15 @@ object mpmesh2() {
 
 BOOST_PYTHON_MODULE(mpmesh) {
 	openvdb::initialize();
+	class_<MeshPotato::MPUtils::Face>("Face", init<>())
+		.def(init<std::list<int>, std::list<int>, std::list<int> >())
+		.def_readwrite("vIndexes", &MeshPotato::MPUtils::Face::vIndexes)
+		.def_readwrite("nIndexes", &MeshPotato::MPUtils::Face::nIndexes)
+		.def_readwrite("tIndexes", &MeshPotato::MPUtils::Face::tIndexes)
+	;
+	class_<std::list<int> >("mp_int_list")
+		.def("getListFromPython", &getListFromPython<int>)
+	;
 	class_<std::list<std::vector<std::string> > >("list_vec_str")
                 .def("getPythonList", &getPythonList)
         ;

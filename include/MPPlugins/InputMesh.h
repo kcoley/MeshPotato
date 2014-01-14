@@ -16,6 +16,9 @@
 #include <map>
 #include <list>
 #include <memory>
+#include "MPUtils/Face.h"
+#include "MPUtils/Vertex.h"
+#include "MPUtils/Normal.h"
 namespace MyEngine {
 
   // ----------------------------------------------------------------------- //
