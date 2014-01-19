@@ -6,6 +6,7 @@ MeshObject::MeshObject() : theKernel(), inputMesh(), outputMesh() {
    std::cout << "Default constructor" << std::endl;
     theKernel.loadPlugin("OBJInputPlugin");
     theKernel.loadPlugin("VDBInputPlugin");
+    theKernel.loadPlugin("ABCInputPlugin");
     theKernel.loadPlugin("VDBOutputPlugin");
     theKernel.loadPlugin("OBJOutputPlugin");
     inputMesh = &theKernel.getInputMesh();
