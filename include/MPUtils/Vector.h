@@ -12,7 +12,7 @@ namespace MeshPotato {
 	//! Utilities 
 	namespace MPUtils {
 		//! MPUtilities
-		typedef openvdb::math::Vec3<float> MPVec3;
+		typedef openvdb::math::Vec3d  MPVec3;
 		typedef openvdb::math::Mat3<float> MPMat3;
 		typedef openvdb::math::Ray<double> MPRay;	
 		

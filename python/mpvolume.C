@@ -2,7 +2,7 @@
 #include <MPVolume/MPVolume.h>
 #include <MPVolume/VDBVolumeGrid.h>
 #include <MPVolume/FieldAlgebra.h>
-#include <MPVolume/VDBVolumeUtils.h>
+#include <MPVolume/VolumeUtils.h>
 #include <MPVolume/ImplicitShape.h>
 
 using namespace boost::python;

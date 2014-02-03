@@ -1,4 +1,4 @@
-CC=clang++
+CC=g++
 CFLAGS=-c -Wall -fPIC
 LDFLAGS=
 SOURCES=$(wildcard src/*.C)

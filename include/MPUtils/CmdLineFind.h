@@ -77,13 +77,13 @@ class CmdLineFind
    }
 
 
-   const Vector find( const std::string& tag, const Vector deflt, const std::string help = "no help" )
+   const MeshPotato::MPUtils::MPVec3 find( const std::string& tag, const MeshPotato::MPUtils::MPVec3 deflt, const std::string help = "no help" )
    {
-      Vector result = deflt;
+      MeshPotato::MPUtils::MPVec3 result = deflt;
       std::vector<size_t> locate = find( tag );
       if( !locate.empty() && locate[0] < items.size()-1 )
       {
-         result = Vector(   atof( items[locate[0]+1].c_str() ),   atof( items[locate[0]+2].c_str() ),   atof( items[locate[0]+3].c_str() )  );
+         result = MeshPotato::MPUtils::MPVec3(   atof( items[locate[0]+1].c_str() ),   atof( items[locate[0]+2].c_str() ),   atof( items[locate[0]+3].c_str() )  );
       }
       registerTag( tag, deflt, result, help );
       return result;

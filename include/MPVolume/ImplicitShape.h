@@ -10,9 +10,8 @@ namespace MeshPotato {
                                         return boost::shared_ptr<ImplicitSphere>(new ImplicitSphere(_R, _C));
                                 }
 
-				typedef typename GradType<float>::GType volumeGradType;
 				ImplicitSphere(const float &_R, const MeshPotato::MPUtils::MPVec3 &_C) : R(_R), C(_C) {}
-				virtual const float eval(const MeshPotato::MPUtils::MPVec3 &P) const { 
+				virtual const volumeDataType eval(const MeshPotato::MPUtils::MPVec3 &P) const { 
 					return R - (P - C).length(); 
 				}
 				virtual const volumeGradType grad(const MeshPotato::MPUtils::MPVec3& P) const {}

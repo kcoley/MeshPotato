@@ -27,6 +27,7 @@ int main() {
 	boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > grid4 = MeshPotato::MPVolume::VDBVolumeGrid::Ptr(vdbgrid);
 	boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > grid5 = MeshPotato::MPVolume::VDBVolumeGrid::Ptr(sphere);
 		
+	std::cout << "Printing" << std::endl;
 	boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > mysphere = MeshPotato::MPVolume::ImplicitSphere::Ptr(10, MPVec3(0,0,0));
 	boost::shared_ptr<MeshPotato::MPVolume::ImplicitSphere> mysphere2 = MeshPotato::MPVolume::ImplicitSphere::Ptr(10, MPVec3(50,0,0));
 	boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > clamp_sphere1 = MeshPotato::MPVolume::Clamp<float>::Ptr(mysphere, 0, 100);
@@ -39,8 +40,7 @@ int main() {
 	openvdb::CoordBBox indexBB(openvdb::Coord(-90,-90,-90), openvdb::Coord(90,90,90));
 	openvdb::FloatGrid::Ptr newvdbgrid = MeshPotato::MPVolume::makeVDBGrid(add, indexBB, 1.0f);
 	
-//	MeshPotato::MPVolume::RayMarcher marcher1(grid5, add2, 0.5f, 1.0f);
-	MeshPotato::MPVolume::VDBRayMarcher marcher(newvdbgrid, add2, 0.1f, 1.0f);
+	MeshPotato::MPVolume::VDBRayMarcher marcher(newvdbgrid, add2, 0.5f, 1.0f);
 	std::cout << "marching" << std::endl;
 //	MeshPotato::MPUtils::MPRay ray(MeshPotato::MPUtils::MPVec3(0,0,0), MeshPotato::MPUtils::MPVec3(1,1,1));
 //   	MeshPotato::MPUtils::Color color = marcher.L(ray);	
