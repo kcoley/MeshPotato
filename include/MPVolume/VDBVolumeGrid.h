@@ -1,3 +1,5 @@
+#ifndef __VDBVOLUMEGRID_H__
+#define __VDBVOLUMEGRID_H__
 #include "MPUtils/Vector.h"
 #include "MPVolume/MPVolumeGrid.h"
 #include <openvdb/Grid.h>
@@ -30,3 +32,4 @@ namespace MeshPotato {
 	}
 
 }
+#endif // __VDBVOLUMEGRID_H__

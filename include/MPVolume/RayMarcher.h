@@ -6,6 +6,7 @@
 #include <openvdb/tools/Interpolation.h>
 #include <openvdb/tools/RayIntersector.h>
 #include <MPVolume/FrustumGrid.h>
+#include "MPUtils/DeepImage.h"
 using namespace MeshPotato::MPUtils;
 namespace MeshPotato {
 namespace MPVolume {
@@ -57,6 +58,56 @@ MeshPotato::MPUtils::Color L(MPRay &ray) {
 
 	}
 	return Color(_L[0],_L[1],_L[2],1.0 - _T);
+}
+MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray) {
+	Color _L = Color(0,0,0,0);
+	float deltaT, deltaS;
+	float _T = 1.0f;
+	float time = 0.0f;	
+	float steptime = 0.0f;	
+	MeshPotato::MPUtils::DeepPixelBuffer deepPixelBuf;
+
+	if (!intersector.setWorldRay(ray)) return deepPixelBuf;
+	double t0 = 0, t1 = 0;
+	while (int n = intersector.march(t0, t1)) {
+		if (time < t0)
+			time = t0;
+		while (time < t1) {
+				MPVec3 P = intersector.getWorldPos(time);
+				float density = interpolator.wsSample(P);
+				if (n == 2) // leaf node
+					deltaS = step;
+				else // constant tile
+					deltaS = step;//t1 - time;
+				if (density > 0) {
+					deltaT = exp(-K*density*deltaS);
+					Color CS,CI,CM;
+					CM.set(1,1,1,1);
+				//	Color CS = density * (Color(1.0, 1.0, 1.0, 1.0));
+	                      //          Color CS = density * (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P) * K));
+	             //   Color CS = (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P) * K)); 
+	                CI = (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P)));
+			MeshPotato::MPUtils::DeepPixel deepPixel;
+	                double test = dsm->eval(P);
+
+	                CS.set(CI.X()*CM.Y(),CI.Y()*CM.Y(),CI.Z()*CM.Z(),CM.W());
+	            
+				//	Color CS = density * (Color(1.0, 1.0, 1.0, 1.0));
+					_L += ((CS)*_T*(1 - deltaT));
+					_T *=deltaT;
+					deepPixel.color = _L;
+					deepPixel.color[3] = 1.0 - _T;
+					deepPixel.depth = P.z();
+//					std::cout << "before push back" << std::endl;
+					deepPixelBuf.push_back(deepPixel);
+//					std::cout << "pushed back" << std::endl;
+					if (_T < 0.01) return deepPixelBuf;
+				}
+				time += deltaS;
+		}
+
+	}
+	return deepPixelBuf;
 }
 private:
 openvdb::FloatGrid::Ptr grid;

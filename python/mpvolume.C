@@ -4,7 +4,7 @@
 #include <MPVolume/FieldAlgebra.h>
 #include <MPVolume/VolumeUtils.h>
 #include <MPVolume/ImplicitShape.h>
-
+#include <MPVolume/RayMarcher.h>
 using namespace boost::python;
 using namespace MeshPotato::MPVolume;
 using namespace MeshPotato::MPUtils;
@@ -74,7 +74,9 @@ BOOST_PYTHON_MODULE(mpvolume) {
 		.staticmethod("ptr")
 		.def("eval", &MeshPotato::MPVolume::Clamp<float>::eval)
 		.def("grad", &MeshPotato::MPVolume::Clamp<float>::grad)
-	;	
+	;
+//	class_<VDBRayMarcher>("VDBRayMarcher", no_init)
+//		.def(init<	
 	def("makeVDBGrid", &MeshPotato::MPVolume::makeVDBGrid);
 	def("getMPVolumeFromPyObject", &getMPVolumeFromPyObject);
 	def("getVDBCoord", &getVDBCoord);

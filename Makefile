@@ -4,6 +4,8 @@ LDFLAGS=
 SOURCES=$(wildcard src/*.C)
 BOOST_INC = /usr/include
 BOOST_LIB = /usr/lib
+OIIO_INC= /group/dpa/local/oiio/include
+OIIO_LIB= /group/dpa/local/oiio/lib
 
 PYTHON_VERSION = 2.7
 PYTHON_INCLUDE = /usr/include/python$(PYTHON_VERSION)
@@ -13,8 +15,8 @@ OBJECTS=$(SOURCES:.C=.o)
 PLUGINS=plugins
 VDBINCLUDE=/group/dpa/local/include
 VDBLIB=/group/dpa/local/openvdb/lib
-INCLUDES= -I ./include -I $(VDBINCLUDE) -I $(BOOST_INC) -I /group/dpa/include 
-LINKS= -L$(VDBLIB) -lopenvdb -L$(BOOST_LIB) -lboost_filesystem -L/group/dpa/lib -lOpenImageIO 
+INCLUDES= -I ./include -I $(VDBINCLUDE) -I $(BOOST_INC) -I $(OIIO_INC) -I /group/dpa/include 
+LINKS= -L$(VDBLIB) -lopenvdb -L$(BOOST_LIB) -L$(OIIO_LIB) -lboost_filesystem -L/group/dpa/lib -lOpenImageIO 
 MESHCONVERTERLIB=lib/libmeshpotato.a
 MESHPOTATOSHAREDLIB=lib/libmeshpotato.so
 PLUGINFILES=plugins/*/*.C
