@@ -209,7 +209,6 @@ void writeOIIOImage( const char* fname, Image& img, const map<string,string>& la
 
 void writeOIIOImage( const char* fname, DeepImage& img, float brightness, float gamma ) {
 	// Prepare the spec for ’half’ RGBA, ’float’ z
-	std::string filename = "deepOutputTest.exr";
 	int xres = img.Width(), yres = img.Height();
 	int nchannels = img.Depth();
 	ImageSpec spec (xres, yres, nchannels);
@@ -219,12 +218,11 @@ void writeOIIOImage( const char* fname, DeepImage& img, float brightness, float 
 	spec.channelnames[spec.z_channel] = "Z";
 	spec.channelformats.assign (channeltypes+0, channeltypes+nchannels);
 	spec.deep = true;
-	// Prepare the data (sorry, complicated, but need to show the gist)
 	DeepData deepdata;
 	deepdata.init (xres*yres, nchannels, channeltypes+0, channeltypes+nchannels);
 	for (int y = 0; y < yres; ++y)
 		for (int x = 0; x < xres; ++x)
-			deepdata.nsamples[y*xres+x] = img.value(x,img.Height() - y - 1).size();//...num samples for that pixel...;
+			deepdata.nsamples[y*xres+x] = img.value(x,img.Height() - y - 1).size();
 	deepdata.alloc (); // allocate pointers and data
 	int pixel = 0;
 	for (int y = 0; y < yres; ++y) {

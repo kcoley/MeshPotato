@@ -86,7 +86,7 @@ MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray) {
 				//	Color CS = density * (Color(1.0, 1.0, 1.0, 1.0));
 	                      //          Color CS = density * (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P) * K));
 	             //   Color CS = (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P) * K)); 
-	                CI = (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P)));
+	                CI = density*(Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P)));
 			MeshPotato::MPUtils::DeepPixel deepPixel;
 	                double test = dsm->eval(P);
 
