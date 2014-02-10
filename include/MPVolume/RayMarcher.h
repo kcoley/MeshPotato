@@ -97,7 +97,7 @@ MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray) {
 					_T *=deltaT;
 					deepPixel.color = _L;
 					deepPixel.color[3] = 1.0 - _T;
-					deepPixel.depth = P.z();
+					deepPixel.depth = -time;
 //					std::cout << "before push back" << std::endl;
 					deepPixelBuf.push_back(deepPixel);
 //					std::cout << "pushed back" << std::endl;
