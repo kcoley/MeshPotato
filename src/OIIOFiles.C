@@ -213,7 +213,7 @@ void writeOIIOImage( const char* fname, DeepImage& img, float brightness, float 
 	int nchannels = img.Depth();
 	ImageSpec spec (xres, yres, nchannels);
 	TypeDesc channeltypes[] = { TypeDesc::HALF, TypeDesc::HALF,
-		TypeDesc::HALF, TypeDesc::HALF, TypeDesc::FLOAT };
+		TypeDesc::HALF, TypeDesc::HALF, TypeDesc::FLOAT, TypeDesc::FLOAT };
 	spec.z_channel = 4;
 	spec.channelnames[spec.z_channel] = "Z";
 	spec.channelformats.assign (channeltypes+0, channeltypes+nchannels);
@@ -226,7 +226,6 @@ void writeOIIOImage( const char* fname, DeepImage& img, float brightness, float 
 	deepdata.alloc (); // allocate pointers and data
 	int pixel = 0;
 	for (int y = 0; y < yres; ++y) {
-//	for (int y = yres - 1; y >= 0; y = y - 1) {
 		for (int x = 0; x < xres; ++x, ++pixel) {
 			DeepPixelBufferVector pixels = img.getDeepPixelBufferVector(x,img.Height() - y - 1);
 			for (int chan = 0; chan < nchannels; ++chan) {
@@ -238,7 +237,7 @@ void writeOIIOImage( const char* fname, DeepImage& img, float brightness, float 
 				} else {
 					// z channel -- FLOAT data
 					for (int samp = 0; samp < deepdata.nsamples[pixel]; ++samp)
-						((float *)ptr)[samp] = pixels[samp].depth;//...value...;
+						((float *)ptr)[samp] = pixels[samp].depth_front;//...value...;
 				}
 			}
 		}

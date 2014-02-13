@@ -12,7 +12,8 @@ namespace MeshPotato {
 
 		struct DeepPixel{
 			Color  color;
-			float depth;
+			float depth_front;
+			float depth_back;
 		};
 		typedef std::list<DeepPixel> DeepPixelBuffer;
 		typedef std::vector<DeepPixel> DeepPixelBufferVector;

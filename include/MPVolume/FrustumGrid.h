@@ -13,7 +13,13 @@ namespace MPVolume {
 class FrustumGrid : public Volume<float> {
 public:
 	static boost::shared_ptr<FrustumGrid > Ptr(boost::shared_ptr<MeshPotato::MPUtils::Camera> _cam, openvdb::BBoxd _bbox, openvdb::Coord::ValueType x_count=100, openvdb::Coord::ValueType z_count=100) { return boost::shared_ptr<FrustumGrid >(new FrustumGrid(_cam, _bbox));}
-	FrustumGrid(boost::shared_ptr<MeshPotato::MPUtils::Camera> _cam, openvdb::BBoxd _bbox) : cam(_cam), bbox(_bbox), grid(openvdb::FloatGrid::create(0)), frustumTransform(cam->createFrustumTransform(bbox)), interpolator(grid->constTree(), *frustumTransform), accessor(grid->getAccessor()) {
+	FrustumGrid(boost::shared_ptr<MeshPotato::MPUtils::Camera> _cam, openvdb::BBoxd _bbox) : 
+	cam(_cam), 
+	bbox(_bbox), 
+	grid(openvdb::FloatGrid::create(0)), 
+	frustumTransform(cam->createFrustumTransform(bbox)), 
+	interpolator(grid->constTree(), *frustumTransform), 
+	accessor(grid->getAccessor()) {
 		grid->setTransform(frustumTransform);
 	}
 	virtual const float eval(const MeshPotato::MPUtils::MPVec3 &P) const {
@@ -75,6 +81,7 @@ public:
 
 	}
 		const void dsm(openvdb::FloatGrid::Ptr density_grid, float K) {
+		std::cout << "DO NOT USE" << std::endl;
 		// Set the intersector to be the vdb density grid (assuming fog volume)
 		openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> intersector(*density_grid);
 		// set the interpolator to the vdb density grid (assuming fog volume)

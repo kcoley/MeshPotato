@@ -43,14 +43,13 @@ MeshPotato::MPUtils::Color L(MPRay &ray) {
 	                      //          Color CS = density * (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P) * K));
 	             //   Color CS = (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P) * K)); 
 	                CI = (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P)));
-	                double test = dsm->eval(P);
 
 	                CS.set(CI.X()*CM.Y(),CI.Y()*CM.Y(),CI.Z()*CM.Z(),CM.W());
 	            
 				//	Color CS = density * (Color(1.0, 1.0, 1.0, 1.0));
 					_L += ((CS)*_T*(1 - deltaT));
 					_T *=deltaT;
-					if (_T < 0.01) return Color(_L[0],_L[1],_L[2],1.0 - _T);
+					if (_T < 0.000001) return Color(_L[0],_L[1],_L[2],1.0 - _T);
 				}
 				time += deltaS;
 
@@ -59,10 +58,9 @@ MeshPotato::MPUtils::Color L(MPRay &ray) {
 	}
 	return Color(_L[0],_L[1],_L[2],1.0 - _T);
 }
-MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray) {
-	Color _L = Color(0,0,0,0);
+MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray, MeshPotato::MPUtils::Camera &cam) {
+//	Color _L = Color(0,0,0,0);
 	float deltaT, deltaS;
-	float _T = 1.0f;
 	float time = 0.0f;	
 	float steptime = 0.0f;	
 	MeshPotato::MPUtils::DeepPixelBuffer deepPixelBuf;
@@ -73,6 +71,7 @@ MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray) {
 		if (time < t0)
 			time = t0;
 		while (time < t1) {
+			Color _L = Color(0,0,0,0);
 				MPVec3 P = intersector.getWorldPos(time);
 				float density = interpolator.wsSample(P);
 				if (n == 2) // leaf node
@@ -86,22 +85,20 @@ MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray) {
 				//	Color CS = density * (Color(1.0, 1.0, 1.0, 1.0));
 	                      //          Color CS = density * (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P) * K));
 	             //   Color CS = (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P) * K)); 
-	                CI = density*(Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P)));
+	                CI = (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P)));
 			MeshPotato::MPUtils::DeepPixel deepPixel;
-	                double test = dsm->eval(P);
+	                double test = exp(-dsm->eval(P));
 
 	                CS.set(CI.X()*CM.Y(),CI.Y()*CM.Y(),CI.Z()*CM.Z(),CM.W());
 	            
 				//	Color CS = density * (Color(1.0, 1.0, 1.0, 1.0));
-					_L += ((CS)*_T*(1 - deltaT));
-					_T *=deltaT;
+					_L += ((CS)*(1 - deltaT));
 					deepPixel.color = _L;
-					deepPixel.color[3] = 1.0 - _T;
-					deepPixel.depth = -time;
+					deepPixel.color[3] = 1.0 - deltaT;
+					deepPixel.depth_front = (P - cam.eye()).length();//(ray(time)).dot(cam.view());
 //					std::cout << "before push back" << std::endl;
 					deepPixelBuf.push_back(deepPixel);
 //					std::cout << "pushed back" << std::endl;
-					if (_T < 0.01) return deepPixelBuf;
 				}
 				time += deltaS;
 		}

@@ -64,6 +64,7 @@ openvdb::math::Transform::Ptr MeshPotato::MPUtils::Camera::createFrustumTransfor
 
    
 //   openvdb::BBoxd bbox(lowerLeft, topRight);
+
    std::cout << "taper = " << taper << std::endl;
    std::cout << "depth = " << depth << std::endl;
    std::cout << "bbox = " << bbox << std::endl;

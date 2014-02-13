@@ -18,7 +18,7 @@ namespace MeshPotato {
 				openvdb::GridBase::Ptr getVDBGrid() const { return grid; }
 				~VDBVolumeGrid() {}
 				virtual const float eval(const MPUtils::MPVec3 &P) const {
-					return -interpolator.wsSample(P);
+					return interpolator.wsSample(P);
 
 				}
 				virtual const MPVec3 grad(const MPVec3 &P) const {
