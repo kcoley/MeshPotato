@@ -4,8 +4,8 @@ LDFLAGS=
 SOURCES=$(wildcard src/*.C)
 BOOST_INC = /usr/include
 BOOST_LIB = /usr/lib
-OIIO_INC= /group/dpa/local/oiio/include
-OIIO_LIB= /group/dpa/local/oiio/lib
+OIIO_INC= /group/dpa/include
+OIIO_LIB= /group/dpa/lib
 
 PYTHON_VERSION = 2.7
 PYTHON_INCLUDE = /usr/include/python$(PYTHON_VERSION)

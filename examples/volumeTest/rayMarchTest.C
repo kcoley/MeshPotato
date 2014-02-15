@@ -18,6 +18,7 @@
 #include <MPVolume/FrustumGrid.h>
 #include <MPUtils/CmdLineFind.h>
 #include <limits>
+#include <MPVolume/Light.h>
 int main(int argc, char **argv) {
 /////////////////////////Parse Command Line Arguments=================================================
 lux::CmdLineFind clf(argc, argv);
@@ -68,7 +69,7 @@ openvdb::GridBase::Ptr baseGrid;
 	std::cout << "before marching" << std::endl;
 	MeshPotato::MPVolume::VolumeFloatPtr grid4 = MeshPotato::MPVolume::VDBVolumeGrid::Ptr(sphere);
 	std::cout << "before marching" << std::endl;
-		
+	MeshPotato::MPVolume::VolumeColorPtr basecolor = MeshPotato::MPVolume::ConstantVolume<MeshPotato::MPUtils::Color>::Ptr(MeshPotato::MPUtils::Color(0,0,0,0));		
 	boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > mysphere = MeshPotato::MPVolume::ImplicitSphere::Ptr(10, MPVec3(0,0,0));
 	boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > mysphere2 = MeshPotato::MPVolume::ImplicitSphere::Ptr(10, MPVec3(50,0,0));
 	boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > clamp_sphere1 = MeshPotato::MPVolume::Clamp<float>::Ptr(mysphere, 0, 100);
@@ -153,26 +154,30 @@ boost::shared_ptr<MeshPotato::MPUtils::Camera> frustumCam3 = MeshPotato::MPVolum
 
 	//MeshPotato::MPVolume::FrustumGrid frustum(frustumCam, bbox);
 	boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid2 > frustum = MeshPotato::MPVolume::FrustumGrid2::Ptr(frustumCam, bbox);
-//	boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid2 > frustum2 = MeshPotato::MPVolume::FrustumGrid2::Ptr(frustumCam2, bbox);
-//	boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid2 > frustum3 = MeshPotato::MPVolume::FrustumGrid2::Ptr(frustumCam3, bbox);
+	boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid2 > frustum2 = MeshPotato::MPVolume::FrustumGrid2::Ptr(frustumCam2, bbox);
+	boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid2 > frustum3 = MeshPotato::MPVolume::FrustumGrid2::Ptr(frustumCam3, bbox);
 //	boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid > frustum2 = MeshPotato::MPVolume::FrustumGrid::Ptr(frustumCam, bbox);
 //	MeshPotato::MPVolume::VolumeFloatPtr addFrustums = MeshPotato::MPVolume::AddVolume<float>::Ptr(frustum, frustum2);
 	openvdb::Coord ijk(50,50,50);
 	std::cout << frustum->indexToWorld(ijk) << std::endl;
 	std::cout << "dsm" << std::endl;
 	frustum->dsm(bunnydsm, dsmK);
-//	frustum2->dsm(bunnydsm, dsmK);
-//	frustum3->dsm(bunnydsm, dsmK);
-//	MeshPotato::MPVolume::VolumeFloatPtr addFrustum = MeshPotato::MPVolume::AddVolume<float>::Ptr(frustum, frustum2);
-//	MeshPotato::MPVolume::VolumeFloatPtr addFrustums = MeshPotato::MPVolume::AddVolume<float>::Ptr(addFrustum, frustum3);
+	frustum2->dsm(bunnydsm, dsmK);
+	frustum3->dsm(bunnydsm, dsmK);
+	boost::shared_ptr<MeshPotato::MPVolume::FrustumLight> lightR = MeshPotato::MPVolume::FrustumLight::Ptr(frustum, MeshPotato::MPUtils::Color(1,0,0,0));
+	boost::shared_ptr<MeshPotato::MPVolume::FrustumLight> lightG = MeshPotato::MPVolume::FrustumLight::Ptr(frustum2, MeshPotato::MPUtils::Color(0,1,0,0));
+	boost::shared_ptr<MeshPotato::MPVolume::FrustumLight> lightB = MeshPotato::MPVolume::FrustumLight::Ptr(frustum3, MeshPotato::MPUtils::Color(0,0,1,0));
+
+	MeshPotato::MPVolume::VolumeColorPtr addLight = MeshPotato::MPVolume::AddVolume<MeshPotato::MPUtils::Color>::Ptr(lightR, lightG);
+	MeshPotato::MPVolume::VolumeColorPtr addLights = MeshPotato::MPVolume::AddVolume<MeshPotato::MPUtils::Color>::Ptr(addLight, lightB);
 	//frustum->dsm(inputGrid, dsmK);
 	std::cout << "bunnydsm " << bunnydsm->eval(MeshPotato::MPUtils::MPVec3(0,0,0)) << std::endl;
 	std::cout << frustum->indexToWorld(openvdb::Coord(0,0,0)) << std::endl;
 	std::cout << frustum->indexToWorld(openvdb::Coord(100,100,500)) << std::endl;
 	//return 0;
 
-	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, frustum, stepSize, scattering);
-//	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, addFrustums, stepSize, scattering);
+//	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, light1, stepSize, scattering);
+	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, addLights, stepSize, scattering);
 	std::cout << "Marching..." << std::endl;
 	image.reset(imageWidth, imageHeight);
 	deepimage.reset(imageWidth, imageHeight);

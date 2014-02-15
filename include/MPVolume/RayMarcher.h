@@ -12,7 +12,7 @@ namespace MeshPotato {
 namespace MPVolume {
 class VDBRayMarcher {
 public:
-VDBRayMarcher(openvdb::FloatGrid::Ptr _grid, VolumeFloatPtr _dsm, const float &_step, const float &_K) : grid(_grid), dsm(_dsm), step(_step), K(_K), interpolator(grid->constTree(), grid->transform()), intersector(*grid) {
+VDBRayMarcher(openvdb::FloatGrid::Ptr _grid, VolumeColorPtr _dsm, const float &_step, const float &_K) : grid(_grid), dsm(_dsm), step(_step), K(_K), interpolator(grid->constTree(), grid->transform()), intersector(*grid) {
 }
 MeshPotato::MPUtils::Color L(MPRay &ray) {
 	Color _L = Color(0,0,0,0);
@@ -42,7 +42,8 @@ MeshPotato::MPUtils::Color L(MPRay &ray) {
 				//	Color CS = density * (Color(1.0, 1.0, 1.0, 1.0));
 	                      //          Color CS = density * (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P) * K));
 	             //   Color CS = (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P) * K)); 
-	                CI = (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P)));
+//	                CI = (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P)));
+	                CI = dsm->eval(P);
 
 	                CS.set(CI.X()*CM.Y(),CI.Y()*CM.Y(),CI.Z()*CM.Z(),CM.W());
 	            
@@ -85,9 +86,10 @@ MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray, MeshPotato::MPUtils::Came
 				//	Color CS = density * (Color(1.0, 1.0, 1.0, 1.0));
 	                      //          Color CS = density * (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P) * K));
 	             //   Color CS = (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P) * K)); 
-	                CI = (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P)));
+//	                CI = (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P)));
+	                CI = dsm->eval(P);
 			MeshPotato::MPUtils::DeepPixel deepPixel;
-	                double test = exp(-dsm->eval(P));
+//	                double test = exp(-dsm->eval(P));
 
 	                CS.set(CI.X()*CM.Y(),CI.Y()*CM.Y(),CI.Z()*CM.Z(),CM.W());
 	            
@@ -108,7 +110,7 @@ MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray, MeshPotato::MPUtils::Came
 }
 private:
 openvdb::FloatGrid::Ptr grid;
-VolumeFloatPtr dsm;
+VolumeColorPtr dsm;
 float K, step;
 openvdb::tools::GridSampler<openvdb::FloatTree, openvdb::tools::BoxSampler> interpolator;
 openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> intersector;
@@ -116,7 +118,7 @@ openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> intersector;
 
 class RayMarcher {
 public:
-RayMarcher(VolumeFloatPtr _grid, VolumeFloatPtr _dsm, const float &_step, const float &_K) : grid(_grid), dsm(_dsm), step(_step), K(_K)  {}
+RayMarcher(VolumeFloatPtr _grid, VolumeColorPtr _dsm, const float &_step, const float &_K) : grid(_grid), dsm(_dsm), step(_step), K(_K)  {}
 MeshPotato::MPUtils::Color L(MPRay &ray) {
         Color _L = Color(0,0,0,0);
         float deltaT;
@@ -144,7 +146,7 @@ MeshPotato::MPUtils::Color L(MPRay &ray) {
 }
 private:
 MeshPotato::MPVolume::VolumeFloatPtr grid;
-VolumeFloatPtr dsm;
+VolumeColorPtr dsm;
 float K, step;
 };
 
