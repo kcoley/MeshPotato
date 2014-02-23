@@ -116,6 +116,18 @@ void writeOIIOImage( const char* fname, Image& img, const vector<string>& keys, 
 	writeOIIOImage( fname, img, labels, displayBrightness, displayGamma );
 
 }
+void writeOIIOImage( const char* fname, DeepImage& img, const vector<string>& keys, const vector<string>& tags,  float displayBrightness, float displayGamma )
+{
+	map<string,string> labels;
+	size_t nblabels = keys.size();
+	nblabels = ( nblabels < tags.size() )? nblabels : tags.size();
+	for( size_t i=0;i<nblabels;i++ )
+	{
+		labels[ keys[i] ] = tags[i];
+	}
+	writeOIIOImage( fname, img, labels, displayBrightness, displayGamma );
+
+}
 
 
 void writeOIIOImage( const char* fname, Image& img, const map<string,string>& labels, float displayBrightness, float displayGamma )
@@ -248,6 +260,112 @@ void writeOIIOImage( const char* fname, DeepImage& img, float brightness, float 
 	struct tm tm = *localtime(&t);
 	datetime = oiiotostr(tm.tm_year + 1900) + "-" + oiiotostr(tm.tm_mon + 1) + "-" + oiiotostr(tm.tm_mday) + " " + oiiotostr(tm.tm_hour) + ":" +  oiiotostr(tm.tm_min) + ":" + oiiotostr(tm.tm_sec);
 	spec.attribute("DateTime", datetime );
+
+	deepdata.init (xres*yres, nchannels, channeltypes+0, channeltypes+nchannels);
+	for (int y = 0; y < yres; ++y)
+		for (int x = 0; x < xres; ++x)
+			deepdata.nsamples[y*xres+x] = img.value(x,img.Height() - y - 1).size();
+	deepdata.alloc (); // allocate pointers and data
+	int pixel = 0;
+	for (int y = 0; y < yres; ++y) {
+		for (int x = 0; x < xres; ++x, ++pixel) {
+			DeepPixelBufferVector pixels = img.getDeepPixelBufferVector(x,img.Height() - y - 1);
+			for (int chan = 0; chan < nchannels; ++chan) {
+				void *ptr = deepdata.pointers[pixel*nchannels + chan];
+				if (chan < 4) { // RGBA -- it’s HALF data
+					for (int samp = 0; samp < deepdata.nsamples[pixel]; ++samp) {
+						((half *)ptr)[samp] = pixels[samp].color[chan];
+					}
+				} else {
+					// z channel -- FLOAT data
+					for (int samp = 0; samp < deepdata.nsamples[pixel]; ++samp)
+						((float *)ptr)[samp] = pixels[samp].depth_front;//...value...;
+				}
+			}
+		}
+	}
+
+
+	// Create the output
+	std::string error;
+	ImageOutput *out = ImageOutput::create (fname);
+	if (! out) {
+		error = geterror();
+		if (error.empty())
+			error = Strutil::format("Could not open");
+		std::cout << error << std::endl;
+		return;
+	}
+	// Make sure the format can handle deep data and per-channel formats
+	std::cout << "output image" << std::endl;
+	// Do the I/O (this is the easy part!)
+	bool worked = out->open (fname, spec);
+	if (!worked) {
+		std::string error = geterror();
+		if (error.empty())
+			std::cout << "didn't work" << std::endl;
+		else
+			std::cout << error << std::endl;
+	}
+	out->write_deep_image (deepdata);
+	out->close ();
+	delete out;
+
+}
+void writeOIIOImage( const char* fname, DeepImage& img, const map<string,string>& labels, float brightness, float gamma ) {
+	// Prepare the spec for ’half’ RGBA, ’float’ z
+	int xres = img.Width(), yres = img.Height();
+	int nchannels = img.Depth();
+	ImageSpec spec (xres, yres, nchannels);
+	TypeDesc channeltypes[] = { TypeDesc::HALF, TypeDesc::HALF,
+		TypeDesc::HALF, TypeDesc::HALF, TypeDesc::FLOAT, TypeDesc::FLOAT };
+	spec.z_channel = 4;
+	spec.channelnames[spec.z_channel] = "Z";
+	spec.channelformats.assign (channeltypes+0, channeltypes+nchannels);
+	spec.deep = true;
+	DeepData deepdata;
+	spec.attribute("ImageDescription", "Deep Image" );
+	spec.attribute("Keywords", "" );
+	register struct passwd *pw;
+	register uid_t uid;
+	uid = geteuid ();
+	pw = getpwuid (uid);
+	string artist = "Unknown";
+	if (pw)
+	{
+		artist = string(pw->pw_name);
+	}
+	spec.attribute("Artist", artist );
+	spec.attribute("Copyright", "" );
+	spec.attribute("DateTime", "" );
+	spec.attribute("DocumentName", "" );
+	spec.attribute("Software", "MeshPotato" );
+	string hostcomputer = "Unknown";
+	struct utsname u_name;
+	int z = uname(&u_name);
+	if ( z != -1 ) 
+	{
+		hostcomputer = string( u_name.nodename );
+	}
+	spec.attribute("HostComputer", hostcomputer );
+	string datetime = "";
+	time_t t = time(NULL);
+	struct tm tm = *localtime(&t);
+	datetime = oiiotostr(tm.tm_year + 1900) + "-" + oiiotostr(tm.tm_mon + 1) + "-" + oiiotostr(tm.tm_mday) + " " + oiiotostr(tm.tm_hour) + ":" +  oiiotostr(tm.tm_min) + ":" + oiiotostr(tm.tm_sec);
+	spec.attribute("DateTime", datetime );
+	if (labels.size() > 0) {
+		map<string,string>::const_iterator lab = labels.begin();
+		while (lab != labels.end()) {
+		        const string& name = lab->first;
+                        const string& value = lab->second;
+                        spec.attribute( name, value );
+                        lab++;
+		}
+	}
+
+
+
+
 	deepdata.init (xres*yres, nchannels, channeltypes+0, channeltypes+nchannels);
 	for (int y = 0; y < yres; ++y)
 		for (int x = 0; x < xres; ++x)
