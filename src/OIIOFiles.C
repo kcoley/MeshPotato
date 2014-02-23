@@ -66,7 +66,7 @@ void writeOIIOImage( const char* fname, Image& img, float displayBrightness, flo
 			string channelname = "C" + oiiotostr(i);
 			spec.channelnames.push_back(channelname);
 		}
-		spec.attribute("ImageDescription", "Image by Kacey" );
+		spec.attribute("ImageDescription", "" );
 		spec.attribute("Keywords", "" );
 		register struct passwd *pw;
 		register uid_t uid;
@@ -81,7 +81,7 @@ void writeOIIOImage( const char* fname, Image& img, float displayBrightness, flo
 		spec.attribute("Copyright", "" );
 		spec.attribute("DateTime", "" );
 		spec.attribute("DocumentName", "" );
-		spec.attribute("Software", "imageTools" );
+		spec.attribute("Software", "MeshPotato" );
 		string hostcomputer = "Unknown";
 		struct utsname u_name;
 		int z = uname(&u_name);
