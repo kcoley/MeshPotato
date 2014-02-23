@@ -1,10 +1,29 @@
 #include "MPVolume.h"
 #include "FrustumGrid.h"
+#include <openvdb/tools/LevelSetRebuild.h>
 namespace MeshPotato {
 	namespace MPVolume {
+		openvdb::GridBase::Ptr readVDBGrid(const std::string vdbFile) {
+
+		openvdb::GridBase::Ptr baseGrid;
+                        openvdb::FloatGrid::Ptr grid_i;
+                        openvdb::GridPtrVecPtr grids_i(new openvdb::GridPtrVec);
+                        static string sName("Loading VDB ");
+                        openvdb::io::File file_i(vdbFile);
+                        file_i.open();
+                        openvdb::io::File::NameIterator nameIter = file_i.beginName();
+                        baseGrid = file_i.readGrid(nameIter.gridName());
+
+			return baseGrid;
+
+}
 		openvdb::FloatGrid::Ptr makeVDBGrid(boost::shared_ptr<Volume<float> > &mpgrid, const openvdb::CoordBBox& indexBB, double h) {
 			openvdb::FloatGrid::Ptr vdbgrid = openvdb::FloatGrid::create();
 			openvdb::FloatGrid::Accessor accessor = vdbgrid->getAccessor();
+			vdbgrid->setBackground(0.1);
+			const float outside = vdbgrid->background();
+			const float inside = -outside;
+			std::cout << "outside = " << outside << std::endl;
 			for (openvdb::Int32 i = indexBB.min().x(); i <= indexBB.max().x(); ++i) {
 				for (openvdb::Int32 j = indexBB.min().y(); j <= indexBB.max().y(); ++j) {
 					for (openvdb::Int32 k = indexBB.min().z(); k <= indexBB.max().z(); ++k) {
@@ -13,12 +32,15 @@ namespace MeshPotato {
 						// compute level set function value
 						MeshPotato::MPUtils::MPVec3 P(p.x(), p.y(),p.z());
 						float value = -mpgrid->eval(P);
-
+						if (value > outside || value < inside) continue;
 						accessor.setValue(openvdb::Coord(i, j, k), value);
 					}
 				}
 			}
 			vdbgrid->setTransform(openvdb::math::Transform::createLinearTransform(h));
+			vdbgrid->signedFloodFill();
+			openvdb::tools::levelSetRebuild(*vdbgrid);
+			std::cout << "outside = " << outside << std::endl;
 			return vdbgrid;
 		}
 		boost::shared_ptr<MeshPotato::MPUtils::Camera> buildFrustumCamera(MeshPotato::MPUtils::MPVec3 eye, openvdb::FloatGrid::Ptr grid) {

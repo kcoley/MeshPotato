@@ -16,6 +16,8 @@ namespace MPUtils{
 
 void writeOIIOImage( const char* fname, Image& img, float brightness = 1.0, float gamma = 1.0 );
 void writeOIIOImage( const char* fname, DeepImage& img, float brightness = 1.0, float gamma = 1.0 );
+void writeOIIOImage( const char* fname, DeepImage& img, const map<string, string>& labels, float brightness = 1.0, float gamma = 1.0 );
+void writeOIIOImage( const char* fname, DeepImage& img, const vector<string>& keys, const vector<string>& tags, float brightness = 1.0, float gamma = 1.0 );
 void writeOIIOImage( const char* fname, Image& img, const map<string,string>& labels, float brightness = 1.0, float gamma = 1.0 );
 void writeOIIOImage( const char* fname, Image& img, const vector<string>& keys, const vector<string>& tags,  float brightness = 1.0, float gamma = 1.0 );
 void readOIIOImage( const char* fname, Image& img );

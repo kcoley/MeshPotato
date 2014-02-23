@@ -219,6 +219,35 @@ void writeOIIOImage( const char* fname, DeepImage& img, float brightness, float 
 	spec.channelformats.assign (channeltypes+0, channeltypes+nchannels);
 	spec.deep = true;
 	DeepData deepdata;
+	spec.attribute("ImageDescription", "Deep Image" );
+	spec.attribute("Keywords", "" );
+	register struct passwd *pw;
+	register uid_t uid;
+	uid = geteuid ();
+	pw = getpwuid (uid);
+	string artist = "Unknown";
+	if (pw)
+	{
+		artist = string(pw->pw_name);
+	}
+	spec.attribute("Artist", artist );
+	spec.attribute("Copyright", "" );
+	spec.attribute("DateTime", "" );
+	spec.attribute("DocumentName", "" );
+	spec.attribute("Software", "MeshPotato" );
+	string hostcomputer = "Unknown";
+	struct utsname u_name;
+	int z = uname(&u_name);
+	if ( z != -1 ) 
+	{
+		hostcomputer = string( u_name.nodename );
+	}
+	spec.attribute("HostComputer", hostcomputer );
+	string datetime = "";
+	time_t t = time(NULL);
+	struct tm tm = *localtime(&t);
+	datetime = oiiotostr(tm.tm_year + 1900) + "-" + oiiotostr(tm.tm_mon + 1) + "-" + oiiotostr(tm.tm_mday) + " " + oiiotostr(tm.tm_hour) + ":" +  oiiotostr(tm.tm_min) + ":" + oiiotostr(tm.tm_sec);
+	spec.attribute("DateTime", datetime );
 	deepdata.init (xres*yres, nchannels, channeltypes+0, channeltypes+nchannels);
 	for (int y = 0; y < yres; ++y)
 		for (int x = 0; x < xres; ++x)

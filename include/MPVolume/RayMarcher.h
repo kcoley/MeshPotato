@@ -12,7 +12,7 @@ namespace MeshPotato {
 namespace MPVolume {
 class VDBRayMarcher {
 public:
-VDBRayMarcher(openvdb::FloatGrid::Ptr _grid, VolumeColorPtr _dsm, const float &_step, const float &_K) : grid(_grid), dsm(_dsm), step(_step), K(_K), interpolator(grid->constTree(), grid->transform()), intersector(*grid) {
+VDBRayMarcher(openvdb::FloatGrid::Ptr _grid, VolumeColorPtr _dsm, const double &_step, const double &_K) : grid(_grid), dsm(_dsm), step(_step), K(_K), interpolator(grid->constTree(), grid->transform()), intersector(*grid) {
 }
 MeshPotato::MPUtils::Color L(MPRay &ray) {
 	Color _L = Color(0,0,0,0);
@@ -31,8 +31,9 @@ MeshPotato::MPUtils::Color L(MPRay &ray) {
 		while (time < t1) {
 				MPVec3 P = intersector.getWorldPos(time);
 				float density = interpolator.wsSample(P);
-				if (n == 2) // leaf node
+				if (n == 2) {// leaf node
 					deltaS = step;
+				}
 				else // constant tile
 					deltaS = step;//t1 - time;
 				if (density > 0) {
@@ -50,7 +51,7 @@ MeshPotato::MPUtils::Color L(MPRay &ray) {
 				//	Color CS = density * (Color(1.0, 1.0, 1.0, 1.0));
 					_L += ((CS)*_T*(1 - deltaT));
 					_T *=deltaT;
-					if (_T < 0.000001) return Color(_L[0],_L[1],_L[2],1.0 - _T);
+					if (_T < 0.0000001) return Color(_L[0],_L[1],_L[2],1.0 - _T);
 				}
 				time += deltaS;
 
@@ -111,7 +112,7 @@ MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray, MeshPotato::MPUtils::Came
 private:
 openvdb::FloatGrid::Ptr grid;
 VolumeColorPtr dsm;
-float K, step;
+double K, step;
 openvdb::tools::GridSampler<openvdb::FloatTree, openvdb::tools::BoxSampler> interpolator;
 openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> intersector;
 };

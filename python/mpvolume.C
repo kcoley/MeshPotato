@@ -5,6 +5,7 @@
 #include <MPVolume/VolumeUtils.h>
 #include <MPVolume/ImplicitShape.h>
 #include <MPVolume/RayMarcher.h>
+#include <MPVolume/FrustumGrid.h>
 using namespace boost::python;
 using namespace MeshPotato::MPVolume;
 using namespace MeshPotato::MPUtils;
@@ -55,12 +56,12 @@ BOOST_PYTHON_MODULE(mpvolume) {
 		.def("eval", &VDBVolumeGrid::eval)
 		.def("grad", &VDBVolumeGrid::grad)
 	;
-	class_<AddVolume<float, Volume<float> >,  bases<MPVolumeWrap> >("AddVolume", no_init)
+	class_<AddVolume<float>,  bases<MPVolumeWrap> >("AddVolume", no_init)
 		.def(init<boost::shared_ptr<Volume<float> >, boost::shared_ptr<Volume<float> > >())
-		.def("ptr", &AddVolume<float, Volume<float> >::Ptr)
+		.def("ptr", &AddVolume<float>::Ptr)
 		.staticmethod("ptr")
-		.def("eval", &AddVolume<float, Volume<float> >::eval)
-		.def("grad", &AddVolume<float, Volume<float> >::grad)
+		.def("eval", &AddVolume<float>::eval)
+		.def("grad", &AddVolume<float>::grad)
 	;
 	class_<ImplicitSphere, bases<MPVolumeWrap> >("ImplicitSphere", no_init)
 		.def(init<float, MeshPotato::MPUtils::MPVec3>() )

@@ -31,6 +31,11 @@ namespace MeshPotato {
 
 				void reset(  int w, int h, int d=5 )
 				{
+					for (int x = 0; x < width; ++x) {
+						for (int y = 0; y < height; ++y) {
+							data[index(x,y)].clear();
+						}
+					}
 					width = w;
 					height = h;
 					depth = d;
@@ -58,8 +63,10 @@ namespace MeshPotato {
 
 				const size_t index( int x, int y ) const { return (size_t) ( x + width*y ) ; }
 		};
-		void setPixel( DeepImage& img, int x, int y, DeepPixelBuffer value );
-		void setPixel( DeepImage& img, int x, int y, DeepPixel &value );
+		void setPixel( DeepImage& img, int x, int y, const DeepPixelBuffer &value );
+		void setPixel( DeepImage& img, int x, int y, const DeepPixel &value );
+		void addPixel( DeepImage& img, int x, int y, const DeepPixelBuffer &value );
+		void addPixel( DeepImage& img, int x, int y, const DeepPixel &value );
 
 	}
 }
