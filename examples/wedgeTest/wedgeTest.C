@@ -19,6 +19,7 @@
 #include <MPUtils/CmdLineFind.h>
 #include <limits>
 #include <MPVolume/Light.h>
+#include <tbb/task_scheduler_init.h>
 using MeshPotato::MPVolume::VolumeFloatPtr;
 
 int main(int argc, char **argv) {
@@ -26,30 +27,36 @@ int main(int argc, char **argv) {
 lux::CmdLineFind clf(argc, argv);
 std::string vdb_volumeFile = clf.find(std::string("-vdb"), std::string("test.vdb"), std::string("VDB Fog Volume File"));
 std::string outputImage = clf.find(std::string("-name"), std::string("test.exr"), std::string("Name of output image"));
+std::string deepOutputImage = clf.find(std::string("-deepname"), std::string("deeptest.exr"), std::string("Name of deep output image"));
+bool godeep = clf.find("-deep", 1, "Write Deep Image");
 int frame = clf.find("-frame", 1, "Frame Number");
 int imageWidth = clf.find("-NX", 960, "Image Width");
 int imageHeight = clf.find("-NY", 540, "Image Height");
+int numthreads = clf.find("-numthreads", 0, "Number of threads");
 float stepSize = clf.find("-step", 1.0f, "Step size");
 float fov = clf.find("-fov", 60.0f, "Field of View");
 float nearP = clf.find("-near", 1.0f, "Near Plane");
 float farP = clf.find("-far", std::numeric_limits<float>::max(), "Far Plane");
-float scattering = clf.find("-K", 1.0f, "Scattering Coefficient");
+float scattering = clf.find("-K", 10.0f, "Scattering Coefficient");
 float dsmK = clf.find("-dsm", 5.0f, "DSM Coefficient");
-MeshPotato::MPUtils::MPVec3 cam_pos = clf.find(std::string("-eye"), MeshPotato::MPUtils::MPVec3(0.0,18.0,90.0), std::string("Camera Position"));
+MeshPotato::MPUtils::MPVec3 cam_pos = clf.find(std::string("-eye"), MeshPotato::MPUtils::MPVec3(0.0,0.0,5.0), std::string("Camera Position"));
 MeshPotato::MPUtils::MPVec3 cam_rot = clf.find(std::string("-rot"), MeshPotato::MPUtils::MPVec3(0.0,0.0,-180.0), std::string("Camera Rotation"));
 
-MeshPotato::MPUtils::MPVec3 fcam_pos = clf.find(std::string("-feye"), MeshPotato::MPUtils::MPVec3(0.0,18.0,20.0), std::string("Frustum Position 1"));
-MeshPotato::MPUtils::MPVec3 fcam_pos2 = clf.find(std::string("-feye2"), MeshPotato::MPUtils::MPVec3(-30.0,18.0,0.0), std::string("Frustum Position 2"));
-MeshPotato::MPUtils::MPVec3 fcam_pos3 = clf.find(std::string("-feye3"), MeshPotato::MPUtils::MPVec3(-30.0,18.0,0.0), std::string("Frustum Position 3"));
+MeshPotato::MPUtils::MPVec3 fcam_pos = clf.find(std::string("-feye"), MeshPotato::MPUtils::MPVec3(0.0,5.0,0.0), std::string("Frustum Position 1"));
+MeshPotato::MPUtils::MPVec3 fcam_pos2 = clf.find(std::string("-feye2"), MeshPotato::MPUtils::MPVec3(-5.0,0.0,0.0), std::string("Frustum Position 2"));
+MeshPotato::MPUtils::MPVec3 fcam_pos3 = clf.find(std::string("-feye3"), MeshPotato::MPUtils::MPVec3(5.0,0.0,0.0), std::string("Frustum Position 3"));
 //MeshPotato::MPUtils::MPVec3 fcam_rot = clf.find(std::string("-frot"), MeshPotato::MPUtils::MPVec3(0.0,0.0,180.0), std::string("Frustum Rotation"));
-float fnearP = clf.find("-fnear", 20.0f, "Frustum Near Plane");
-float ffarP = clf.find("-ffar", 60.0f, "Frustum Far Plane");
 float frequency = clf.find("-freq", 5.0f, "Frequncy");
 float amplitude = clf.find("-amp", 3.0f, "Amplitude");
 float roughness = clf.find("-rough", 1.0f, "Roughness");
+float fjump = clf.find("-fjump", 1.0f, "Octave");
+float gamma = clf.find("-gamma", 1.0f, "Gamma");
 clf.usage("-h");
 clf.printFinds();
 
+tbb::task_scheduler_init schedulerInit(
+	(numthreads == 0) ? tbb::task_scheduler_init::automatic : numthreads
+);
 
 openvdb::initialize();
 cam_rot/= 180.0;
@@ -68,6 +75,8 @@ cam_rot.normalize();
 	noise.frequency = frequency;
 	noise.amplitude = amplitude;
 	noise.roughness = roughness;
+	noise.fjump = fjump;
+	noise.gamma = gamma;
 	boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > mysphere = MeshPotato::MPVolume::PyroclasticSphere::Ptr(1, MPVec3(0,0,0), noise);
 	boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > mysphere2 = MeshPotato::MPVolume::ImplicitSphere::Ptr(10, MPVec3(50,0,0));
 	boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > clamp_sphere1 = MeshPotato::MPVolume::Clamp<float>::Ptr(mysphere, 0, 100);
@@ -77,8 +86,8 @@ cam_rot.normalize();
 	MeshPotato::MPVolume::VolumeFloatPtr add2 = MeshPotato::MPVolume::AddVolume<float >::Ptr(clamp_sphere1, clamp_sphere2);
 	float val = grid4->eval(MeshPotato::MPUtils::MPVec3(0,0,0));
 	
-	openvdb::CoordBBox indexBB(openvdb::Coord(-200,-200,-200), openvdb::Coord(200,200,200));
-	openvdb::FloatGrid::Ptr newvdbgrid = MeshPotato::MPVolume::makeVDBGrid(mysphere, indexBB, 0.05);
+	openvdb::CoordBBox indexBB(openvdb::Coord(-400,-400,-400), openvdb::Coord(400,400,400));
+	openvdb::FloatGrid::Ptr newvdbgrid = MeshPotato::MPVolume::makeVDBGrid(mysphere, indexBB, 0.02);
 //	openvdb::FloatGrid::Ptr newvdbgrid = MeshPotato::MPVolume::makeVDBGrid(clamp_sphere1, indexBB, 0.01f);
 	openvdb::tools::sdfToFogVolume<openvdb::FloatGrid>(newvdbgrid.operator*());
 	openvdb::io::File file(vdb_volumeFile);
@@ -151,21 +160,23 @@ boost::shared_ptr<MeshPotato::MPUtils::Camera> frustumCam3 = MeshPotato::MPVolum
 	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, addLights, stepSize, scattering);
 	std::cout << "Marching..." << std::endl;
 	image.reset(imageWidth, imageHeight);
-	deepimage.reset(imageWidth, imageHeight);
+	if (godeep)
+		deepimage.reset(imageWidth, imageHeight);
 	for (int j = 0; j < imageHeight; ++j) {
 		for (int i = 0; i < imageWidth; ++i) {
 			double x = (double)i/(imageWidth - 1.0);
 			double y = (double)j/(imageHeight - 1.0);
 			MeshPotato::MPUtils::MPRay ray = cam.getRay(x,y);//vdbcam.getRay(i,j);//cam.getRay(x,y);
-
-			setPixel(deepimage, i, j, marcher.deepL(ray, cam));
+			if (godeep)
+				setPixel(deepimage, i, j, marcher.deepL(ray, cam));
 			setPixel(image, i, j, marcher.L(ray));
 		}
 		meter.update();
 	}
 	std::cout << "Done Marching" << std::endl;
-	MeshPotato::MPUtils::writeOIIOImage(outputImage.c_str(), image);
-	MeshPotato::MPUtils::writeOIIOImage(("deep" + outputImage).c_str(), deepimage);
+	MeshPotato::MPUtils::writeOIIOImage(outputImage.c_str(), image, clf.mapFinds());
+	if (godeep)
+		MeshPotato::MPUtils::writeOIIOImage((deepOutputImage).c_str(), deepimage, clf.mapFinds());
 	clf.printFinds();
 	return 0;
 }
