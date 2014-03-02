@@ -19,6 +19,8 @@
 #include <MPUtils/CmdLineFind.h>
 #include <limits>
 #include <MPVolume/Light.h>
+#include <tbb/task_scheduler_init.h>
+
 using MeshPotato::MPVolume::VolumeFloatPtr;
 
 int main(int argc, char **argv) {
@@ -28,6 +30,7 @@ std::string vdb_volumeFile = clf.find(std::string("-vdb"), std::string("bunny_cl
 std::string outputImage = clf.find(std::string("-name"), std::string("test.exr"), std::string("Name of output image"));
 int imageWidth = clf.find("-NX", 960, "Image Width");
 int imageHeight = clf.find("-NY", 540, "Image Height");
+int numthreads = clf.find("-numthreads", 0, "Number of Threads");
 float stepSize = clf.find("-step", 1.0f, "Step size");
 float fov = clf.find("-fov", 60.0f, "Field of View");
 float nearP = clf.find("-near", 1.0f, "Near Plane");
@@ -47,6 +50,9 @@ float ffarP = clf.find("-ffar", 60.0f, "Frustum Far Plane");
 clf.usage("-h");
 clf.printFinds();
 
+tbb::task_scheduler_init schedulerInit(
+        (numthreads == 0) ? tbb::task_scheduler_init::automatic : numthreads
+);
 
 openvdb::initialize();
 cam_rot/= 180.0;
@@ -90,14 +96,14 @@ cam_rot.normalize();
 	openvdb::FloatGrid::Ptr inputGrid = openvdb::gridPtrCast<openvdb::FloatGrid>(baseGrid);
 	std::cout << "marching" << std::endl;
 
-	MeshPotato::MPUtils::Image image;
+	boost::shared_ptr<MeshPotato::MPUtils::Image> image = MeshPotato::MPUtils::Image::Ptr();
 	MeshPotato::MPUtils::DeepImage deepimage;
-	MeshPotato::MPUtils::Camera cam;
+	boost::shared_ptr<MeshPotato::MPUtils::Camera> cam = MeshPotato::MPUtils::Camera::Ptr();
 	std::cout << "cam_rot = " << cam_rot << std::endl;
 	std::cout << "cam_rot normalized = " << cam_rot.unit() << std::endl;
-	cam.setEyeViewUp(cam_pos, cam_rot, MeshPotato::MPUtils::MPVec3(0,1,0));
-	cam.setNearPlane(nearP);
-	cam.setFarPlane(farP);
+	cam->setEyeViewUp(cam_pos, cam_rot, MeshPotato::MPUtils::MPVec3(0,1,0));
+	cam->setNearPlane(nearP);
+	cam->setFarPlane(farP);
 		
 	MeshPotato::MPVolume::VolumeFloatPtr bunnydsm = MeshPotato::MPVolume::VDBVolumeGrid::Ptr(inputGrid);
 	std::cout << bunnydsm->eval(MeshPotato::MPUtils::MPVec3(0,0,0)) << std::endl;
@@ -145,24 +151,30 @@ boost::shared_ptr<MeshPotato::MPUtils::Camera> frustumCam3 = MeshPotato::MPVolum
 	//return 0;
 
 //	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, light1, stepSize, scattering);
-	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, addLights, stepSize, scattering);
+//	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, addLights, stepSize, scattering);
 	std::cout << "Marching..." << std::endl;
-	image.reset(imageWidth, imageHeight);
-	deepimage.reset(imageWidth, imageHeight);
+	image->reset(imageWidth, imageHeight);
+//	deepimage.reset(imageWidth, imageHeight);
+	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, addLights, stepSize, scattering, image, cam, outputImage);
+	marcher.render(true);
+
+
+/*
 	for (int j = 0; j < imageHeight; ++j) {
 		for (int i = 0; i < imageWidth; ++i) {
 			double x = (double)i/(imageWidth - 1.0);
 			double y = (double)j/(imageHeight - 1.0);
-			MeshPotato::MPUtils::MPRay ray = cam.getRay(x,y);//vdbcam.getRay(i,j);//cam.getRay(x,y);
+			MeshPotato::MPUtils::MPRay ray = cam->getRay(x,y);//vdbcam.getRay(i,j);//cam.getRay(x,y);
 
 			setPixel(deepimage, i, j, marcher.deepL(ray, cam));
 			setPixel(image, i, j, marcher.L(ray));
 		}
 		meter.update();
 	}
+*/
 	std::cout << "Done Marching" << std::endl;
-	MeshPotato::MPUtils::writeOIIOImage(outputImage.c_str(), image);
-	MeshPotato::MPUtils::writeOIIOImage(("deep" + outputImage).c_str(), deepimage);
+//	MeshPotato::MPUtils::writeOIIOImage(outputImage.c_str(), image);
+//	MeshPotato::MPUtils::writeOIIOImage(("deep" + outputImage).c_str(), deepimage);
 	clf.printFinds();
 	return 0;
 }

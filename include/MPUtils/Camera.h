@@ -19,16 +19,15 @@ class Camera
     const MeshPotato::MPUtils::MPVec3& eye() const  { return position; }
     const MeshPotato::MPUtils::MPVec3& view() const { return axis_view; }
     const MeshPotato::MPUtils::MPVec3& up() const   { return axis_up; }
-    const MeshPotato::MPUtils::MPRay getRay(const double i, const double j) {
-        MPVec3 temp = view(i,j);
-        temp.normalize();
+    const MeshPotato::MPUtils::MPRay getRay(const double i, const double j)  const {
+        MPVec3 temp = view(i,j).unit();
 
 	return MeshPotato::MPUtils::MPRay(position,temp);	
     }
     // view direction of a pixel at the fractional position x,y.
     // Nominally 0 <= x <= 1 and 0 <= y <= 1 for the primary fov,
     // but the values can extend beyond that
-    const MeshPotato::MPUtils::MPVec3 view( const double x, const double y );
+    const MeshPotato::MPUtils::MPVec3 view( const double x, const double y ) const;
 
     void setFov( const double fov );
     const double& fov() const { return FOV; }

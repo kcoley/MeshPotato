@@ -83,7 +83,7 @@ void Image::interpolationCoefficients( float x, float y,
 }
 
 
-void setPixel( Image& img, int x, int y, std::vector<float>& value )
+void setPixel( Image& img, int x, int y, const std::vector<float>& value ) 
 {
    size_t nb = ( value.size() < img.Depth() ) ? value.size() : img.Depth();
    for( size_t i=0;i<nb;i++ )
@@ -92,7 +92,7 @@ void setPixel( Image& img, int x, int y, std::vector<float>& value )
    }
 }
 
-void setPixel( Image& img, int x, int y, Color value )
+void setPixel( Image& img, int x, int y, const Color &value )
 {
       img.value( x, y, 0 ) = value.X();
       img.value( x, y, 1 ) = value.Y();

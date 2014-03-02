@@ -86,8 +86,8 @@ cam_rot.normalize();
 	MeshPotato::MPVolume::VolumeFloatPtr add2 = MeshPotato::MPVolume::AddVolume<float >::Ptr(clamp_sphere1, clamp_sphere2);
 	float val = grid4->eval(MeshPotato::MPUtils::MPVec3(0,0,0));
 	
-	openvdb::CoordBBox indexBB(openvdb::Coord(-400,-400,-400), openvdb::Coord(400,400,400));
-	openvdb::FloatGrid::Ptr newvdbgrid = MeshPotato::MPVolume::makeVDBGrid(mysphere, indexBB, 0.02);
+	openvdb::CoordBBox indexBB(openvdb::Coord(-200,-200,-200), openvdb::Coord(200,200,200));
+	openvdb::FloatGrid::Ptr newvdbgrid = MeshPotato::MPVolume::makeVDBGrid(mysphere, indexBB, 0.05);
 //	openvdb::FloatGrid::Ptr newvdbgrid = MeshPotato::MPVolume::makeVDBGrid(clamp_sphere1, indexBB, 0.01f);
 	openvdb::tools::sdfToFogVolume<openvdb::FloatGrid>(newvdbgrid.operator*());
 	openvdb::io::File file(vdb_volumeFile);
@@ -95,7 +95,7 @@ cam_rot.normalize();
 	grids.push_back(newvdbgrid);
 	file.write(grids);
 	file.close();
-//	return 0;
+	return 0;
 	MeshPotato::MPVolume::VolumeFloatPtr grid;
 	openvdb::GridBase::Ptr baseGrid = MeshPotato::MPVolume::readVDBGrid(vdb_volumeFile);
 

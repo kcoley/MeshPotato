@@ -4,6 +4,7 @@
 
 #include <vector>
 #include "Color.h"
+#include <boost/shared_ptr.hpp>
 using namespace std;
 
 namespace MeshPotato {
@@ -12,7 +13,7 @@ namespace MPUtils {
 class Image
 {
   public:
-
+    static boost::shared_ptr<Image> Ptr() {return boost::shared_ptr<Image>(new Image()); }
     Image() :
        width  (0),
        height (0),
@@ -63,8 +64,8 @@ class Image
 				 ) const;
 };
 
-void setPixel( Image& img, int x, int y, std::vector<float>& value );
-void setPixel( Image& img, int x, int y, Color value );
+void setPixel( Image& img, int x, int y, const std::vector<float>& value );
+void setPixel( Image& img, int &x, int &y, const Color &value );
 
 }
 }

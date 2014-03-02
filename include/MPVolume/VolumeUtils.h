@@ -20,7 +20,7 @@ namespace MeshPotato {
 		openvdb::FloatGrid::Ptr makeVDBGrid(boost::shared_ptr<Volume<float> > &mpgrid, const openvdb::CoordBBox& indexBB, double h) {
 			openvdb::FloatGrid::Ptr vdbgrid = openvdb::FloatGrid::create();
 			openvdb::FloatGrid::Accessor accessor = vdbgrid->getAccessor();
-			vdbgrid->setBackground(0.1);
+			vdbgrid->setBackground(2.0);
 			const float outside = vdbgrid->background();
 			const float inside = -outside;
 			std::cout << "outside = " << outside << std::endl;
