@@ -18,8 +18,7 @@ public:
 VDBRayMarcher(openvdb::FloatGrid::Ptr _grid, VolumeColorPtr _dsm, const double &_step, const double &_K, boost::shared_ptr<MeshPotato::MPUtils::Image> _image, boost::shared_ptr<MeshPotato::MPUtils::Camera> _camera, const std::string &_outputImage) : grid(_grid), dsm(_dsm), step(_step), K(_K), interpolator(grid->constTree(), grid->transform()), intersector(*grid), image(_image), camera(_camera), outputImage(_outputImage) {
 
 }
-inline const MeshPotato::MPUtils::Color L(MPRay &ray) const {
-openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> intersector2(*grid);
+inline const MeshPotato::MPUtils::Color L(MPRay &ray, openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> intersector2) const {
 	Color _L = Color(0,0,0,0);
 	float deltaT, deltaS;
 	float _T = 1.0f;
@@ -106,13 +105,15 @@ const MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray, MeshPotato::MPUtils
 	return deepPixelBuf;
 }
 void operator() (const tbb::blocked_range<size_t>& r) const {
+// Define intersector here
+openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> intersector2(*grid);
 	for (int j = r.begin(), je = r.end(); j < je; ++j) {
 		for (int i = 0, ie = image->Width(); i < ie; ++i) {
 			MeshPotato::MPUtils::MPRay ray;
 			double x = (double)i/(image->Width() - 1.0);
                		double y = (double)j/(image->Height() - 1.0);
 			ray = camera->getRay(x,y);
-			Color c = L(ray);
+			Color c = L(ray, intersector2);
 			float &val1 = image->value(i,j,0);
 			val1 =c[0]; 
 			float &val2 = image->value(i,j,1);
