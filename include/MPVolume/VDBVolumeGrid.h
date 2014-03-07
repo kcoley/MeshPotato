@@ -26,7 +26,7 @@ namespace MeshPotato {
 				virtual const float defaultValue() const {}
 			private:
 				openvdb::FloatGrid::Ptr grid;
-				openvdb::tools::GridSampler<openvdb::FloatTree, openvdb::tools::QuadraticSampler> interpolator;			
+				openvdb::tools::GridSampler<openvdb::FloatTree, openvdb::tools::BoxSampler> interpolator;			
 
 		};
 	}

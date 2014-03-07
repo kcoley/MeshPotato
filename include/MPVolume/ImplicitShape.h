@@ -4,45 +4,35 @@
 #include "MPUtils/Vector.h"
 #include "MPNoise/Noise.h"
 #include "MPNoise/PerlinNoise.h"
+#include <boost/scoped_ptr.hpp>
 namespace MeshPotato {
 	namespace MPVolume {
-		class ImplicitSphere : public MeshPotato::MPVolume::Volume<float> {
+		class ImplicitShape: public MeshPotato::MPVolume::Volume<float> {
 			public:
-				static boost::shared_ptr<ImplicitSphere> Ptr(const float &_R,  const MeshPotato::MPUtils::MPVec3 &_C) {
-                                        return boost::shared_ptr<ImplicitSphere>(new ImplicitSphere(_R, _C));
-                                }
-
-				ImplicitSphere(const float &_R, const MeshPotato::MPUtils::MPVec3 &_C) : R(_R), C(_C) {}
-				virtual const volumeDataType eval(const MeshPotato::MPUtils::MPVec3 &P) const { 
-					return R - (P - C).length(); 
-				}
-				virtual const volumeGradType grad(const MeshPotato::MPUtils::MPVec3& P) const {}
-			private:
-				float R;
-				MeshPotato::MPUtils::MPVec3 C;
+			virtual const volumeDataType eval(const MeshPotato::MPUtils::MPVec3 &P) const = 0;
+			virtual const volumeGradType grad(const MeshPotato::MPUtils::MPVec3 &P) const = 0;
 		};
-		class PyroclasticSphere : public MeshPotato::MPVolume::Volume<float> {
+		class ImplicitSphere : public ImplicitShape {
 			public:
-				static boost::shared_ptr<PyroclasticSphere> Ptr(const float &_R,  const MeshPotato::MPUtils::MPVec3 &_C, const MeshPotato::MPNoise::Noise_t &_noiseparms) {
-                                        return boost::shared_ptr<PyroclasticSphere>(new PyroclasticSphere(_R, _C, _noiseparms));
-                                }
-
-				PyroclasticSphere(const float &_R, const MeshPotato::MPUtils::MPVec3 &_C, const MeshPotato::MPNoise::Noise_t &_noiseparms) : R(_R), C(_C), noiseparms(_noiseparms), perlin(), noise() {
-					perlin.setParameters(noiseparms);
-					noise = &perlin;
-				}
-				virtual const volumeDataType eval(const MeshPotato::MPUtils::MPVec3 &P) const {
-					return R - (P - C).length() + pow(fabs(noise->eval((P - C)/(P - C).length())), noiseparms.gamma)*1.0;
-				}
-				virtual const volumeGradType grad(const MeshPotato::MPUtils::MPVec3& P) const {
-					return (C-P).unit();
-				}
+				static boost::shared_ptr<ImplicitSphere> Ptr(const float &_R,  const MeshPotato::MPUtils::MPVec3 &_C);
+				ImplicitSphere(const float &_R, const MeshPotato::MPUtils::MPVec3 &_C);
+				~ImplicitSphere();
+				const volumeDataType eval(const MeshPotato::MPUtils::MPVec3 &P) const; 
+				const volumeGradType grad(const MeshPotato::MPUtils::MPVec3& P) const;
 			private:
-				float R;
-				MeshPotato::MPUtils::MPVec3 C;
-				MeshPotato::MPNoise::Noise_t noiseparms;
-				MeshPotato::MPNoise::FractalSum<MeshPotato::MPNoise::PerlinNoiseGustavson> perlin;
-				MeshPotato::MPNoise::Noise* noise;
+				class Impl;
+				boost::scoped_ptr<Impl> mImpl;
+		};
+		class PyroclasticSphere : public ImplicitShape {
+			public:
+				static boost::shared_ptr<PyroclasticSphere> Ptr(const float &_R,  const MeshPotato::MPUtils::MPVec3 &_C, const MeshPotato::MPNoise::Noise_t &_noiseparms);
+				PyroclasticSphere(const float &_R, const MeshPotato::MPUtils::MPVec3 &_C, const MeshPotato::MPNoise::Noise_t &_noiseparms);
+				~PyroclasticSphere();
+				const volumeDataType eval(const MeshPotato::MPUtils::MPVec3 &P) const;
+				const volumeGradType grad(const MeshPotato::MPUtils::MPVec3& P) const;
+			private:
+				class Impl;
+				boost::scoped_ptr<Impl> mImpl;
 		};
 		
 		template<typename T>
