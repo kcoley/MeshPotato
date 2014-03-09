@@ -45,9 +45,11 @@ pympmesh: $(OBJECTS)
 pympvolume: $(OBJECTS)
 	$(CC) $(CFLAGS) -I$(PYTHON_INCLUDE) $(PYMPVOLUME).C -o $(PYMPVOLUME).o
 	$(CC) -shared -Wl,-soname,mpvolume.so $(PYMPVOLUME).o -lpython2.7 -lboost_python -lboost_thread -lboost_system -lboost_filesystem -L./lib -L/group/dpa/local/openvdb/lib -lmeshpotato -lopenvdb /group/dpa/local/openvdb/python/lib/python2.7/pyopenvdb.so -lboost_system -o pymeshpotato/mpvolume.so 
+
+python: pympmesh pympvolume
 clean:
-	rm lib/*.so*
 	rm src/*.o
+	rm lib/*.so*
 	rm python/*.o
 
 doc:

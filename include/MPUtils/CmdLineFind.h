@@ -19,8 +19,10 @@
 #include <iostream>
 #include <cstdlib>
 #include "LuxVector.h"
-
-namespace lux{
+#include "Vector.h"
+using namespace lux;
+namespace MeshPotato{
+namespace MPUtils {
 
 class CmdLineFind
 {
@@ -482,5 +484,6 @@ class CmdLineFind
 };
 
 
-}
+}// MPUtils
+}// MeshPotato
 #endif
