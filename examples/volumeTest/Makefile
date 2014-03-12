@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -g
+CFLAGS = -g 
 VDB_INC = /group/dpa/include/openvdb/include
 VDB_LIB = /group/dpa/local/openvdb/lib
 OPENEXR_INC = /group/dpa/include/OpenEXR

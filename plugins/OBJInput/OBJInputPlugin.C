@@ -72,7 +72,10 @@ void split(const std::string& in, std::vector<std::string>& result){
 
 			/// <summary>Gets the name of the graphics driver</summary>
 		virtual bool loadMesh(const char *meshName) {
-				static std::string sName("Loading OBJ");
+			vertices.clear();
+			normals.clear();
+			faces.clear();
+			static std::string sName("Loading OBJ");
 				std::cout << "Loading OBJ " << meshName << std::endl;
 				std::ifstream File(meshName);
 				std::string Line;

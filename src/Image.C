@@ -3,12 +3,60 @@
 using namespace std;
 namespace MeshPotato {
 namespace MPUtils {
+void imageLinearInterpolation( float x, float dx, int nx, int& i, int& ii, float& w, float& ww, bool isperiodic );
+	class Image::Impl {
+		public:
+			int width, height, depth;
+			std::vector<std::vector<float> > data;
+			const int Width() const { return width;}
+			const int Height() const { return height;}
+			const int Depth() const { return depth;}
+			const size_t index(int x, int y) const { return (size_t) (x + width*y);}
+			void interpolationCoefficients( float x, float y,
+		                                   float& wx, float& wwx,
+	                                           float& wy, float& wwy,
+                                                   int& ix, int& iix,
+                                                   int& iy, int& iiy
+                                                   ) const;
+
+	};
+	boost::shared_ptr<Image> Image::Ptr() { return boost::shared_ptr<Image>(new Image()); }
+	Image::Image():
+       		mImpl(new Image::Impl())	
+	{
+		mImpl->width = 0; 
+	        mImpl->height = 0;
+	        mImpl->depth = 0;
+	}
+	Image::~Image() {}
+	void Image::reset(int w, int h, int d) {
+		mImpl->width = w;
+		mImpl->height = h;
+		mImpl->depth = d;
+		std::vector<float> pixel;
+		pixel.resize(mImpl->depth);
+		for( size_t i=0;i<(size_t)mImpl->depth;i++ ){ pixel[i] = 0.0; }
+		mImpl->data.resize(mImpl->width*mImpl->height);
+	        for( size_t i=0;i<mImpl->data.size();i++ ){ mImpl->data[i] = pixel; }
+	}
+
+
+	const float& Image::value( int x, int y, int c ) const { return mImpl->data[ mImpl->index(x,y) ][(size_t)c]; }
+        float& Image::value( int x, int y, int c ) { return mImpl->data[ mImpl->index(x,y) ][(size_t)c]; }
+
+        std::vector<float>& Image::pixel(int x, int y ) { return mImpl->data[ mImpl->index(x,y) ]; }
+        std::vector<float>& Image::pixel(int x ) { return mImpl->data[x]; }
+
+	const int Image::Width() const { return mImpl->Width(); }
+    	const int Image::Height() const { return mImpl->Height(); }
+        const int Image::Depth() const { return mImpl->Depth(); }
+
 
 const float Image::interpolatedValue( float x, float y, int c ) const
 {
    int ix, iy, iix, iiy;
    float wx, wy, wwx, wwy;
-   interpolationCoefficients( x, y, wx, wwx, wy, wwy, ix, iix, iy, iiy );
+   mImpl->interpolationCoefficients( x, y, wx, wwx, wy, wwy, ix, iix, iy, iiy );
    float v = value(  ix,  iy, c ) *  wx *  wy
            + value( iix,  iy, c ) * wwx *  wy
 	   + value(  ix, iiy, c ) *  wx * wwy
@@ -21,7 +69,7 @@ std::vector<float> Image::interpolatedPixel( float x, float y ) const
 {
    int ix, iy, iix, iiy;
    float wx, wy, wwx, wwy;
-   interpolationCoefficients( x, y, wx, wwx, wy, wwy, ix, iix, iy, iiy );
+   mImpl->interpolationCoefficients( x, y, wx, wwx, wy, wwy, ix, iix, iy, iiy );
    std::vector<float> pix;
    for( size_t c=0;c<Depth();c++ )
    {
@@ -71,7 +119,7 @@ void imageLinearInterpolation( float x, float dx, int nx, int& i, int& ii, float
 
 
 
-void Image::interpolationCoefficients( float x, float y, 
+void Image::Impl::interpolationCoefficients( float x, float y, 
                                       float& wx, float& wwx,
 				      float& wy, float& wwy,
 				      int& ix, int& iix,

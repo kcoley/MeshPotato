@@ -3,6 +3,7 @@
 #include "defines.h"
 #include "OutputMeshAPI.h"
 #include "InputMeshAPI.h"
+#include "MPVolume/MPVolume.h"
 namespace MeshPotato {
 namespace MPPlugins {
 class OutputMeshAPI;
@@ -35,10 +36,12 @@ class OutputMeshAPI;
 /// The function signature for a routine that writes out/reads in a mesh
 typedef OutputMeshAPI *(*OutputMeshInitFunc)();
 typedef InputMeshAPI *(*InputMeshInitFunc)();
+typedef MeshPotato::MPVolume::VolumeFloatPtr *(*VolumeFloatInitFunc)();
 
 /// The function signature for a routine that destroys an output mesh
 typedef void (*OutputMeshFreeFunc)(OutputMeshAPI *);
 typedef void (*InputMeshFreeFunc)(InputMeshAPI *);
+typedef void (*VolumeFloatFreeFunc)(MeshPotato::MPVolume::VolumeFloatPtr *);
 
 /// A routine to let a plugin register a new output mesh type
 CORE_FUNC void RegisterOutputMesh(const char *type, 
@@ -48,6 +51,9 @@ CORE_FUNC void RegisterOutputMesh(const char *type,
 CORE_FUNC void RegisterInputMesh(const char *type, 
 				  InputMeshInitFunc init_cb,
 				  InputMeshFreeFunc free_cb);
+CORE_FUNC void RegisterVolumeFloat(const char *type, 
+				  VolumeFloatInitFunc init_cb,
+				  VolumeFloatFreeFunc free_cb);
 
 } // MPPlugins
 } // MeshPotato

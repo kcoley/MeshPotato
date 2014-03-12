@@ -24,39 +24,39 @@
 using MeshPotato::MPVolume::VolumeFloatPtr;
 
 int main(int argc, char **argv) {
-/////////////////////////Parse Command Line Arguments=================================================
-lux::CmdLineFind clf(argc, argv);
-std::string vdb_volumeFile = clf.find(std::string("-vdb"), std::string("bunny_cloud/bunny_cloud.vdb"), std::string("VDB Fog Volume File"));
-std::string outputImage = clf.find(std::string("-name"), std::string("test.exr"), std::string("Name of output image"));
-int imageWidth = clf.find("-NX", 960, "Image Width");
-int imageHeight = clf.find("-NY", 540, "Image Height");
-int numthreads = clf.find("-numthreads", 0, "Number of Threads");
-float stepSize = clf.find("-step", 1.0f, "Step size");
-float fov = clf.find("-fov", 60.0f, "Field of View");
-float nearP = clf.find("-near", 1.0f, "Near Plane");
-float farP = clf.find("-far", std::numeric_limits<float>::max(), "Far Plane");
-float scattering = clf.find("-K", 1.0f, "Scattering Coefficient");
-float dsmK = clf.find("-dsm", 5.0f, "DSM Coefficient");
-MeshPotato::MPUtils::MPVec3 cam_pos = clf.find(std::string("-eye"), MeshPotato::MPUtils::MPVec3(0.0,18.0,90.0), std::string("Camera Position"));
-MeshPotato::MPUtils::MPVec3 cam_rot = clf.find(std::string("-rot"), MeshPotato::MPUtils::MPVec3(0.0,0.0,-180.0), std::string("Camera Rotation"));
+	/////////////////////////Parse Command Line Arguments=================================================
+	MeshPotato::MPUtils::CmdLineFind clf(argc, argv);
+	std::string vdb_volumeFile = clf.find(std::string("-vdb"), std::string("bunny_cloud/bunny_cloud.vdb"), std::string("VDB Fog Volume File"));
+	std::string outputImage = clf.find(std::string("-name"), std::string("test.exr"), std::string("Name of output image"));
+	int imageWidth = clf.find("-NX", 960, "Image Width");
+	int imageHeight = clf.find("-NY", 540, "Image Height");
+	int numthreads = clf.find("-numthreads", 1, "Number of Threads");
+	float stepSize = clf.find("-step", 1.0f, "Step size");
+	float fov = clf.find("-fov", 60.0f, "Field of View");
+	float nearP = clf.find("-near", 1.0f, "Near Plane");
+	float farP = clf.find("-far", std::numeric_limits<float>::max(), "Far Plane");
+	float scattering = clf.find("-K", 1.0f, "Scattering Coefficient");
+	float dsmK = clf.find("-dsm", 5.0f, "DSM Coefficient");
+	MeshPotato::MPUtils::MPVec3 cam_pos = clf.find(std::string("-eye"), MeshPotato::MPUtils::MPVec3(0.0,18.0,90.0), std::string("Camera Position"));
+	MeshPotato::MPUtils::MPVec3 cam_rot = clf.find(std::string("-rot"), MeshPotato::MPUtils::MPVec3(0.0,0.0,-180.0), std::string("Camera Rotation"));
 
-MeshPotato::MPUtils::MPVec3 fcam_pos = clf.find(std::string("-feye"), MeshPotato::MPUtils::MPVec3(0.0,18.0,20.0), std::string("Frustum Position 1"));
-MeshPotato::MPUtils::MPVec3 fcam_pos2 = clf.find(std::string("-feye2"), MeshPotato::MPUtils::MPVec3(-30.0,18.0,0.0), std::string("Frustum Position 2"));
-MeshPotato::MPUtils::MPVec3 fcam_pos3 = clf.find(std::string("-feye3"), MeshPotato::MPUtils::MPVec3(-30.0,18.0,0.0), std::string("Frustum Position 3"));
-//MeshPotato::MPUtils::MPVec3 fcam_rot = clf.find(std::string("-frot"), MeshPotato::MPUtils::MPVec3(0.0,0.0,180.0), std::string("Frustum Rotation"));
-float fnearP = clf.find("-fnear", 20.0f, "Frustum Near Plane");
-float ffarP = clf.find("-ffar", 60.0f, "Frustum Far Plane");
+	MeshPotato::MPUtils::MPVec3 fcam_pos = clf.find(std::string("-feye"), MeshPotato::MPUtils::MPVec3(0.0,18.0,20.0), std::string("Frustum Position 1"));
+	MeshPotato::MPUtils::MPVec3 fcam_pos2 = clf.find(std::string("-feye2"), MeshPotato::MPUtils::MPVec3(-30.0,18.0,0.0), std::string("Frustum Position 2"));
+	MeshPotato::MPUtils::MPVec3 fcam_pos3 = clf.find(std::string("-feye3"), MeshPotato::MPUtils::MPVec3(-30.0,18.0,0.0), std::string("Frustum Position 3"));
+	//MeshPotato::MPUtils::MPVec3 fcam_rot = clf.find(std::string("-frot"), MeshPotato::MPUtils::MPVec3(0.0,0.0,180.0), std::string("Frustum Rotation"));
+	float fnearP = clf.find("-fnear", 20.0f, "Frustum Near Plane");
+	float ffarP = clf.find("-ffar", 60.0f, "Frustum Far Plane");
 
-clf.usage("-h");
-clf.printFinds();
+	clf.usage("-h");
+	clf.printFinds();
 
-tbb::task_scheduler_init schedulerInit(
-        (numthreads == 0) ? tbb::task_scheduler_init::automatic : numthreads
-);
+	tbb::task_scheduler_init schedulerInit(
+			(numthreads == 0) ? tbb::task_scheduler_init::automatic : numthreads
+			);
 
-openvdb::initialize();
-cam_rot/= 180.0;
-cam_rot.normalize();
+	openvdb::initialize();
+	cam_rot/= 180.0;
+	cam_rot.normalize();
 	openvdb::FloatGrid::Ptr sphere = openvdb::tools::createLevelSetSphere<openvdb::FloatGrid>(10, openvdb::Vec3f(0, 0, 0), 0.05);
 	openvdb::tools::sdfToFogVolume<openvdb::FloatGrid>(*sphere);	
 
@@ -66,7 +66,7 @@ cam_rot.normalize();
 	MeshPotato::MPVolume::VolumeFloatPtr grid4 = MeshPotato::MPVolume::VDBVolumeGrid::Ptr(sphere);
 	std::cout << "before marching" << std::endl;
 	MeshPotato::MPVolume::VolumeColorPtr basecolor = MeshPotato::MPVolume::ConstantVolume<MeshPotato::MPUtils::Color>::Ptr(MeshPotato::MPUtils::Color(0,0,0,0));		
-//	boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > mysphere = MeshPotato::MPVolume::ImplicitSphere::Ptr(10, MPVec3(0,0,0));
+	//	boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > mysphere = MeshPotato::MPVolume::ImplicitSphere::Ptr(10, MPVec3(0,0,0));
 	MeshPotato::MPNoise::Noise_t noise;
 	noise.frequency = 5;
 	noise.amplitude = 3;
@@ -79,17 +79,17 @@ cam_rot.normalize();
 	boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > add = MeshPotato::MPVolume::AddVolume<float >::Ptr(clamp_sphere1, clamp_sphere2);
 	MeshPotato::MPVolume::VolumeFloatPtr add2 = MeshPotato::MPVolume::AddVolume<float >::Ptr(clamp_sphere1, clamp_sphere2);
 	float val = grid4->eval(MeshPotato::MPUtils::MPVec3(0,0,0));
-	
-//	openvdb::CoordBBox indexBB(openvdb::Coord(-400,-400,-400), openvdb::Coord(400,400,400));
-//	openvdb::FloatGrid::Ptr newvdbgrid = MeshPotato::MPVolume::makeVDBGrid(mysphere, indexBB, 0.005);
-//	openvdb::FloatGrid::Ptr newvdbgrid = MeshPotato::MPVolume::makeVDBGrid(clamp_sphere1, indexBB, 0.01f);
-//	openvdb::tools::sdfToFogVolume<openvdb::FloatGrid>(newvdbgrid.operator*());
-//	openvdb::io::File file("pyroclast5.vdb");
-//	openvdb::GridPtrVec grids;
-//	grids.push_back(newvdbgrid);
-//	file.write(grids);
-//	file.close();
-//	return 0;
+
+	//	openvdb::CoordBBox indexBB(openvdb::Coord(-400,-400,-400), openvdb::Coord(400,400,400));
+	//	openvdb::FloatGrid::Ptr newvdbgrid = MeshPotato::MPVolume::makeVDBGrid(mysphere, indexBB, 0.005);
+	//	openvdb::FloatGrid::Ptr newvdbgrid = MeshPotato::MPVolume::makeVDBGrid(clamp_sphere1, indexBB, 0.01f);
+	//	openvdb::tools::sdfToFogVolume<openvdb::FloatGrid>(newvdbgrid.operator*());
+	//	openvdb::io::File file("pyroclast5.vdb");
+	//	openvdb::GridPtrVec grids;
+	//	grids.push_back(newvdbgrid);
+	//	file.write(grids);
+	//	file.close();
+	//	return 0;
 	MeshPotato::MPVolume::VolumeFloatPtr grid;
 	openvdb::GridBase::Ptr baseGrid = MeshPotato::MPVolume::readVDBGrid(vdb_volumeFile);
 
@@ -104,25 +104,25 @@ cam_rot.normalize();
 	cam->setEyeViewUp(cam_pos, cam_rot, MeshPotato::MPUtils::MPVec3(0,1,0));
 	cam->setNearPlane(nearP);
 	cam->setFarPlane(farP);
-		
+
 	MeshPotato::MPVolume::VolumeFloatPtr bunnydsm = MeshPotato::MPVolume::VDBVolumeGrid::Ptr(inputGrid);
 	std::cout << bunnydsm->eval(MeshPotato::MPUtils::MPVec3(0,0,0)) << std::endl;
 
-//	openvdb::tools::Film film(imageWidth, imageHeight);
-//	openvdb::tools::PerspectiveCamera vdbcam(film, MeshPotato::MPUtils::MPVec3(-29,-77,0), MeshPotato::MPUtils::MPVec3(-100,60,23));
-//	openvdb::tools::PerspectiveCamera vdbcam(film, cam_rot, cam_pos);
+	//	openvdb::tools::Film film(imageWidth, imageHeight);
+	//	openvdb::tools::PerspectiveCamera vdbcam(film, MeshPotato::MPUtils::MPVec3(-29,-77,0), MeshPotato::MPUtils::MPVec3(-100,60,23));
+	//	openvdb::tools::PerspectiveCamera vdbcam(film, cam_rot, cam_pos);
 	MeshPotato::MPUtils::ProgressMeter meter(imageHeight, "volume render");
-//	vdbcam.lookAt(MeshPotato::MPUtils::MPVec3(0,0,0));
-openvdb::BBoxd bbox(MeshPotato::MPUtils::MPVec3(0,0,0), MeshPotato::MPUtils::MPVec3(100,100,100));	
+	//	vdbcam.lookAt(MeshPotato::MPUtils::MPVec3(0,0,0));
+	openvdb::BBoxd bbox(MeshPotato::MPUtils::MPVec3(0,0,0), MeshPotato::MPUtils::MPVec3(100,100,100));	
 	boost::shared_ptr<MeshPotato::MPUtils::Camera> frustumCam = MeshPotato::MPUtils::Camera::Ptr();
 
 
 
-//Building Frustum Camera////////////////////////////
-frustumCam = MeshPotato::MPVolume::buildFrustumCamera(fcam_pos, inputGrid);
-boost::shared_ptr<MeshPotato::MPUtils::Camera> frustumCam2 = MeshPotato::MPVolume::buildFrustumCamera(fcam_pos2, inputGrid);
-boost::shared_ptr<MeshPotato::MPUtils::Camera> frustumCam3 = MeshPotato::MPVolume::buildFrustumCamera(fcam_pos3, inputGrid);
-////End Building Frustum Camera//////////////////////////////////////////////////////////////
+	//Building Frustum Camera////////////////////////////
+	frustumCam = MeshPotato::MPVolume::buildFrustumCamera(fcam_pos, inputGrid);
+	boost::shared_ptr<MeshPotato::MPUtils::Camera> frustumCam2 = MeshPotato::MPVolume::buildFrustumCamera(fcam_pos2, inputGrid);
+	boost::shared_ptr<MeshPotato::MPUtils::Camera> frustumCam3 = MeshPotato::MPVolume::buildFrustumCamera(fcam_pos3, inputGrid);
+	////End Building Frustum Camera//////////////////////////////////////////////////////////////
 
 
 
@@ -130,8 +130,8 @@ boost::shared_ptr<MeshPotato::MPUtils::Camera> frustumCam3 = MeshPotato::MPVolum
 	boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid > frustum = MeshPotato::MPVolume::FrustumGrid::Ptr(frustumCam, bbox);
 	boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid > frustum2 = MeshPotato::MPVolume::FrustumGrid::Ptr(frustumCam2, bbox);
 	boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid > frustum3 = MeshPotato::MPVolume::FrustumGrid::Ptr(frustumCam3, bbox);
-//	boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid > frustum2 = MeshPotato::MPVolume::FrustumGrid::Ptr(frustumCam, bbox);
-//	MeshPotato::MPVolume::VolumeFloatPtr addFrustums = MeshPotato::MPVolume::AddVolume<float>::Ptr(frustum, frustum2);
+	//	boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid > frustum2 = MeshPotato::MPVolume::FrustumGrid::Ptr(frustumCam, bbox);
+	//	MeshPotato::MPVolume::VolumeFloatPtr addFrustums = MeshPotato::MPVolume::AddVolume<float>::Ptr(frustum, frustum2);
 	openvdb::Coord ijk(50,50,50);
 	std::cout << frustum->indexToWorld(ijk) << std::endl;
 	std::cout << "dsm" << std::endl;
@@ -150,31 +150,31 @@ boost::shared_ptr<MeshPotato::MPUtils::Camera> frustumCam3 = MeshPotato::MPVolum
 	std::cout << frustum->indexToWorld(openvdb::Coord(100,100,500)) << std::endl;
 	//return 0;
 
-//	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, light1, stepSize, scattering);
-//	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, addLights, stepSize, scattering);
+	//	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, light1, stepSize, scattering);
+	//	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, addLights, stepSize, scattering);
 	std::cout << "Marching..." << std::endl;
 	image->reset(imageWidth, imageHeight);
-//	deepimage.reset(imageWidth, imageHeight);
+	//	deepimage.reset(imageWidth, imageHeight);
 	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, addLights, stepSize, scattering, image, cam, outputImage);
 	marcher.render(true);
 
 
-/*
-	for (int j = 0; j < imageHeight; ++j) {
-		for (int i = 0; i < imageWidth; ++i) {
-			double x = (double)i/(imageWidth - 1.0);
-			double y = (double)j/(imageHeight - 1.0);
-			MeshPotato::MPUtils::MPRay ray = cam->getRay(x,y);//vdbcam.getRay(i,j);//cam.getRay(x,y);
+	/*
+	   for (int j = 0; j < imageHeight; ++j) {
+	   for (int i = 0; i < imageWidth; ++i) {
+	   double x = (double)i/(imageWidth - 1.0);
+	   double y = (double)j/(imageHeight - 1.0);
+	   MeshPotato::MPUtils::MPRay ray = cam->getRay(x,y);//vdbcam.getRay(i,j);//cam.getRay(x,y);
 
-			setPixel(deepimage, i, j, marcher.deepL(ray, cam));
-			setPixel(image, i, j, marcher.L(ray));
-		}
-		meter.update();
-	}
-*/
+	   setPixel(deepimage, i, j, marcher.deepL(ray, cam));
+	   setPixel(image, i, j, marcher.L(ray));
+	   }
+	   meter.update();
+	   }
+	   */
 	std::cout << "Done Marching" << std::endl;
-//	MeshPotato::MPUtils::writeOIIOImage(outputImage.c_str(), image);
-//	MeshPotato::MPUtils::writeOIIOImage(("deep" + outputImage).c_str(), deepimage);
+	//	MeshPotato::MPUtils::writeOIIOImage(outputImage.c_str(), image);
+	//	MeshPotato::MPUtils::writeOIIOImage(("deep" + outputImage).c_str(), deepimage);
 	clf.printFinds();
 	return 0;
 }

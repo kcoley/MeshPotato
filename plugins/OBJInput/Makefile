@@ -1,5 +1,4 @@
-#CC=g++
-CC=clang++
+CC=g++
 CFLAGS=-c -Wall -fPIC
 
 INCLUDES= -I ./include -I $(VDBINCLUDE)

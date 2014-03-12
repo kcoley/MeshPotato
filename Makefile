@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-c -Wall -fPIC
+CFLAGS=-c -Wall -fPIC 
 LDFLAGS=
 SOURCES=$(wildcard src/*.C)
 BOOST_INC = /usr/include

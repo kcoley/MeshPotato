@@ -15,9 +15,24 @@ namespace MeshPotato {
 namespace MPVolume {
 class VDBRayMarcher {
 public:
-VDBRayMarcher(openvdb::FloatGrid::Ptr _grid, VolumeColorPtr _dsm, const double &_step, const double &_K, boost::shared_ptr<MeshPotato::MPUtils::Image> _image, boost::shared_ptr<MeshPotato::MPUtils::Camera> _camera, const std::string &_outputImage) : grid(_grid), dsm(_dsm), step(_step), K(_K), interpolator(grid->constTree(), grid->transform()), intersector(*grid), image(_image), camera(_camera), outputImage(_outputImage) {
+VDBRayMarcher(openvdb::FloatGrid::Ptr _grid, 
+	     VolumeColorPtr _dsm, 
+	     const double &_step, 
+	     const double &_K, 
+	     boost::shared_ptr<MeshPotato::MPUtils::Image> _image, 
+	     boost::shared_ptr<MeshPotato::MPUtils::Camera> _camera, 
+	     const std::string &_outputImage
+	     ) : 
+	     grid(_grid), 
+	     dsm(_dsm), 
+	     step(_step), 
+	     K(_K), 
+	     interpolator(grid->constTree(), grid->transform()), 
+	     intersector(*grid), 
+	     image(_image), 
+	     camera(_camera), 
+	     outputImage(_outputImage) {}
 
-}
 inline const MeshPotato::MPUtils::Color L(MPRay &ray, openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> intersector2) const {
 	Color _L = Color(0,0,0,0);
 	float deltaT, deltaS;

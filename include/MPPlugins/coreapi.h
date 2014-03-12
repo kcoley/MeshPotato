@@ -4,7 +4,7 @@
 #include "defines.h"
 #include "OutputMeshAPI.h"
 #include "InputMeshAPI.h"
-
+#include "MPVolume/MPVolume.h"
 #include <string>
 #include <map>
 
@@ -36,6 +36,18 @@ public:
 private:
 	typedef std::map<std::string, CreateCallback> CallbackMap;
 	static CallbackMap mInputMeshes;
+
+};
+class CORE_API VolumeFloatFactory {
+public:
+	typedef MPVolume::VolumeFloatPtr *(*CreateCallback)();
+
+	static void RegisterVolumeFloat(const std::string & type, CreateCallback cb);
+	static void UnregisterVolumeFloat(const std::string &type);
+	static MPVolume::VolumeFloatPtr *CreateVolumeFloat(const std::string &type);
+private:
+	typedef std::map<std::string, CreateCallback> CallbackMap;
+	static CallbackMap mVolumeFloats;
 
 };
 

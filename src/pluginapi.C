@@ -16,5 +16,11 @@ namespace MeshPotato {
 			InputMeshFactory::RegisterInputMesh(type, init_cb);
 			(void) free_cb; // objects never get freed
 		}
+		void RegisterVolumeFloat(const char *type,
+				VolumeFloatInitFunc init_cb,
+				VolumeFloatFreeFunc free_cb) {
+			VolumeFloatFactory::RegisterVolumeFloat(type, init_cb);
+			(void) free_cb; // objects never get freed
+		}
 	}
 }
