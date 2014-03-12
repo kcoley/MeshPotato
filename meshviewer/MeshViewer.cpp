@@ -37,6 +37,9 @@
 
 #include "MeshViewer.h"
 #include "Utility.h"
+#include <MPPlugins/coreapi.h>
+#include <MPPlugins/pluginmanager.h>
+#include <boost/filesystem.hpp>
 // Global Objects
 MeshViewer *viewer;
 Camera     *cam;
@@ -294,10 +297,15 @@ void MeshViewer::readFile(const char* inName) {
 }
 void MeshViewer::readFile(std::string &inName) {
   Vertex v;
-  mpmesh.loadMesh(inName);
-  std::list<std::vector<std::string> > verts = mpmesh.getVertices();
-  std::list<std::vector<std::string> > norms = mpmesh.getNormals();
-  std::list<std::vector<std::string> > facs  = mpmesh.getFaces();
+  std::string inputExtension = boost::filesystem::extension(inName);
+  inputExtension = inputExtension.erase(0,1);
+  MeshPotato::MPPlugins::InputMeshAPI *imesh = MeshPotato::MPPlugins::InputMeshFactory::CreateInputMesh(inputExtension);
+  imesh->loadMesh(inName.c_str());
+
+  std::list<std::vector<std::string> > verts = imesh->getVertices();
+  std::list<std::vector<std::string> > norms = imesh->getNormals();
+  std::list<std::vector<std::string> > facs  = imesh->getFaces();
+  delete imesh;
   for (std::list<std::vector<std::string> >::iterator iter = verts.begin(); iter != verts.end(); ++iter) {
 	for (std::vector<std::string>::iterator ptr = iter->begin(); ptr != iter->end(); ptr = ptr + 3) {
 		v.x = stringToType<float>(*ptr);
@@ -951,7 +959,7 @@ void myHandleMotion(int x, int y) {
 
 // Main program to create window, setup callbacks, and initiate GLUT
 int main(int argc, char* argv[]) {
-  
+MeshPotato::MPPlugins::PluginManager::GetInstance().LoadAll(); 
   if(argc < 2) {
     cout << "Usage: ./meshviewer [filename.obj]"  << endl;
     exit(0);

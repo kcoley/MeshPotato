@@ -15,7 +15,7 @@ ifeq ("$(shell uname)", "Darwin")
   CFLAGS  = -I/opt/local/include -I/group/dpa/include -g -std=c++0x
 else
   ifeq ("$(shell uname)", "Linux")
-  LDFLAGS =  -lm -lX11 -lGL -lGLU -lglut -lGLEW -L/group/dpa/lib -lOpenImageIO -L$(MESHPOTATO_DIR)/lib -lmeshpotato -L/group/dpa/local/openvdb/lib -lopenvdb -lboost_system -lboost_filesystem
+  LDFLAGS =  -lm -lX11 -lGL -lGLU -lglut -lGLEW -L/group/dpa/lib -lOpenImageIO -lboost_filesystem -L$(MESHPOTATO_DIR)/lib -lmeshpotato -L/group/dpa/local/openvdb/lib -lopenvdb -lboost_system -lboost_filesystem
   CFLAGS  = -I/group/dpa/include -g -I $(MESHPOTATO_DIR)/include  
 #  CFLAGS  = -I/group/dpa/include -g -std=c++0x -I $(MESHPOTATO_DIR)/include
   endif

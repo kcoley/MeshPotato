@@ -18,7 +18,6 @@
 #include <OpenImageIO/imageio.h>
 #include "Face.h"
 #include "Camera.h"
-#include <MPMesh/MeshObject.h>
 #ifdef __APPLE__
 #  include <GL/glew.h>
 #  include <GLUT/glut.h>
@@ -45,7 +44,7 @@ typedef float RGBA[4];
 class MeshViewer {
 public:
   // Initializing constant values relative to the class
-  MeshViewer() : mpmesh(), filetype() { 
+  MeshViewer() : filetype() { 
     minX = maxX = minY = maxY = minZ = maxZ = 0;
     Width = WIDTH;  Height = HEIGHT; Aspect = ASPECT;
   }
@@ -83,8 +82,6 @@ public:
   void initialize(char*);
 
 private:
-  // Kernel for Mesh Potato
-   MyEngine::Kernel mpkernel;
 
   // Values to calculate center of of the object
   float minX;
@@ -134,7 +131,6 @@ private:
   vector<Vertex> vertTex;
   list<Face> faces;
   vector<Material> mats;
-  MeshPotato::MeshObject mpmesh;
   // Used as a buffer to store pixels read from glReadPixels
   RGBA *pixmap;
   std::string filetype;
