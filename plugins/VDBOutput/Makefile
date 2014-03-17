@@ -22,7 +22,7 @@ all: $(PLUGINFILES)
 
 python: $(PYVDBMESH).C
 	$(CC) $(CFLAGS) -I $(PYTHON_INCLUDE) $(PYVDBMESH).C 
-	$(CC) -shared -Wl,-soname,$(PYVDBMESH).so $(PYVDBMESH).o -lpython2.7 -lboost_python -lboost_thread -lboost_system -lboost_filesystem  -L./lib -L/group/dpa/local/openvdb/lib -L$(HOME)/projects/MeshPotato/lib -lmeshpotato -lopenvdb /group/dpa/local/openvdb/python/lib/python2.7/pyopenvdb.so -lboost_system -o $(PYVDBMESH).so
+	$(CC) -shared -Wl,-soname,$(PYVDBMESH).so $(PYVDBMESH).o -L. -lVDBOutputPlugin -lpython2.7 -lboost_python -lboost_thread -lboost_system -lboost_filesystem  -L./lib -L/group/dpa/local/openvdb/lib -L$(HOME)/projects/MeshPotato/lib -lmeshpotato -lopenvdb /group/dpa/local/openvdb/python/lib/python2.7/pyopenvdb.so -lboost_system -o $(PYVDBMESH).so
 	cp $(PYVDBMESH).so ../../pymeshpotato
 
 clean:

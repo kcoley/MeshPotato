@@ -4,11 +4,11 @@
 #include <list>
 #include <vector>
 using namespace boost::python;
-using namespace MyEngine;
-struct InputMeshWrap: MyEngine::InputMesh, wrapper<MyEngine::InputMesh> {
-        void loadMesh(const char *) {}
-        void writeMesh(const char *) {}
-        const size_t getNumberVertices() const {
+using namespace MeshPotato::MPPlugins;
+struct InputMeshWrap: MeshPotato::MPPlugins::InputMeshAPI, wrapper<MeshPotato::MPPlugins::InputMeshAPI> {
+        bool loadMesh(const char *) {}
+        bool writeMesh(const char *) {}
+        const unsigned int getNumberVertices() const {
                 return this->get_override("getNumberVertices")();
         }
 
@@ -16,16 +16,16 @@ struct InputMeshWrap: MyEngine::InputMesh, wrapper<MyEngine::InputMesh> {
 
 BOOST_PYTHON_MODULE(pyOBJInputPlugin) {
 //        openvdb::initialize();
-        class_<InputMeshWrap, boost::noncopyable>("InputMesh")
-                .def("loadMesh", pure_virtual(&MyEngine::InputMesh::InputMeshDriver::loadMesh))
-                .def("getNumberVertices", pure_virtual(&MyEngine::InputMesh::InputMeshDriver::getNumberVertices))
+        class_<InputMeshWrap, boost::noncopyable>("InputMesh", no_init)
+                .def("loadMesh", pure_virtual(&MeshPotato::MPPlugins::InputMeshAPI::loadMesh))
+                .def("getNumberVertices", pure_virtual(&MeshPotato::MPPlugins::InputMeshAPI::getNumberVertices))
                 ;
-	class_<OBJInputMeshDriver, bases<InputMeshWrap> >("OBJInputMesh")
-		.def("loadMesh", &OBJInputMeshDriver::loadMesh)
-		.def("getNumberVertices", &OBJInputMeshDriver::getNumberVertices)
-		.def("getVertices", &OBJInputMeshDriver::getVertices)
-		.def("getNormals", &OBJInputMeshDriver::getNormals)
-		.def("getFaces", &OBJInputMeshDriver::getFaces)
+	class_<MeshPotato::MPPlugins::OBJInputMesh, bases<InputMeshWrap> >("OBJInputMesh")
+		.def("loadMesh", &OBJInputMesh::loadMesh)
+		.def("getNumberVertices", &OBJInputMesh::getNumberVertices)
+		.def("getVertices", &OBJInputMesh::getVertices)
+		.def("getNormals", &OBJInputMesh::getNormals)
+		.def("getFaces", &OBJInputMesh::getFaces)
 		; 
 }
 

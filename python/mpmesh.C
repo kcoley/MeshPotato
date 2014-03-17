@@ -85,7 +85,7 @@ BOOST_PYTHON_MODULE(mpmesh) {
               .def("writeMesh", &MeshPotato::MPMesh::MeshObject::writeMesh)
 //              .def("Write", &MeshPotato::MPMesh::MPMesh::Write)
         ;
-	class_<InputMeshWrap, boost::noncopyable>("InputMesh")
+	class_<InputMeshWrap, boost::noncopyable>("InputMesh", no_init)
 		.def("loadMesh", pure_virtual(&MeshPotato::MPPlugins::InputMeshAPI::loadMesh))
 		.def("getNumberVertices", pure_virtual(&MeshPotato::MPPlugins::InputMeshAPI::getNumberVertices))
 		;
