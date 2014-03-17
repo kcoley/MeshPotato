@@ -45,7 +45,6 @@ FrustumGrid(boost::shared_ptr<MeshPotato::MPUtils::Camera> _cam, openvdb::BBoxd 
 		accessor.setValue(ijk, value);
 	}     
 	MeshPotato::MPUtils::MPVec3 indexToWorld(const openvdb::Coord &ijk) {
-		openvdb::Vec3d vec(1,2,3);
 		return frustumTransform.indexToWorld(ijk);     
 	} 
 	virtual const MeshPotato::MPUtils::MPVec3 grad(const MeshPotato::MPUtils::MPVec3 &P) const {}

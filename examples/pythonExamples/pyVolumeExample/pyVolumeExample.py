@@ -12,7 +12,7 @@ volume2 = mpvol.VDBVolumeGrid.ptr(sphere2)
 volume3 = mpvol.VDBVolumeGrid.ptr(cube)
 clamp_volume1 = mpvol.Clamp.ptr(volume1, 0, 1)
 clamp_volume2 = mpvol.Clamp.ptr(volume2, 0, 1)
-addedVolume = mpvol.AddVolume.ptr(clamp_volume1, clamp_volume2)
+addedVolume = mpvol.AddVolumeFloat.ptr(clamp_volume1, clamp_volume2)
 #print addedVolume.eval([3,4,5])
 #coordbbox = mpvol.CoordBBox(
 minBB = mpvol.getVDBCoord([-40, -40, -40])

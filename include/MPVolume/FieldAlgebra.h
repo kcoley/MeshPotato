@@ -1,7 +1,7 @@
 #ifndef __FIELD_ALGEBRA_H__
 #define __FIELD_ALGEBRA_H__
 #include "MPVolume.h"
-
+#include <boost/shared_ptr.hpp>
 namespace MeshPotato {
 namespace MPVolume {
 template <typename T>
@@ -17,7 +17,8 @@ const typename Volume<T>::volumeDataType  eval(const MeshPotato::MPUtils::MPVec3
 const typename Volume<T>::volumeGradType grad(
 	  const MeshPotato::MPUtils::MPVec3 &P) const;
 private:
-boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > f1, f2;	
+class Impl;
+boost::shared_ptr<Impl> mImpl;
 };
 
 typedef AddVolume<float> AddVolumeFloat;

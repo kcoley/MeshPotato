@@ -20,7 +20,15 @@ struct MPVolumeWrap : Volume<float>, wrapper<Volume<float> > {
 boost::python::object getMPVolumeFromPyObject(boost::shared_ptr<Volume<float> >vdbgrid) {
 	return object(&vdbgrid);
 }
-
+MPVec3 getMPVec3(boost::python::list& ls) {
+	MPVec3 vec;
+	if (len(ls) == 3) {
+		vec.x() = (boost::python::extract<float>(ls[0]));
+		vec.y() = (boost::python::extract<float>(ls[1]));
+		vec.z() = (boost::python::extract<float>(ls[2]));
+	}
+	return vec;
+}
 openvdb::Coord getVDBCoord(boost::python::list& ls) {
 	openvdb::Coord coord;
 	if (len(ls) == 3) {
@@ -40,6 +48,9 @@ BOOST_PYTHON_MODULE(mpvolume) {
 	class_<openvdb::Coord>("openvdb_coord")
 		.def("getVDBCoord", &getVDBCoord)
 	;
+	class_<MPVec3>("mpvec3")
+		.def("getMPVec3", &getMPVec3)
+	;
 	class_<boost::shared_ptr<Volume<float> > >("mpvolume_float")
 	;
 	class_<openvdb::CoordBBox  >("coord_bbox", no_init)
@@ -56,12 +67,12 @@ BOOST_PYTHON_MODULE(mpvolume) {
 		.def("eval", &VDBVolumeGrid::eval)
 		.def("grad", &VDBVolumeGrid::grad)
 	;
-	class_<AddVolume<float>,  bases<MPVolumeWrap> >("AddVolume", no_init)
+	class_<AddVolumeFloat,  bases<MPVolumeWrap> >("AddVolumeFloat", no_init)
 		.def(init<boost::shared_ptr<Volume<float> >, boost::shared_ptr<Volume<float> > >())
-		.def("ptr", &AddVolume<float>::Ptr)
+		.def("ptr", &AddVolumeFloat::Ptr)
 		.staticmethod("ptr")
-		.def("eval", &AddVolume<float>::eval)
-		.def("grad", &AddVolume<float>::grad)
+		.def("eval", &AddVolumeFloat::eval)
+		.def("grad", &AddVolumeFloat::grad)
 	;
 	class_<ImplicitSphere, bases<MPVolumeWrap> >("ImplicitSphere", no_init)
 		.def(init<float, MeshPotato::MPUtils::MPVec3>() )
@@ -82,4 +93,5 @@ BOOST_PYTHON_MODULE(mpvolume) {
 	def("getMPVolumeFromPyObject", &getMPVolumeFromPyObject);
 	def("getVDBCoord", &getVDBCoord);
 	def("getVDBCoordBBox", &getVDBCoordBBox);
+	def("getMPVec3", &getMPVec3);
 }

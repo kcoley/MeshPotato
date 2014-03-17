@@ -1,11 +1,12 @@
+#include <MPMesh/MeshObject.h>
 #include <openvdb/openvdb.h>
 #include <pyopenvdb.h>
 #include <boost/python.hpp>
-#include <MPMesh/MeshObject.h>
 #include <MPMesh/MPMesh.h>
-#include <MPPlugins/InputMesh.h>
+#include <MPPlugins/pluginapi.h>
 #include "pymeshpotato.h"
 #include <MeshPotato/meshpotato.h>
+#include <MPPlugins/coreapi.h>
 using namespace boost::python;
 object processGrid(object inObj) {
 	object outObj;
@@ -13,7 +14,7 @@ object processGrid(object inObj) {
 		if (openvdb::GridBase::Ptr grid = pyopenvdb::getGridFromPyObject(inObj)) {
 		grid = grid->deepCopyGrid();
 		//process...
-		MeshPotato::MeshObject mesh; //dummy example
+		MeshPotato::MPMesh::MeshObject mesh; //dummy example
 		outObj = pyopenvdb::getPyObjectFromGrid(grid);
 		}
 	}
@@ -24,18 +25,20 @@ object processGrid(object inObj) {
 	return outObj;
 }
 
-struct InputMeshWrap: MyEngine::InputMesh, wrapper<MyEngine::InputMesh> {
-	void loadMesh(const char *) {}
-	const size_t getNumberVertices() const {
+struct InputMeshWrap: MeshPotato::MPPlugins::InputMeshAPI, wrapper<MeshPotato::MPPlugins::InputMeshAPI> {
+	bool loadMesh(const char *) {
+		return this->get_override("loadMesh")();
+	}
+	const unsigned int getNumberVertices() const {
 		return this->get_override("getNumberVertices")();
 	}
 };
 
 object mpmesh() { 
 	object outObj = (	
-      class_<MeshPotato::MeshObject>("MeshObject", init<>())
-              .def("loadMesh", &MeshPotato::MeshObject::loadMesh)
-              .def("writeMesh", &MeshPotato::MeshObject::writeMesh)
+      class_<MeshPotato::MPMesh::MeshObject>("MeshObject", init<>())
+              .def("loadMesh", &MeshPotato::MPMesh::MeshObject::loadMesh)
+              .def("writeMesh", &MeshPotato::MPMesh::MeshObject::writeMesh)
 	);
 	return outObj;
 }
@@ -51,12 +54,12 @@ object mpmesh2() {
 
 BOOST_PYTHON_MODULE(mpmesh) {
 	openvdb::initialize();
-	class_<MeshPotato::MPUtils::Face>("Face", init<>())
-		.def(init<std::list<int>, std::list<int>, std::list<int> >())
-		.def_readwrite("vIndexes", &MeshPotato::MPUtils::Face::vIndexes)
-		.def_readwrite("nIndexes", &MeshPotato::MPUtils::Face::nIndexes)
-		.def_readwrite("tIndexes", &MeshPotato::MPUtils::Face::tIndexes)
-	;
+//	class_<MeshPotato::MPUtils::Face>("Face", init<>())
+//		.def(init<std::list<int>, std::list<int>, std::list<int> >())
+//		.def_readwrite("vIndexes", &MeshPotato::MPUtils::Face::vIndexes)
+//		.def_readwrite("nIndexes", &MeshPotato::MPUtils::Face::nIndexes)
+//		.def_readwrite("tIndexes", &MeshPotato::MPUtils::Face::tIndexes)
+//	;
 	class_<std::list<int> >("mp_int_list")
 		.def("getListFromPython", &getListFromPython<int>)
 	;
@@ -77,9 +80,14 @@ BOOST_PYTHON_MODULE(mpmesh) {
               .def("GetName", &MeshPotato::MPMesh::MPMesh::GetName)
 //              .def("Write", &MeshPotato::MPMesh::MPMesh::Write)
         ;
+	class_<MeshPotato::MPMesh::MeshObject>("MeshObject", init<>())
+              .def("loadMesh", &MeshPotato::MPMesh::MeshObject::loadMesh)
+              .def("writeMesh", &MeshPotato::MPMesh::MeshObject::writeMesh)
+//              .def("Write", &MeshPotato::MPMesh::MPMesh::Write)
+        ;
 	class_<InputMeshWrap, boost::noncopyable>("InputMesh")
-		.def("loadMesh", pure_virtual(&MyEngine::InputMesh::InputMeshDriver::loadMesh))
-		.def("getNumberVertices", pure_virtual(&MyEngine::InputMesh::InputMeshDriver::getNumberVertices))
+		.def("loadMesh", pure_virtual(&MeshPotato::MPPlugins::InputMeshAPI::loadMesh))
+		.def("getNumberVertices", pure_virtual(&MeshPotato::MPPlugins::InputMeshAPI::getNumberVertices))
 		;
 
 	def("getPythonList", &getPythonList);

@@ -4,7 +4,7 @@
 #include "MPUtils/Vector.h"
 #include "MPNoise/Noise.h"
 #include "MPNoise/PerlinNoise.h"
-#include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 namespace MeshPotato {
 	namespace MPVolume {
 		class ImplicitShape: public MeshPotato::MPVolume::Volume<float> {
@@ -21,7 +21,7 @@ namespace MeshPotato {
 				const volumeGradType grad(const MeshPotato::MPUtils::MPVec3& P) const;
 			private:
 				class Impl;
-				boost::scoped_ptr<Impl> mImpl;
+				boost::shared_ptr<Impl> mImpl;
 		};
 		class PyroclasticSphere : public ImplicitShape {
 			public:
@@ -32,7 +32,7 @@ namespace MeshPotato {
 				const volumeGradType grad(const MeshPotato::MPUtils::MPVec3& P) const;
 			private:
 				class Impl;
-				boost::scoped_ptr<Impl> mImpl;
+				boost::shared_ptr<Impl> mImpl;
 		};
 		
 		template<typename T>
