@@ -9,7 +9,7 @@ OIIO_LIB= /group/dpa/lib
 
 PYTHON_VERSION = 2.7
 PYTHON_INCLUDE = /usr/include/python$(PYTHON_VERSION)
-
+INSTALL_PATH = /group/dpa/local/MeshPotato
 PYTHON_TARGET = lib/meshpotato_python
 OBJECTS=$(SOURCES:.C=.o)
 PLUGINS=plugins
@@ -50,7 +50,15 @@ clean:
 	rm src/*.o
 	rm lib/*.so*
 	rm python/*.o
-
+install:
+	rsync -azvr bin $(INSTALL_PATH)
+	rsync -azvr include $(INSTALL_PATH)
+	rsync -azvr lib $(INSTALL_PATH)
+	rsync -azvr pymeshpotato $(INSTALL_PATH)
+	rsync -azvr plugins $(INSTALL_PATH)
+	rsync -azvr maya $(INSTALL_PATH)
+	chmod -R 777 $(INSTALL_PATH)
+	find $(INSTALL_PATH) -name ".svn" -type d -exec rm -rf {} \;
 doc:
 	doxygen Doxyfile
 plugins:

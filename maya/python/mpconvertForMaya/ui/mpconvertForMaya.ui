@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>mpConvertPtrWindow</class>
+ <widget class="QMainWindow" name="mpConvertPtrWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -39,7 +39,7 @@
       <string>Convert</string>
      </property>
      <property name="+c" stdset="0">
-      <string>&quot;convert()&quot;</string>
+      <string>&quot;MPConvert.use.convert()&quot;</string>
      </property>
     </widget>
     <widget class="QPushButton" name="convertButton_2">
@@ -55,7 +55,7 @@
       <string>Cancel</string>
      </property>
      <property name="+c" stdset="0">
-      <string>&quot;closeWindow()&quot;</string>
+      <string>&quot;MPConvert.use.closeWindow()&quot;</string>
      </property>
     </widget>
    </widget>
@@ -72,7 +72,7 @@
      <string>Browse</string>
     </property>
     <property name="+c" stdset="0">
-     <string>&quot;browse()&quot;</string>
+     <string>&quot;MPConvert.use.browse()&quot;</string>
     </property>
    </widget>
    <widget class="QGroupBox" name="radioGroupBox">
@@ -245,7 +245,7 @@
      <x>0</x>
      <y>0</y>
      <width>563</width>
-     <height>26</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAbout">

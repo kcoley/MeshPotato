@@ -48,6 +48,7 @@ MeshPotato::MPPlugins::OutputMeshAPI *omesh = MeshPotato::MPPlugins::OutputMeshF
  }
   imesh->loadMesh(file1.c_str());
   MeshPotato::MeshSpec spec;
+  spec.voxelSize = voxelSize;
   omesh->loadMesh(imesh->getVertices(), imesh->getNormals(), imesh->getFaces(),
    spec);	
   omesh->writeMesh(file2.c_str());

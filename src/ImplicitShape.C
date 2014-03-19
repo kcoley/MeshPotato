@@ -8,8 +8,8 @@ public:
 	MeshPotato::MPUtils::MPVec3 C;
 };
 
-boost::shared_ptr<ImplicitSphere> ImplicitSphere::Ptr(const float &_R, const MeshPotato::MPUtils::MPVec3 &_C) {
-	return boost::shared_ptr<ImplicitSphere>(new ImplicitSphere(_R, _C));	
+boost::shared_ptr<Volume<float> > ImplicitSphere::Ptr(const float &_R, const MeshPotato::MPUtils::MPVec3 &_C) {
+	return boost::shared_ptr<Volume<float> >(new ImplicitSphere(_R, _C));	
 }
 ImplicitSphere::ImplicitSphere(const float &_R,const MeshPotato::MPUtils::MPVec3 &_C) : mImpl(new ImplicitSphere::Impl()) {
 mImpl->R = _R; 

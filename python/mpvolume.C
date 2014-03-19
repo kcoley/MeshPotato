@@ -79,6 +79,7 @@ BOOST_PYTHON_MODULE(mpvolume) {
 		.def("ptr", &ImplicitSphere::Ptr)
 		.staticmethod("ptr")
 		.def("eval", &ImplicitSphere::eval)
+		.def("grad", &ImplicitSphere::grad)
 	;
 	class_<Clamp<float>, bases<MPVolumeWrap> >("Clamp", no_init)
 		.def(init<boost::shared_ptr<Volume<float> >, float, float>())
