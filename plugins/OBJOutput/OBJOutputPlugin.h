@@ -14,9 +14,10 @@
 #include <list>
 #include <vector>
 #include <MeshPotato/meshpotato.h>
+using namespace MeshPotato::MPPlugins;
 namespace MeshPotato {
-namespace MPPlugins {
-	class OBJOutputMesh : public OutputMeshAPI {
+namespace MPMesh {
+	class OBJOutputMesh : public OutputMesh {
 	public:
 	~OBJOutputMesh() {}
 
@@ -26,7 +27,7 @@ namespace MPPlugins {
 	}
 
 			/// <summary>Gets the name of the graphics driver</summary>
-	virtual bool loadMesh(const std::list<std::vector<std::string> > &vertices, const std::list<std::vector<std::string> > &normals, const std::list<std::vector<std::string> > &faces, const MeshPotato::MeshSpec &spec) {
+	virtual bool loadMesh(const std::list<std::vector<std::string> > &vertices, const std::list<std::vector<std::string> > &normals, const std::list<std::vector<std::string> > &faces, const MeshPotato::MPUtils::AttributeTable  &table) {
 				this->vertices = vertices;
 				this->normals = normals;
 				this->faces = faces;
@@ -91,17 +92,17 @@ namespace MPPlugins {
 			std::list<std::vector<std::string> > faces;
 	};
 
-	PLUGIN_FUNC OutputMeshAPI *CreateOutputMesh() {
+	PLUGIN_FUNC OutputMesh *CreateOutputMesh() {
 		return new OBJOutputMesh;
 	}
 
-	PLUGIN_FUNC void DestroyOutputMesh(OutputMeshAPI * om) {
+	PLUGIN_FUNC void DestroyOutputMesh(OutputMesh * om) {
 		delete om;
 	}
 
 	PLUGIN_DISPLAY_NAME("OBJ OutputMesh");
 	PLUGIN_INIT() {
-		std::cout << "PLUGIN_INIT" << std::endl;
+		std::cout << "OBJ_OUTPUT_PLUGIN_INIT" << std::endl;
 		RegisterOutputMesh("obj", CreateOutputMesh, DestroyOutputMesh);
 		return 0;
 	}

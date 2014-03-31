@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
 	std::cout << "marching" << std::endl;
 
 	boost::shared_ptr<MeshPotato::MPUtils::Image> image = MeshPotato::MPUtils::Image::Ptr();
-	MeshPotato::MPUtils::DeepImage deepimage;
+	boost::shared_ptr<MeshPotato::MPUtils::DeepImage> deepimage = MeshPotato::MPUtils::DeepImage::Ptr();
 	boost::shared_ptr<MeshPotato::MPUtils::Camera> cam = MeshPotato::MPUtils::Camera::Ptr();
 	std::cout << "cam_rot = " << cam_rot << std::endl;
 	std::cout << "cam_rot normalized = " << cam_rot.unit() << std::endl;
@@ -154,10 +154,11 @@ int main(int argc, char **argv) {
 	//	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, addLights, stepSize, scattering);
 	std::cout << "Marching..." << std::endl;
 	image->reset(imageWidth, imageHeight);
+	deepimage->reset(imageWidth, imageHeight);
 	//	deepimage.reset(imageWidth, imageHeight);
-	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, addLights, stepSize, scattering, image, cam, outputImage);
+	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, addLights, stepSize, scattering, image, deepimage, cam, outputImage);
 	marcher.render(true);
-
+	marcher.writeImage();
 
 	/*
 	   for (int j = 0; j < imageHeight; ++j) {

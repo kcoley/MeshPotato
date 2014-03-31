@@ -6,13 +6,21 @@
 #include <stdio.h>
 #include <list>
 using namespace std;
+using namespace MeshPotato::MPPlugins;
 namespace MeshPotato {
-	namespace MPPlugins {
-		class VDBOutputMesh : public OutputMeshAPI {
+	namespace MPMesh {
+		class VDBOutputMesh : public OutputMesh {
 			public:
 				virtual ~VDBOutputMesh() {}
 				virtual const char *getName() const { return "VDB Output Mesh";}
-				virtual bool loadMesh(const list<std::vector<std::string> > &vertices, const list<std::vector<std::string> >&normals, const list<std::vector<std::string> > &faces, const MeshPotato::MeshSpec &spec) {
+				virtual bool loadMesh(const list<std::vector<std::string> > &vertices, const list<std::vector<std::string> >&normals, const list<std::vector<std::string> > &faces, const MPUtils::AttributeTable &table)
+				{
+						mTable.addDoubleAttr("inBandWidth", 3.0);
+						mTable.addDoubleAttr("voxelSize", 1.0);
+						mTable.addDoubleAttr("exBandWidth", 3.0);
+						mTable.addDoubleAttr("inBandWidth", 3.0);
+						mTable.addDoubleAttr("backgroundValue", 2.0);
+						mTable.mergeTable(table);
 					std::cout <<"Loading VDB Output Mesh"<< std::endl;
 					this->vertices.clear();
 					this->normals.clear();
@@ -20,10 +28,10 @@ namespace MeshPotato {
 					this->vertices = vertices;
 					this->normals = normals;
 					this->faces = faces;
-					voxelSize = spec.voxelSize;
-					exBandWidth = spec.exBandWidth;
-					inBandWidth = spec.inBandWidth;
-					grid = openvdb::FloatGrid::create(/*background value */2.0);
+					voxelSize = mTable.findDoubleAttr("voxelSize");
+					exBandWidth = mTable.findDoubleAttr("exBandWidth");
+					inBandWidth = mTable.findDoubleAttr("exBandWidth");
+					grid = openvdb::FloatGrid::create(mTable.findDoubleAttr("backgroundValue"));
 
 					return true;
 
@@ -49,7 +57,6 @@ namespace MeshPotato {
 				strm.str("");
 				strm.clear();
 				verts.push_back(openvdb::math::Vec3s(x, y, z));
-				//						verts.push_back(openvdb::math::Vec3s(iter->x, iter->y, iter->z));
 			}
 
 			// Write faces
@@ -77,16 +84,12 @@ namespace MeshPotato {
 					polys.push_back(openvdb::math::Vec4<uint32_t>(x - 1, y - 1, z - 1, w - 1));
 
 				}
-				//						polys.push_back(openvdb::math::Vec4<uint32_t>((unsigned int)iter->x - 1, (unsigned int)iter->y - 1, (unsigned int)iter->z - 1, openvdb::util::INVALID_IDX));
 
 			}
 
 
 			openvdb::math::Transform::Ptr transform = openvdb::math::Transform::createLinearTransform(voxelSize);
 
-
-
-			//					#pragma omp parallel for
 			for( size_t i = 0; i < verts.size(); ++i ){
 				verts[i] = transform->worldToIndex(verts[i]);
 			}
@@ -119,6 +122,7 @@ namespace MeshPotato {
 				}
 
 			private:
+				MPUtils::AttributeTable mTable;
 				float voxelSize;
 				float exBandWidth;
 				float inBandWidth;
@@ -127,12 +131,11 @@ namespace MeshPotato {
 				list<std::vector<std::string> > faces;
 				openvdb::FloatGrid::Ptr grid;
 
-
 		};
-		PLUGIN_FUNC OutputMeshAPI *CreateOutputMesh () {
+		PLUGIN_FUNC OutputMesh *CreateOutputMesh () {
 			return new VDBOutputMesh;
 		}
-		PLUGIN_FUNC void DestroyOutputMesh(OutputMeshAPI *om) {
+		PLUGIN_FUNC void DestroyOutputMesh(OutputMesh *om) {
 			delete om;
 		}
 		PLUGIN_DISPLAY_NAME("VDB OutputMesh");

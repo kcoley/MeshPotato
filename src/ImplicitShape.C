@@ -50,7 +50,23 @@ const PyroclasticSphere::volumeDataType PyroclasticSphere::eval(const MeshPotato
 const PyroclasticSphere::volumeGradType PyroclasticSphere::grad(const MeshPotato::MPUtils::MPVec3& P) const {
                                         return (mImpl->C-P).unit();
 }
+class Cumulo::Impl {
+public:
+	VolumeFloatPtr f;
+	MPNoise::Noise_t parms;
+	VolumeVectorPtr Y;
+	MPNoise::FractalSum<MPNoise::PerlinNoiseGustavson> perlin;
+	boost::shared_ptr<MPNoise::Noise> noise;
+};
+const Cumulo::volumeDataType Cumulo::eval(const MPUtils::MPVec3 &P) const {
+	if (mImpl->f->eval(P) > -1) {
+		return mImpl->f->eval(P) + pow(fabs(mImpl->noise->eval(mImpl->Y->eval(P))), mImpl->parms.gamma) * mImpl->parms.amplitude;
 
-
+	}
+	else
+		return -1;
+}
+const Cumulo::volumeGradType Cumulo::grad(const MPUtils::MPVec3 &P) const {
+}
 }
 }

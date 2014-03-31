@@ -1,12 +1,16 @@
 #ifndef __PLUGINAPI_H__
 #define __PLUGINAPI_H__
 #include "defines.h"
-#include "OutputMeshAPI.h"
-#include "InputMeshAPI.h"
+#include "MPMesh/InputMesh.h"
 #include "MPVolume/MPVolume.h"
+#include "MPMesh/OutputMesh.h"
+namespace MeshPotato {
+	namespace MPMesh {
+		class OutputMesh;
+	}
+}
 namespace MeshPotato {
 namespace MPPlugins {
-class OutputMeshAPI;
 #define PLUGIN_API_VERSION 1
 
 #define CORE_FUNC extern "C" CORE_API
@@ -34,13 +38,13 @@ class OutputMeshAPI;
 	PLUGIN_API const char * PluginMaxVersion = version
 
 /// The function signature for a routine that writes out/reads in a mesh
-typedef OutputMeshAPI *(*OutputMeshInitFunc)();
-typedef InputMeshAPI *(*InputMeshInitFunc)();
+typedef MeshPotato::MPMesh::OutputMesh *(*OutputMeshInitFunc)();
+typedef MeshPotato::MPMesh::InputMesh *(*InputMeshInitFunc)();
 typedef MeshPotato::MPVolume::VolumeFloatPtr *(*VolumeFloatInitFunc)();
 
 /// The function signature for a routine that destroys an output mesh
-typedef void (*OutputMeshFreeFunc)(OutputMeshAPI *);
-typedef void (*InputMeshFreeFunc)(InputMeshAPI *);
+typedef void (*OutputMeshFreeFunc)(MeshPotato::MPMesh::OutputMesh *);
+typedef void (*InputMeshFreeFunc)(MeshPotato::MPMesh::InputMesh *);
 typedef void (*VolumeFloatFreeFunc)(MeshPotato::MPVolume::VolumeFloatPtr *);
 
 /// A routine to let a plugin register a new output mesh type

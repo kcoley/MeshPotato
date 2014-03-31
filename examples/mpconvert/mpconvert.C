@@ -36,27 +36,26 @@ std::string inputExtension = boost::filesystem::extension(file1);
 std::string outputExtension = boost::filesystem::extension(file2);
 outputExtension = outputExtension.erase(0,1);
 inputExtension = inputExtension.erase(0,1);
-MeshPotato::MPPlugins::OutputMeshAPI *omesh = MeshPotato::MPPlugins::OutputMeshFactory::CreateOutputMesh(outputExtension);
+MeshPotato::MPMesh::OutputMesh *omesh = MeshPotato::MPPlugins::OutputMeshFactory::CreateOutputMesh(outputExtension);
   if (! omesh) {
 	std::cout << "Failed to register outputmesh!" << std::endl;
 	return 1;
  }
-  MeshPotato::MPPlugins::InputMeshAPI *imesh = MeshPotato::MPPlugins::InputMeshFactory::CreateInputMesh(inputExtension);
+  MeshPotato::MPMesh::InputMesh *imesh = MeshPotato::MPPlugins::InputMeshFactory::CreateInputMesh(inputExtension);
   if (! imesh) {
 	std::cout << "Failed to register inputmesh!" << std::endl;
 	return 1;
  }
   imesh->loadMesh(file1.c_str());
-  MeshPotato::MeshSpec spec;
-  spec.voxelSize = voxelSize;
+  MeshPotato::MPUtils::AttributeTable table;
+  table.addDoubleAttr("voxelSize", voxelSize);
+  table.addDoubleAttr("exBandWidth", exBandWidth);
+  table.addDoubleAttr("inBandWidth", inBandWidth);
   omesh->loadMesh(imesh->getVertices(), imesh->getNormals(), imesh->getFaces(),
-   spec);	
+   table);	
   omesh->writeMesh(file2.c_str());
   delete omesh; 
   delete imesh; 
-//  MeshPotato::MeshObject mesh;
   clf.printFinds(); 
 
-//    mesh.loadMesh(file1);
-//    mesh.writeMesh(file2);
 }

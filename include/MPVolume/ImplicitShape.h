@@ -34,6 +34,17 @@ namespace MeshPotato {
 				class Impl;
 				boost::shared_ptr<Impl> mImpl;
 		};
+		class Cumulo : public ImplicitShape {
+			public:
+				static boost::shared_ptr<Cumulo> Ptr(VolumeFloatPtr  &_f,  MPNoise::Noise_t &_noiseparms, VolumeVectorPtr &Y);
+				Cumulo(VolumeFloatPtr  &_f,  MPNoise::Noise_t &_noiseparms, VolumeVectorPtr &Y);
+				~Cumulo();
+				const volumeDataType eval(const MeshPotato::MPUtils::MPVec3 &P) const;
+				const volumeGradType grad(const MeshPotato::MPUtils::MPVec3& P) const;
+			private:
+				class Impl;
+				boost::shared_ptr<Impl> mImpl;
+		};
 		
 		template<typename T>
 		class Clamp: public MeshPotato::MPVolume::Volume<T> {

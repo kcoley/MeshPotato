@@ -17,7 +17,8 @@ struct MPVolumeWrap : Volume<float>, wrapper<Volume<float> > {
 		return this->get_override("grad")();
 	}
 };
-boost::python::object getMPVolumeFromPyObject(boost::shared_ptr<Volume<float> >vdbgrid) {
+boost::python::object getMPVolumeFromPyObject(
+		boost::shared_ptr<Volume<float> >vdbgrid) {
 	return object(&vdbgrid);
 }
 MPVec3 getMPVec3(boost::python::list& ls) {
@@ -60,7 +61,8 @@ BOOST_PYTHON_MODULE(mpvolume) {
 		.def("eval", pure_virtual(&Volume<float>::eval))	
 		.def("grad", pure_virtual(&Volume<float>::grad))	
 	;
-	class_<VDBVolumeGrid, boost::shared_ptr<VDBVolumeGrid>, bases<MPVolumeWrap> >("VDBVolumeGrid", no_init)
+	class_<VDBVolumeGrid, boost::shared_ptr<VDBVolumeGrid>, 
+			bases<MPVolumeWrap> >("VDBVolumeGrid", no_init)
 		.def(init<openvdb::FloatGrid::Ptr>())
 		.def("ptr", &VDBVolumeGrid::Ptr)
 		.staticmethod("ptr")
@@ -88,8 +90,6 @@ BOOST_PYTHON_MODULE(mpvolume) {
 		.def("eval", &MeshPotato::MPVolume::Clamp<float>::eval)
 		.def("grad", &MeshPotato::MPVolume::Clamp<float>::grad)
 	;
-//	class_<VDBRayMarcher>("VDBRayMarcher", no_init)
-//		.def(init<	
 	def("makeVDBGrid", &MeshPotato::MPVolume::makeVDBGrid);
 	def("getMPVolumeFromPyObject", &getMPVolumeFromPyObject);
 	def("getVDBCoord", &getVDBCoord);

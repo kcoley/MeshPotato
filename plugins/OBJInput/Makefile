@@ -20,7 +20,7 @@ all: $(PLUGINFILES)
 
 python: $(PYOBJMESH).C
 	$(CC) $(CFLAGS) -I $(PYTHON_INCLUDE) $(PYOBJMESH).C -o $(PYOBJMESH).o
-	$(CC) -shared -Wl,-soname,$(PYOBJMESH).so $(PYOBJMESH).o -lpython2.7 -lboost_python -lboost_thread -lboost_system -lboost_filesystem -L./lib -L/group/dpa/local/openvdb/lib -L$(HOME)/projects/MeshPotato/lib -lmeshpotato -lopenvdb /group/dpa/local/openvdb/python/lib/python2.7/pyopenvdb.so -lboost_system -o $(PYOBJMESH).so
+	$(CC) -shared -Wl,-soname,$(PYOBJMESH).so $(PYOBJMESH).o -lpython2.7 -lboost_python -lboost_thread -lboost_system -lboost_filesystem -L./lib -L/group/dpa/local/openvdb/lib -L$(MESHPOTATO_DIR)/lib -lmeshpotato -lopenvdb /group/dpa/local/openvdb/python/lib/python2.7/pyopenvdb.so -lboost_system -o $(PYOBJMESH).so
 	cp $(PYOBJMESH).so ../../pymeshpotato/
 
 clean:

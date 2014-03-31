@@ -7,8 +7,8 @@ namespace MeshPotato {
 namespace MPMesh {
 	class MeshObject::Impl {
 	public:
-		MeshPotato::MPPlugins::OutputMeshAPI* oMesh;
-		MeshPotato::MPPlugins::InputMeshAPI* iMesh;
+		MeshPotato::MPMesh::OutputMesh* oMesh;
+		MeshPotato::MPMesh::InputMesh* iMesh;
 	};
 	MeshObject::~MeshObject() {
 		delete mImpl->oMesh;
@@ -19,7 +19,7 @@ namespace MPMesh {
 
 	}
 
-	bool MeshObject::loadMesh(const std::string &name) {
+	bool MeshObject::loadMesh(const std::string &name, const MPUtils::AttributeTable table) {
 	// clear out the vertices, normals and faces previously stored
 	// load the mesh into the inputMesh
 		std::string inputExtension = boost::filesystem::extension(name);
@@ -32,12 +32,11 @@ namespace MPMesh {
 		        mImpl->iMesh->loadMesh(name.c_str());
 			return true;
 	}
-	bool MeshObject::writeMesh(const std::string &name) {
-	MeshPotato::MeshSpec spec;
+	bool MeshObject::writeMesh(const std::string &name, const MPUtils::AttributeTable table) {
 	std::string outputExtension = boost::filesystem::extension(name);
 	outputExtension = outputExtension.erase(0,1);
 	mImpl->oMesh = MeshPotato::MPPlugins::OutputMeshFactory::CreateOutputMesh(outputExtension);
-	mImpl->oMesh->loadMesh(mImpl->iMesh->getVertices(), mImpl->iMesh->getNormals(), mImpl->iMesh->getFaces(), spec);
+	mImpl->oMesh->loadMesh(mImpl->iMesh->getVertices(), mImpl->iMesh->getNormals(), mImpl->iMesh->getFaces(), table);
 	mImpl->oMesh->writeMesh(name.c_str());
 	return true;
 	}

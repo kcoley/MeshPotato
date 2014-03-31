@@ -5,6 +5,7 @@
 #include <vector>
 #include <list>
 #include "Color.h"
+#include<boost/shared_ptr.hpp>
 using namespace std;
 
 namespace MeshPotato {
@@ -20,7 +21,9 @@ namespace MeshPotato {
 		class DeepImage
 		{
 			public:
-
+				static boost::shared_ptr<DeepImage> Ptr() {
+					return boost::shared_ptr<DeepImage>(new DeepImage());
+				}
 				DeepImage() :
 					width  (0),
 					height (0),

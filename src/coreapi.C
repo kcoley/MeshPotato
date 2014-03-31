@@ -26,7 +26,7 @@ void VolumeFloatFactory::UnregisterVolumeFloat(const std::string &type) {
 	mVolumeFloats.erase(type);
 }
 
-OutputMeshAPI *OutputMeshFactory::CreateOutputMesh(const std::string &type) {
+MeshPotato::MPMesh::OutputMesh *OutputMeshFactory::CreateOutputMesh(const std::string &type) {
 	CallbackMap::iterator it = mOutputMeshes.find(type);
 	if (it != mOutputMeshes.end()) {
 		// call the creation callback to construct this derived type
@@ -36,7 +36,7 @@ OutputMeshAPI *OutputMeshFactory::CreateOutputMesh(const std::string &type) {
 	return NULL;
 
 }
-InputMeshAPI *InputMeshFactory::CreateInputMesh(const std::string &type) {
+MeshPotato::MPMesh::InputMesh *InputMeshFactory::CreateInputMesh(const std::string &type) {
 	CallbackMap::iterator it = mInputMeshes.find(type);
 	if (it != mInputMeshes.end()) {
 		// call the creation callback to construct this derived type

@@ -3,11 +3,14 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <list>
 #include <vector>
+#include <MPUtils/AttributeTable.h>
 using namespace boost::python;
-using namespace MeshPotato::MPPlugins;
-struct InputMeshWrap: MeshPotato::MPPlugins::InputMeshAPI, wrapper<MeshPotato::MPPlugins::InputMeshAPI> {
-        bool loadMesh(const char *) {}
-        bool writeMesh(const char *) {}
+using namespace MeshPotato::MPMesh;
+
+struct InputMeshWrap:MeshPotato::MPMesh::InputMesh, wrapper<MeshPotato::MPMesh::InputMesh> {
+        bool loadMesh(const char *, const MeshPotato::MPUtils::AttributeTable) {
+		return this->get_override("loadMesh")();
+	}
         const unsigned int getNumberVertices() const {
                 return this->get_override("getNumberVertices")();
         }
@@ -17,8 +20,8 @@ struct InputMeshWrap: MeshPotato::MPPlugins::InputMeshAPI, wrapper<MeshPotato::M
 BOOST_PYTHON_MODULE(pyVDBInputPlugin) {
 //        openvdb::initialize();
         class_<InputMeshWrap, boost::noncopyable>("InputMesh", no_init)
-                .def("loadMesh", pure_virtual(&MeshPotato::MPPlugins::InputMeshAPI::loadMesh))
-                .def("getNumberVertices", pure_virtual(&MeshPotato::MPPlugins::InputMeshAPI::getNumberVertices))
+                .def("loadMesh", pure_virtual(&MeshPotato::MPMesh::InputMesh::loadMesh))
+                .def("getNumberVertices", pure_virtual(&MeshPotato::MPMesh::InputMesh::getNumberVertices))
                 ;
 
 

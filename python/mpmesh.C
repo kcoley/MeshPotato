@@ -47,19 +47,12 @@ object mpmesh2() {
       class_<MeshPotato::MPMesh::MPMesh>("MPMesh", no_init)
               .def("SetName", &MeshPotato::MPMesh::MPMesh::SetName)
               .def("GetName", &MeshPotato::MPMesh::MPMesh::GetName)
-//              .def("Write", &MeshPotato::MPMesh::MPMesh::Write)
 	);
 	return outObj;
 }
 
 BOOST_PYTHON_MODULE(mpmesh) {
 	openvdb::initialize();
-//	class_<MeshPotato::MPUtils::Face>("Face", init<>())
-//		.def(init<std::list<int>, std::list<int>, std::list<int> >())
-//		.def_readwrite("vIndexes", &MeshPotato::MPUtils::Face::vIndexes)
-//		.def_readwrite("nIndexes", &MeshPotato::MPUtils::Face::nIndexes)
-//		.def_readwrite("tIndexes", &MeshPotato::MPUtils::Face::tIndexes)
-//	;
 	class_<std::list<int> >("mp_int_list")
 		.def("getListFromPython", &getListFromPython<int>)
 	;
@@ -78,12 +71,10 @@ BOOST_PYTHON_MODULE(mpmesh) {
 	      .def(init<std::string>())
               .def("SetName", &MeshPotato::MPMesh::MPMesh::SetName)
               .def("GetName", &MeshPotato::MPMesh::MPMesh::GetName)
-//              .def("Write", &MeshPotato::MPMesh::MPMesh::Write)
         ;
 	class_<MeshPotato::MPMesh::MeshObject>("MeshObject", init<>())
               .def("loadMesh", &MeshPotato::MPMesh::MeshObject::loadMesh)
               .def("writeMesh", &MeshPotato::MPMesh::MeshObject::writeMesh)
-//              .def("Write", &MeshPotato::MPMesh::MPMesh::Write)
         ;
 	class_<InputMeshWrap, boost::noncopyable>("InputMesh", no_init)
 		.def("loadMesh", pure_virtual(&MeshPotato::MPPlugins::InputMeshAPI::loadMesh))
@@ -91,8 +82,5 @@ BOOST_PYTHON_MODULE(mpmesh) {
 		;
 
 	def("getPythonList", &getPythonList);
-//	class_<MeshPotato::MPMesh::MPMesh>("MPMesh", no_init)
-//		.def("SetName", &MeshPotato::MPMesh::MPMesh::SetName)
-//	;
 }
 

@@ -4,7 +4,7 @@
 #include <set>
 
 #define MESHPOTATO_API_MAJOR 0
-#define MESHPOTATO_API_MINOR 2
+#define MESHPOTATO_API_MINOR 3
 #define MESHPOTATO_API_PATCH 0
 
 class Version {

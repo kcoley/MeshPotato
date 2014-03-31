@@ -13,9 +13,10 @@
 #include <stdio.h>
 #include <list>
 #include <stdlib.h>
-
+#include <MPUtils/AttributeTable.h>
+using namespace MeshPotato::MPPlugins;
 namespace MeshPotato {
-namespace MPPlugins {
+namespace MPMesh {
 
 
 void keepFaceVertexOnly(const std::string &line, std::vector<std::string>& result) {
@@ -59,7 +60,7 @@ void split(const std::string& in, std::vector<std::string>& result){
 
 	/// OpenGL graphics drver
 	//  class OpenGLGraphicsDriver : public GraphicsServer::GraphicsDriver {
-	class OBJInputMesh : public InputMeshAPI {
+	class OBJInputMesh : public InputMesh {
 	public:
 		~OBJInputMesh() {}
 
@@ -71,7 +72,7 @@ void split(const std::string& in, std::vector<std::string>& result){
 			}
 
 			/// <summary>Gets the name of the graphics driver</summary>
-		virtual bool loadMesh(const char *meshName) {
+		virtual bool loadMesh(const char *meshName, const MPUtils::AttributeTable &table) {
 			vertices.clear();
 			normals.clear();
 			faces.clear();
@@ -88,26 +89,17 @@ void split(const std::string& in, std::vector<std::string>& result){
 					LineStream >> Name;
 
 					if(Name == "v"){// Vertex
-//						vertex v;
 						std::vector<std::string> vec = std::vector<std::string>(std::istream_iterator<std::string>(LineStream), std::istream_iterator<std::string>());
-//						sscanf(Line.c_str(), "%*s %f %f %f", &v.x, &v.y, &v.z);
 						
 						vertices.push_back(vec);
 					}
 					else if(Name == "vn"){// Vertex Normal
-//						vertex n;
 						std::vector<std::string> normal = std::vector<std::string>(std::istream_iterator<std::string>(LineStream), std::istream_iterator<std::string>());
-//						sscanf(Line.c_str(), "%*s %f %f %f", &n.x, &n.y, &n.z);
 						normals.push_back(normal);
 					}
 					else if(Name == "f"){// Vertex Normal
 						std::vector<std::string> face;
-//						vertex f;
 						keepFaceVertexOnly(Line, face);
-//						f.x = ::atof(vect[1].c_str());
-//						f.y = ::atof(vect[2].c_str());
-//						f.z = ::atof(vect[3].c_str());
-//						sscanf(Line.c_str(), "%*s %f %f %f", &f.x, &f.y, &f.z);
 						faces.push_back(face);
 					}
 				};
@@ -142,17 +134,17 @@ void split(const std::string& in, std::vector<std::string>& result){
 			std::string file_ext;
 	};
 
-	 PLUGIN_FUNC InputMeshAPI *CreateInputMesh() {
+	 PLUGIN_FUNC InputMesh *CreateInputMesh() {
                 return new OBJInputMesh;
         }
 
-        PLUGIN_FUNC void DestroyInputMesh(InputMeshAPI * om) {
+        PLUGIN_FUNC void DestroyInputMesh(InputMesh * om) {
                 delete om;
         }
 
         PLUGIN_DISPLAY_NAME("OBJ InputMesh");
         PLUGIN_INIT() {
-                std::cout << "PLUGIN_INIT" << std::endl;
+                std::cout << "OBJ_INPUT_PLUGIN_INIT" << std::endl;
                 RegisterInputMesh("obj", CreateInputMesh, DestroyInputMesh);
                 return 0;
         }

@@ -6,6 +6,7 @@
 #include <list>
 #include <vector>
 #include <boost/shared_ptr.hpp>
+#include "MPUtils/AttributeTable.h"
 
 namespace MeshPotato {
 namespace MPMesh {
@@ -14,8 +15,8 @@ public:
 	MeshObject();
 	~MeshObject();
         // Load Mesh
-        bool loadMesh(const std::string &name);
-        bool writeMesh(const std::string &name);
+        bool loadMesh(const std::string &name, const MPUtils::AttributeTable table=MPUtils::AttributeTable());
+        bool writeMesh(const std::string &name, const MPUtils::AttributeTable table=MPUtils::AttributeTable());
 	const std::list<std::vector<std::string> > getVertices() const;
 	const std::list<std::vector<std::string> > getNormals() const;
 	const std::list<std::vector<std::string> > getFaces() const;

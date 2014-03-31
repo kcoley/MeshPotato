@@ -87,7 +87,6 @@ FrustumGrid(boost::shared_ptr<MeshPotato::MPUtils::Camera> _cam, openvdb::BBoxd 
 	}
 
 		const void dsm(const VolumeFloatPtr density_grid, double K) {
-		int test = 0;
 		int count = 0;
 		openvdb::Coord ijk;
 		int dim = 1;
@@ -102,7 +101,6 @@ FrustumGrid(boost::shared_ptr<MeshPotato::MPUtils::Camera> _cam, openvdb::BBoxd 
 						double y = (double)j/(ySize - 1);
 						MPVec3 X = camera->eye();
 						MPVec3 d = camera->view(x,y);
-						test = 0;
 					
 						double deltaS = ((camera->farPlane() - camera->nearPlane())/(camera->view().dot(d)))/(zSize - 1);
 						double value = 0;
@@ -115,13 +113,9 @@ FrustumGrid(boost::shared_ptr<MeshPotato::MPUtils::Camera> _cam, openvdb::BBoxd 
 
 					if (val > 0) {
 						value += val * deltaS * K;
-						test = 1;
 						count++;
 					}	
-					if(test == 0 )
-						accessor.setValue(ijk, 0.1);
-					else
-						accessor.setValue(ijk, value);
+					accessor.setValue(ijk, value);
 
 
 				}

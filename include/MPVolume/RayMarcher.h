@@ -20,6 +20,7 @@ VDBRayMarcher(openvdb::FloatGrid::Ptr _grid,
 	     const double &_step, 
 	     const double &_K, 
 	     boost::shared_ptr<MeshPotato::MPUtils::Image> _image, 
+	     boost::shared_ptr<MeshPotato::MPUtils::DeepImage> _deepimage, 
 	     boost::shared_ptr<MeshPotato::MPUtils::Camera> _camera, 
 	     const std::string &_outputImage
 	     ) : 
@@ -30,31 +31,26 @@ VDBRayMarcher(openvdb::FloatGrid::Ptr _grid,
 	     interpolator(grid->constTree(), grid->transform()), 
 	     intersector(*grid), 
 	     image(_image), 
+	     deepimage(_deepimage), 
 	     camera(_camera), 
 	     outputImage(_outputImage) {}
 
-inline const MeshPotato::MPUtils::Color L(MPRay &ray, openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> intersector2) const {
+const MeshPotato::MPUtils::Color L(MPRay &ray, openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> &intersector2) const {
 	Color _L = Color(0,0,0,0);
 	float deltaT, deltaS;
 	float _T = 1.0f;
 	float time = 0.0f;	
 	float steptime = 0.0f;	
-
-	if (!intersector2.setWorldRay(ray)) return Color(0,0,0,0);
+	openvdb::tools::GridSampler<openvdb::FloatTree, openvdb::tools::BoxSampler> interpolator2(grid->constTree(), grid->transform());
+	if (!intersector2.setWorldRay(ray)) return _L;
 	double t0 = 0, t1 = 0;
 	while (int n = intersector2.march(t0, t1)) {
-		if (time < t0)
-			time = t0;
-		while (time < t1) {
+		for (float time = step*ceil(t0/step); time <= t1; time += step) {
 				MPVec3 P = intersector2.getWorldPos(time);
-				float density = interpolator.wsSample(P);
-				if (n == 2) {// leaf node
-					deltaS = step;
-				}
-				else // constant tile
-					deltaS = step;//t1 - time;
+				double density = interpolator2.wsSample(P);
+
 				if (density > 0) {
-					deltaT = exp(-K*density*deltaS);
+					deltaT = exp(-K*density*step);
 					Color CM(1,1,1,1);
 			                Color CI = dsm->eval(P);
 			                Color CS = CI*CM;
@@ -63,57 +59,38 @@ inline const MeshPotato::MPUtils::Color L(MPRay &ray, openvdb::tools::VolumeRayI
 					_T *=deltaT;
 					if (_T < 0.0000001) return Color(_L[0],_L[1],_L[2],1.0 - _T);
 				}
-				time += deltaS;
-
 		}
 
 	}
 	return Color(_L[0],_L[1],_L[2],1.0 - _T);
 }
-const MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray, MeshPotato::MPUtils::Camera &cam) {
-//	Color _L = Color(0,0,0,0);
+const MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray, openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> &intersector2) const {
 	float deltaT, deltaS;
-	float time = 0.0f;	
 	float steptime = 0.0f;	
 	MeshPotato::MPUtils::DeepPixelBuffer deepPixelBuf;
 
-	if (!intersector.setWorldRay(ray)) return deepPixelBuf;
+	if (!intersector2.setWorldRay(ray)) return deepPixelBuf;
 	double t0 = 0, t1 = 0;
-	while (int n = intersector.march(t0, t1)) {
-		if (time < t0)
-			time = t0;
-		while (time < t1) {
-			Color _L = Color(0,0,0,0);
-				MPVec3 P = intersector.getWorldPos(time);
-				float density = interpolator.wsSample(P);
-				if (n == 2) // leaf node
-					deltaS = step;
-				else // constant tile
-					deltaS = step;//t1 - time;
-				if (density > 0) {
-					deltaT = exp(-K*density*deltaS);
-					Color CS,CI,CM;
-					CM.set(1,1,1,1);
-				//	Color CS = density * (Color(1.0, 1.0, 1.0, 1.0));
-	                      //          Color CS = density * (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P) * K));
-	             //   Color CS = (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P) * K)); 
-//	                CI = (Color(1.0, 1.0, 1.0, 1.0) * exp(-dsm->eval(P)));
-	                CI = dsm->eval(P);
-			MeshPotato::MPUtils::DeepPixel deepPixel;
-//	                double test = exp(-dsm->eval(P));
+	while (int n = intersector2.march(t0, t1)) {
+		for (float time = step*ceil(t0/step); time <= t1; time += step) {
+				MPVec3 P = intersector2.getWorldPos(time);
+				double density = interpolator.wsSample(P);
 
-	                CS.set(CI.X()*CM.Y(),CI.Y()*CM.Y(),CI.Z()*CM.Z(),CM.W());
+				if (density > 0) {
+					deltaT = exp(-K*density*step);
+					Color CM(1,1,1,1);
+	                		Color CI = dsm->eval(P);
+					Color CS = CI*CM;
+
+					MeshPotato::MPUtils::DeepPixel deepPixel;
+
 	            
-				//	Color CS = density * (Color(1.0, 1.0, 1.0, 1.0));
-					_L += ((CS)*(1 - deltaT));
+					Color _L = ((CS)*(1 - deltaT));
 					deepPixel.color = _L;
 					deepPixel.color[3] = 1.0 - deltaT;
-					deepPixel.depth_front = (P - cam.eye()).length();//(ray(time)).dot(cam.view());
-//					std::cout << "before push back" << std::endl;
+					deepPixel.depth_front = (P - camera->eye()).length();//(ray(time)).dot(cam.view());
 					deepPixelBuf.push_back(deepPixel);
-//					std::cout << "pushed back" << std::endl;
 				}
-				time += deltaS;
 		}
 
 	}
@@ -121,29 +98,36 @@ const MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray, MeshPotato::MPUtils
 }
 void operator() (const tbb::blocked_range<size_t>& r) const {
 // Define intersector here
-openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> intersector2(*grid);
+//openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> intersector2(*grid);
+
 	for (int j = r.begin(), je = r.end(); j < je; ++j) {
+		// Create an intersector for each thread
+		openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> intersector2(*grid);
 		for (int i = 0, ie = image->Width(); i < ie; ++i) {
 			MeshPotato::MPUtils::MPRay ray;
 			double x = (double)i/(image->Width() - 1.0);
                		double y = (double)j/(image->Height() - 1.0);
 			ray = camera->getRay(x,y);
-			Color c = L(ray, intersector2);
-			float &val1 = image->value(i,j,0);
-			val1 =c[0]; 
-			float &val2 = image->value(i,j,1);
-			val2 = c[1];
-			float &val3 = image->value(i,j,2);
-			val3 = c[2];
-			float &val4 = image->value(i,j,3);
-			val4 = c[3];
+
+
+			const Color c = L(ray, intersector2);
+			std::vector<float> &pixel = image->pixel(i,j);
+			pixel[0] = c[0];
+			pixel[1] = c[1];
+			pixel[2] = c[2];
+			pixel[3] = c[3];
+//			const MPUtils::DeepPixelBuffer d = deepL(ray, intersector2);
+//			deepimage->value(i,j) = d;
 		}
 	}
-	MeshPotato::MPUtils::writeOIIOImage(outputImage.c_str(), *image);
 }
 inline void render(bool threaded) const {
 	tbb::blocked_range<size_t> range(0, image->Height());
 	threaded ? tbb::parallel_for(range, *this) : (*this)(range);
+}
+void writeImage() {
+	MeshPotato::MPUtils::writeOIIOImage(outputImage.c_str(), *image);
+//	 MeshPotato::MPUtils::writeOIIOImage(("deep"+outputImage).c_str(), *deepimage);
 }
 private:
 openvdb::FloatGrid::Ptr grid;
@@ -152,6 +136,7 @@ double K, step;
 openvdb::tools::GridSampler<openvdb::FloatTree, openvdb::tools::BoxSampler> interpolator;
 openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> intersector;
 boost::shared_ptr<MeshPotato::MPUtils::Image> image;
+boost::shared_ptr<MeshPotato::MPUtils::DeepImage> deepimage;
 boost::shared_ptr<MeshPotato::MPUtils::Camera> camera;
 std::string outputImage;
 };
