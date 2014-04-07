@@ -156,7 +156,7 @@ int main(int argc, char **argv) {
 	image->reset(imageWidth, imageHeight);
 	deepimage->reset(imageWidth, imageHeight);
 	//	deepimage.reset(imageWidth, imageHeight);
-	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, addLights, stepSize, scattering, image, deepimage, cam, outputImage);
+	MeshPotato::MPVolume::VDBRayMarcher<openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> > marcher(inputGrid, addLights, stepSize, scattering, image, deepimage, cam, outputImage);
 	marcher.render(true);
 	marcher.writeImage();
 

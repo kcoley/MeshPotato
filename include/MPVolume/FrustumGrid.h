@@ -32,7 +32,8 @@ FrustumGrid(boost::shared_ptr<MeshPotato::MPUtils::Camera> _cam, openvdb::BBoxd 
 	frustumTransform(frustum_map_ptr), 
 	interpolator(grid->constTree(), frustumTransform), 
 	accessor(grid->getAccessor()),
-	fastSampler(accessor, frustumTransform)
+	accessor2(grid->getConstAccessor()),
+	fastSampler(accessor2, frustumTransform)
 	 {
 	//	openvdb::math::NonlinearFrustumMap(camera.eye(), camera.view(), camera.up(), camera.aspectRatio(), camera.nearPlane(), camera.farPlane(), x_count,z_count)
 	    grid->setTransform(frustumTransform.copy());
@@ -133,7 +134,8 @@ openvdb::math::MapBase::Ptr frustum_map_ptr;
 openvdb::math::Transform frustumTransform;
 openvdb::tools::GridSampler<openvdb::FloatTree, openvdb::tools::BoxSampler> interpolator;     
 openvdb::FloatGrid::Accessor accessor;
-openvdb::tools::GridSampler<openvdb::FloatGrid::Accessor, openvdb::tools::BoxSampler> fastSampler;
+openvdb::FloatGrid::ConstAccessor accessor2;
+openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::BoxSampler> fastSampler;
 };
 
 }

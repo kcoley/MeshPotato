@@ -25,7 +25,7 @@ object processGrid(object inObj) {
 	return outObj;
 }
 
-struct InputMeshWrap: MeshPotato::MPPlugins::InputMeshAPI, wrapper<MeshPotato::MPPlugins::InputMeshAPI> {
+struct InputMeshWrap: MeshPotato::MPMesh::InputMesh, wrapper<MeshPotato::MPMesh::InputMesh> {
 	bool loadMesh(const char *) {
 		return this->get_override("loadMesh")();
 	}
@@ -77,8 +77,8 @@ BOOST_PYTHON_MODULE(mpmesh) {
               .def("writeMesh", &MeshPotato::MPMesh::MeshObject::writeMesh)
         ;
 	class_<InputMeshWrap, boost::noncopyable>("InputMesh", no_init)
-		.def("loadMesh", pure_virtual(&MeshPotato::MPPlugins::InputMeshAPI::loadMesh))
-		.def("getNumberVertices", pure_virtual(&MeshPotato::MPPlugins::InputMeshAPI::getNumberVertices))
+		.def("loadMesh", pure_virtual(&MeshPotato::MPMesh::InputMesh::loadMesh))
+		.def("getNumberVertices", pure_virtual(&MeshPotato::MPMesh::InputMesh::getNumberVertices))
 		;
 
 	def("getPythonList", &getPythonList);

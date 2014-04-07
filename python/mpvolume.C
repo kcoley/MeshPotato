@@ -6,10 +6,72 @@
 #include <MPVolume/ImplicitShape.h>
 #include <MPVolume/RayMarcher.h>
 #include <MPVolume/FrustumGrid.h>
+#include <MPVolume/Light.h>
+#include <MPVolume/VolumeUtils.h>
+#include <MPUtils/Camera.h>
+#include <string>
+#include <openvdb/openvdb.h>
+#include <openvdb/tools/LevelSetUtil.h>
 using namespace boost::python;
 using namespace MeshPotato::MPVolume;
 using namespace MeshPotato::MPUtils;
-struct MPVolumeWrap : Volume<float>, wrapper<Volume<float> > {
+
+object ConvertToFogVolume(object &grid) {
+	openvdb::FloatGrid grid_obj = extract<openvdb::FloatGrid>(grid);
+	openvdb::tools::sdfToFogVolume<openvdb::FloatGrid>(grid_obj);
+
+	return object(grid_obj);
+
+}
+
+MeshPotato::MPVolume::VolumeColorPtr CreateFrustumLight(MPVec3 light_pos, Color light_color, MPVec3 light_resolution, openvdb::FloatGrid grid, float dsmK=1.0) {
+	openvdb::FloatGrid::Ptr gridPtr = grid.copy();
+	boost::shared_ptr<MeshPotato::MPUtils::Camera> frustumCam = MeshPotato::MPVolume::buildFrustumCamera(light_pos, gridPtr);
+	openvdb::BBoxd bbox(MeshPotato::MPUtils::MPVec3(0,0,0), light_resolution);
+	boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid > frustum = MeshPotato::MPVolume::FrustumGrid::Ptr(frustumCam, bbox);
+	MeshPotato::MPVolume::VolumeFloatPtr dsmgrid = MeshPotato::MPVolume::VDBVolumeGrid::Ptr(gridPtr);
+	frustum->dsm(dsmgrid, dsmK);
+	VolumeColorPtr light = MeshPotato::MPVolume::FrustumLight::Ptr(frustum, light_color);
+	return light;
+
+};
+object CreateVDBFrustumLight(object& light_pos, object& light_color, object& light_resolution, object& grid) {
+	extract<openvdb::FloatGrid> grid_obj(grid);
+	extract<MPVec3> light_pos_obj(light_pos);
+	extract<Color> light_color_obj(light_color);
+	extract<MPVec3> light_resolution_obj(light_resolution);
+	return object(CreateFrustumLight(light_pos_obj, light_color_obj, light_resolution_obj, grid_obj));
+
+};
+void RenderVDBFunc(openvdb::FloatGrid grid, VolumeColorPtr light, double step, double k, boost::shared_ptr<Image> image, boost::shared_ptr<DeepImage> deepimage, boost::shared_ptr<Camera> camera, std::string name, bool threaded) {
+	const bool isLevelSet = (grid.getGridClass() == openvdb::GRID_LEVEL_SET);
+	openvdb::FloatGrid::Ptr gridPtr = grid.copy();
+	if (isLevelSet) {
+		//convert to fog volume
+		openvdb::tools::sdfToFogVolume<openvdb::FloatGrid>(*gridPtr);
+	}
+	openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> inter(*gridPtr);
+	MeshPotato::MPVolume::VDBRayMarcher marcher = MeshPotato::MPVolume::VDBRayMarcher(gridPtr, light, step, k, image, deepimage, camera, name);
+	marcher.render(threaded);
+	marcher.writeImage();
+}
+void RenderVDB(object grid, object light, object step, object k, object image, object deepimage, object camera, object name, object threaded) {
+
+	extract<openvdb::FloatGrid> grid_obj(grid);
+	extract<VolumeColorPtr> light_obj(light);
+	extract<double> step_obj(step);
+	extract<double> k_obj(k);
+	extract<boost::shared_ptr<Image> > image_obj(image);
+	extract<boost::shared_ptr<DeepImage> > deepimage_obj(deepimage);
+	extract<boost::shared_ptr<Camera> > camera_obj(camera);
+	extract<std::string> name_obj(name);
+	extract<bool> threaded_obj(threaded);
+	RenderVDBFunc(grid_obj, light_obj, step_obj, k_obj, image_obj, deepimage_obj, camera_obj, name_obj, threaded);
+}
+openvdb::FloatGrid::Ptr getVDBPtr(openvdb::FloatGrid grid) {
+	return grid.copy();
+}
+struct MPVolumeFloatWrap : Volume<float>, wrapper<Volume<float> > {
 	const float eval(const MPVec3& P) const {
 		return this->get_override("eval")();
 	}
@@ -17,82 +79,95 @@ struct MPVolumeWrap : Volume<float>, wrapper<Volume<float> > {
 		return this->get_override("grad")();
 	}
 };
+struct MPVolumeColorWrap : Volume<Color>, wrapper<Volume<Color> > {
+	const Color eval(const MPVec3& P) const {
+		return this->get_override("eval")();
+	}
+	const int grad(const MPVec3& P) const {
+		return this->get_override("grad")();
+	}
+};
 boost::python::object getMPVolumeFromPyObject(
 		boost::shared_ptr<Volume<float> >vdbgrid) {
 	return object(&vdbgrid);
 }
-MPVec3 getMPVec3(boost::python::list& ls) {
-	MPVec3 vec;
-	if (len(ls) == 3) {
-		vec.x() = (boost::python::extract<float>(ls[0]));
-		vec.y() = (boost::python::extract<float>(ls[1]));
-		vec.z() = (boost::python::extract<float>(ls[2]));
-	}
-	return vec;
-}
-openvdb::Coord getVDBCoord(boost::python::list& ls) {
-	openvdb::Coord coord;
-	if (len(ls) == 3) {
-		coord.setX(boost::python::extract<float>(ls[0]));
-		coord.setY(boost::python::extract<float>(ls[1]));
-		coord.setZ(boost::python::extract<float>(ls[2]));
-	}
-	else
-		std::cout << "List is not of three elements" << std::endl;
-	return coord;
-}
-openvdb::CoordBBox getVDBCoordBBox(openvdb::Coord &min, openvdb::Coord &max) {
 
-	return openvdb::CoordBBox(min, max);
-}
 BOOST_PYTHON_MODULE(mpvolume) {
-	class_<openvdb::Coord>("openvdb_coord")
-		.def("getVDBCoord", &getVDBCoord)
 	;
-	class_<MPVec3>("mpvec3")
-		.def("getMPVec3", &getMPVec3)
+	class_<boost::shared_ptr<FrustumLight> >("frustum_light")
 	;
 	class_<boost::shared_ptr<Volume<float> > >("mpvolume_float")
 	;
-	class_<openvdb::CoordBBox  >("coord_bbox", no_init)
-		.def("getVDBCoordBBox", &getVDBCoord)
+	class_<boost::shared_ptr<Volume<Color> > >("mpvolume_color")
 	;
-	class_<MPVolumeWrap, boost::noncopyable>("VolumeFloat")
+	class_<MPVolumeFloatWrap, boost::noncopyable>("VolumeFloat")
 		.def("eval", pure_virtual(&Volume<float>::eval))	
 		.def("grad", pure_virtual(&Volume<float>::grad))	
 	;
+	class_<MPVolumeColorWrap, boost::noncopyable>("VolumeColor")
+		.def("eval", pure_virtual(&Volume<Color>::eval))	
+		.def("grad", pure_virtual(&Volume<Color>::grad))	
+	;
 	class_<VDBVolumeGrid, boost::shared_ptr<VDBVolumeGrid>, 
-			bases<MPVolumeWrap> >("VDBVolumeGrid", no_init)
+			bases<MPVolumeFloatWrap> >("VDBVolumeGrid", no_init)
 		.def(init<openvdb::FloatGrid::Ptr>())
 		.def("ptr", &VDBVolumeGrid::Ptr)
 		.staticmethod("ptr")
 		.def("eval", &VDBVolumeGrid::eval)
 		.def("grad", &VDBVolumeGrid::grad)
 	;
-	class_<AddVolumeFloat,  bases<MPVolumeWrap> >("AddVolumeFloat", no_init)
-		.def(init<boost::shared_ptr<Volume<float> >, boost::shared_ptr<Volume<float> > >())
-		.def("ptr", &AddVolumeFloat::Ptr)
-		.staticmethod("ptr")
+	class_<AddVolumeFloat,  bases<MPVolumeFloatWrap> >("AddVolumeFloat", no_init)
+		.def("__init__", make_constructor(&AddVolumeFloat::Ptr))
 		.def("eval", &AddVolumeFloat::eval)
 		.def("grad", &AddVolumeFloat::grad)
 	;
-	class_<ImplicitSphere, bases<MPVolumeWrap> >("ImplicitSphere", no_init)
-		.def(init<float, MeshPotato::MPUtils::MPVec3>() )
+	class_<UnionFloat,  bases<MPVolumeFloatWrap> >("UnionFloat", no_init)
+		.def("__init__", make_constructor(&UnionFloat::Ptr))
+		.def("eval", &UnionFloat::eval)
+		.def("grad", &UnionFloat::grad)
+	;
+	class_<UnionVector,  bases<MPVolumeFloatWrap> >("UnionVector", no_init)
+		.def("__init__", make_constructor(&UnionVector::Ptr))
+		.def("eval", &UnionVector::eval)
+		.def("grad", &UnionVector::grad)
+	;
+	class_<AddVolumeColor,  bases<MPVolumeColorWrap> >("AddVolumeColor", no_init)
+		.def("__init__", make_constructor(&AddVolumeColor::Ptr))
+		.def("ptr", &AddVolumeColor::Ptr)
+		.staticmethod("ptr")
+		.def("eval", &AddVolumeColor::eval)
+		.def("grad", &AddVolumeColor::grad)
+	;
+	class_<ImplicitSphere, bases<MPVolumeFloatWrap> >("ImplicitSphere", no_init)
+		.def("__init__", make_constructor(&ImplicitSphere::Ptr))
 		.def("ptr", &ImplicitSphere::Ptr)
 		.staticmethod("ptr")
 		.def("eval", &ImplicitSphere::eval)
 		.def("grad", &ImplicitSphere::grad)
 	;
-	class_<Clamp<float>, bases<MPVolumeWrap> >("Clamp", no_init)
-		.def(init<boost::shared_ptr<Volume<float> >, float, float>())
-		.def("ptr", &MeshPotato::MPVolume::Clamp<float>::Ptr)
-		.staticmethod("ptr")
+	class_<PyroclasticSphere, bases<MPVolumeFloatWrap> >("PyroclasticSphere", no_init)
+		.def("__init__", make_constructor(&PyroclasticSphere::Ptr))
+		.def("eval", &PyroclasticSphere::eval)
+		.def("grad", &PyroclasticSphere::grad)
+	;
+	class_<Clamp<float>, bases<MPVolumeFloatWrap> >("Clamp", no_init)
+		.def("__init__", make_constructor(&Clamp<float>::Ptr))
 		.def("eval", &MeshPotato::MPVolume::Clamp<float>::eval)
 		.def("grad", &MeshPotato::MPVolume::Clamp<float>::grad)
 	;
+	class_<FrustumLight, bases<MPVolumeColorWrap> >("FrustumLight", no_init)
+		.def("__init__", make_constructor(&FrustumLight::Ptr))
+	;	
+	class_<VDBRayMarcher>("VDBRayMarcher", no_init)
+		.def(init<openvdb::FloatGrid::Ptr, VolumeColorPtr, double, double, boost::shared_ptr<Image>, boost::shared_ptr<DeepImage> , boost::shared_ptr<Camera> , std::string>())
+		.def("render", &MeshPotato::MPVolume::VDBRayMarcher::render)
+		.def("writeImage", &MeshPotato::MPVolume::VDBRayMarcher::writeImage)
+	;
+
+	def("getVDBPtr", &getVDBPtr);	
 	def("makeVDBGrid", &MeshPotato::MPVolume::makeVDBGrid);
 	def("getMPVolumeFromPyObject", &getMPVolumeFromPyObject);
-	def("getVDBCoord", &getVDBCoord);
-	def("getVDBCoordBBox", &getVDBCoordBBox);
-	def("getMPVec3", &getMPVec3);
+	def("CreateVDBFrustumLight", &CreateVDBFrustumLight);
+	def("RenderVDB", &RenderVDB);
+	def("ConvertToFogVolume", &ConvertToFogVolume);
 }

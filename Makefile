@@ -24,6 +24,8 @@ PLUGINFILES=plugins/*/*.C
 PYTARGET=pymeshpotato/pymeshpotato
 PYMPVOLUME=python/mpvolume
 PYMPMESH=python/mpmesh
+PYMPUTILS=python/mputils
+PYMPNOISE=python/mpnoise
 LIB_MAJOR_VERSION=$(shell grep 'define MESHPOTATO_API_MAJOR ' include/MPPlugins/version.h | sed 's/[^0-9]*//g')
 LIB_MINOR_VERSION=$(shell grep 'define MESHPOTATO_API_MINOR ' include/MPPlugins/version.h | sed 's/[^0-9]*//g')
 LIB_PATCH_VERSION=$(shell grep 'define MESHPOTATO_API_PATCH ' include/MPPlugins/version.h | sed 's/[^0-9]*//g')
@@ -41,11 +43,19 @@ pympmesh: $(OBJECTS)
 	$(CC) $(CFLAGS) -I $(PYTHON_INCLUDE) $(PYMPMESH).C -o $(PYMPMESH).o
 	$(CC) -shared -Wl,-soname,mpmesh.so $(PYMPMESH).o -lpython2.7 -lboost_python -lboost_thread -lboost_system -lboost_filesystem -L./lib -L/group/dpa/local/openvdb/lib -lmeshpotato -lopenvdb /group/dpa/local/openvdb/python/lib/python2.7/pyopenvdb.so -lboost_system -o pymeshpotato/mpmesh.so 
 
+pymputils: $(OBJECTS)
+	$(CC) $(CFLAGS) -I $(PYTHON_INCLUDE) $(PYMPUTILS).C -o $(PYMPUTILS).o
+	$(CC) -shared -Wl,-soname,mputils.so $(PYMPUTILS).o -lpython2.7 -lboost_python -lboost_thread -lboost_system -lboost_filesystem -L./lib  -lmeshpotato -lboost_system -o pymeshpotato/mputils.so 
+pympnoise: $(OBJECTS)
+	$(CC) $(CFLAGS) -I $(PYTHON_INCLUDE) $(PYMPNOISE).C -o $(PYMPNOISE).o
+	$(CC) -shared -Wl,-soname,mpnoise.so $(PYMPNOISE).o -lpython2.7 -lboost_python -lboost_thread -lboost_system -lboost_filesystem -L./lib  -L/group/dpa/local/openvdb/lib -lopenvdb /group/dpa/local/openvdb/python/lib/python2.7/pyopenvdb.so -lmeshpotato -lboost_system -o pymeshpotato/mpnoise.so 
+
+
 pympvolume: $(OBJECTS)
 	$(CC) $(CFLAGS) -I$(PYTHON_INCLUDE) $(PYMPVOLUME).C -o $(PYMPVOLUME).o
 	$(CC) -shared -Wl,-soname,mpvolume.so $(PYMPVOLUME).o -lpython2.7 -lboost_python -lboost_thread -lboost_system -lboost_filesystem -L./lib -L/group/dpa/local/openvdb/lib -lmeshpotato -lopenvdb /group/dpa/local/openvdb/python/lib/python2.7/pyopenvdb.so -lboost_system -o pymeshpotato/mpvolume.so 
 
-python: pympmesh pympvolume
+python: pympmesh pympvolume pymputils pympnoise
 clean:
 	rm src/*.o
 	rm lib/*.so*

@@ -1,3 +1,6 @@
+#ifndef __VDBVOLUMEUTILS_H__
+#define __VDBVOLUMEUTILS_H__
+
 #include "MPVolume.h"
 
 namespace MeshPotato {
@@ -19,7 +22,9 @@ namespace MeshPotato {
 				}
 			}
 			vdbgrid->setTransform(openvdb::math::Transform::createLinearTransform(h));
+			vdbgrid->setGridClass(openvdb::GRID_LEVEL_SET);
 			return vdbgrid;
 		}
 	}
 } 
+#endif // __VDBVOLUMEUTILS_H__

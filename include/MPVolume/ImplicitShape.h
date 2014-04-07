@@ -25,7 +25,7 @@ namespace MeshPotato {
 		};
 		class PyroclasticSphere : public ImplicitShape {
 			public:
-				static boost::shared_ptr<PyroclasticSphere> Ptr(const float &_R,  const MeshPotato::MPUtils::MPVec3 &_C, const MeshPotato::MPNoise::Noise_t &_noiseparms);
+				static VolumeFloatPtr Ptr(const float &_R,  const MeshPotato::MPUtils::MPVec3 &_C, const MeshPotato::MPNoise::Noise_t &_noiseparms);
 				PyroclasticSphere(const float &_R, const MeshPotato::MPUtils::MPVec3 &_C, const MeshPotato::MPNoise::Noise_t &_noiseparms);
 				~PyroclasticSphere();
 				const volumeDataType eval(const MeshPotato::MPUtils::MPVec3 &P) const;

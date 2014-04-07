@@ -22,7 +22,7 @@ const ImplicitSphere::volumeDataType ImplicitSphere::eval(const MeshPotato::MPUt
 }
 const ImplicitSphere::volumeGradType ImplicitSphere::grad(const MeshPotato::MPUtils::MPVec3 &P) const {}
 
-boost::shared_ptr<PyroclasticSphere> PyroclasticSphere::Ptr(const float &_R, const MeshPotato::MPUtils::MPVec3 &_C, const MeshPotato::MPNoise::Noise_t &_noiseparms) {
+boost::shared_ptr<Volume<float> > PyroclasticSphere::Ptr(const float &_R, const MeshPotato::MPUtils::MPVec3 &_C, const MeshPotato::MPNoise::Noise_t &_noiseparms) {
  return boost::shared_ptr<PyroclasticSphere>(new PyroclasticSphere(_R, _C, _noiseparms));
 }
 

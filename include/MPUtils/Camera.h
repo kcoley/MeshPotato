@@ -12,6 +12,7 @@ class Camera
 
   public:
 
+    Camera(const MeshPotato::MPUtils::MPVec3& eye, const MeshPotato::MPUtils::MPVec3& view, const MeshPotato::MPUtils::MPVec3& up );
     Camera();
    ~Camera(){}
     static boost::shared_ptr<Camera> Ptr() { return boost::shared_ptr<Camera>(new Camera());}

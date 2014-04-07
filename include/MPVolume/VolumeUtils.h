@@ -1,3 +1,6 @@
+#ifndef __VOLUMEUTILS_H__
+#define __VOLUMEUTILS_H__
+
 #include "MPVolume.h"
 #include "FrustumGrid.h"
 #include <openvdb/tools/LevelSetRebuild.h>
@@ -18,9 +21,8 @@ namespace MeshPotato {
 
 }
 		openvdb::FloatGrid::Ptr makeVDBGrid(boost::shared_ptr<Volume<float> > &mpgrid, const openvdb::CoordBBox& indexBB, double h) {
-			openvdb::FloatGrid::Ptr vdbgrid = openvdb::FloatGrid::create();
+			openvdb::FloatGrid::Ptr vdbgrid = openvdb::FloatGrid::create(2.0);
 			openvdb::FloatGrid::Accessor accessor = vdbgrid->getAccessor();
-			vdbgrid->setBackground(2.0);
 			const float outside = vdbgrid->background();
 			const float inside = -outside;
 			std::cout << "outside = " << outside << std::endl;
@@ -41,6 +43,7 @@ namespace MeshPotato {
 			vdbgrid->signedFloodFill();
 			openvdb::tools::levelSetRebuild(*vdbgrid);
 			std::cout << "outside = " << outside << std::endl;
+			vdbgrid->setGridClass(openvdb::GRID_LEVEL_SET);
 			return vdbgrid;
 		}
 		boost::shared_ptr<MeshPotato::MPUtils::Camera> buildFrustumCamera(MeshPotato::MPUtils::MPVec3 eye, openvdb::FloatGrid::Ptr grid) {
@@ -182,4 +185,5 @@ namespace MeshPotato {
 		}
 		 */
 	}
-} 
+}
+#endif // __VOLUMEUTILS_H__

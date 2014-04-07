@@ -4,7 +4,7 @@
 #include "MPUtils/Color.h"
 #include <boost/shared_ptr.hpp>
 namespace MeshPotato {
-	//! Handles Volumetric Operations on Meshes
+	//! Handles Volumetric Operations
 	namespace MPVolume {
 		template<typename T>
 			struct GradType {
@@ -34,10 +34,10 @@ namespace MeshPotato {
 			};
 
 
-		typedef boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > VolumeFloatPtr;
-		typedef boost::shared_ptr<MeshPotato::MPVolume::Volume<MeshPotato::MPUtils::Color> > VolumeColorPtr;
-		typedef boost::shared_ptr<MeshPotato::MPVolume::Volume<MeshPotato::MPUtils::MPVec3> > VolumeVectorPtr;
-		typedef boost::shared_ptr<MeshPotato::MPVolume::Volume<MeshPotato::MPUtils::MPMat3> > VolumeMatrixPtr;
+	typedef boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > VolumeFloatPtr;
+	typedef boost::shared_ptr<MeshPotato::MPVolume::Volume<MeshPotato::MPUtils::Color> > VolumeColorPtr;
+	typedef boost::shared_ptr<MeshPotato::MPVolume::Volume<MeshPotato::MPUtils::MPVec3> > VolumeVectorPtr;
+	typedef boost::shared_ptr<MeshPotato::MPVolume::Volume<MeshPotato::MPUtils::MPMat3> > VolumeMatrixPtr;
 	}
 }
 #endif // __MPVOLUME_H__

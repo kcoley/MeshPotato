@@ -20,7 +20,6 @@
 #include <vector>
 namespace MeshPotato {
 	namespace MPNoise {
-		//#include "OfficialColors.h"
 
 		struct Noise_t 
 		{

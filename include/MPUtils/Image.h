@@ -5,7 +5,6 @@
 #include <vector>
 #include "Color.h"
 #include <boost/shared_ptr.hpp>
-#include <boost/scoped_ptr.hpp>
 using namespace std;
 
 namespace MeshPotato {
@@ -34,11 +33,11 @@ class Image
     const int Width() const;
     const int Height() const;
     const int Depth() const; 
+    Image(const Image&);
 
   private:
     class Impl;
-    boost::scoped_ptr<Impl> mImpl;
-    Image(const Image&);
+    boost::shared_ptr<Impl> mImpl;
 };
 
 void setPixel( Image& img, int x, int y, const std::vector<float>& value );

@@ -13,8 +13,13 @@
 using namespace MeshPotato::MPUtils;
 namespace MeshPotato {
 namespace MPVolume {
+
 class VDBRayMarcher {
 public:
+typedef openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> IntersectorT;
+typedef openvdb::FloatGrid::ConstAccessor  AccessorType;
+typedef openvdb::tools::BoxSampler SamplerT;
+typedef openvdb::tools::GridSampler<AccessorType, SamplerT> SamplerType;
 VDBRayMarcher(openvdb::FloatGrid::Ptr _grid, 
 	     VolumeColorPtr _dsm, 
 	     const double &_step, 
@@ -33,19 +38,23 @@ VDBRayMarcher(openvdb::FloatGrid::Ptr _grid,
 	     image(_image), 
 	     deepimage(_deepimage), 
 	     camera(_camera), 
-	     outputImage(_outputImage) {}
+	     outputImage(_outputImage),
+       	     accessor(grid->getConstAccessor())	{}
 
-const MeshPotato::MPUtils::Color L(MPRay &ray, openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> &intersector2) const {
+//const MeshPotato::MPUtils::Color L(MPRay &ray, openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> &intersector2) const {
+//const inline MeshPotato::MPUtils::Color L(MPRay &ray, IntersectorT &intersector2, openvdb::tools::GridSampler<openvdb::FloatTree, openvdb::tools::BoxSampler> &interpolator2) const {
+const inline MeshPotato::MPUtils::Color L(MPRay &ray, IntersectorT &intersector2, SamplerType &interpolator2) const {
 	Color _L = Color(0,0,0,0);
 	float deltaT, deltaS;
 	float _T = 1.0f;
 	float time = 0.0f;	
 	float steptime = 0.0f;	
-	openvdb::tools::GridSampler<openvdb::FloatTree, openvdb::tools::BoxSampler> interpolator2(grid->constTree(), grid->transform());
+//	openvdb::tools::GridSampler<openvdb::FloatTree, openvdb::tools::BoxSampler> interpolator2(grid->constTree(), grid->transform());
 	if (!intersector2.setWorldRay(ray)) return _L;
 	double t0 = 0, t1 = 0;
 	while (int n = intersector2.march(t0, t1)) {
-		for (float time = step*ceil(t0/step); time <= t1; time += step) {
+//		for (double time = step*ceil(t0/step); time <= t1; time += step) {
+		for (double time = t0; time <= t1; time += step) {
 				MPVec3 P = intersector2.getWorldPos(time);
 				double density = interpolator2.wsSample(P);
 
@@ -55,7 +64,7 @@ const MeshPotato::MPUtils::Color L(MPRay &ray, openvdb::tools::VolumeRayIntersec
 			                Color CI = dsm->eval(P);
 			                Color CS = CI*CM;
 	            
-					_L += ((CS)*_T*(1 - deltaT));
+					_L += ((CS)*_T*(1.0 - deltaT));
 					_T *=deltaT;
 					if (_T < 0.0000001) return Color(_L[0],_L[1],_L[2],1.0 - _T);
 				}
@@ -64,7 +73,8 @@ const MeshPotato::MPUtils::Color L(MPRay &ray, openvdb::tools::VolumeRayIntersec
 	}
 	return Color(_L[0],_L[1],_L[2],1.0 - _T);
 }
-const MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray, openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> &intersector2) const {
+const MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray, IntersectorT &intersector2) const {
+//const MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray, openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> &intersector2) const {
 	float deltaT, deltaS;
 	float steptime = 0.0f;	
 	MeshPotato::MPUtils::DeepPixelBuffer deepPixelBuf;
@@ -97,20 +107,20 @@ const MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray, openvdb::tools::Vol
 	return deepPixelBuf;
 }
 void operator() (const tbb::blocked_range<size_t>& r) const {
-// Define intersector here
-//openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> intersector2(*grid);
-
-	for (int j = r.begin(), je = r.end(); j < je; ++j) {
+//	openvdb::tools::GridSampler<openvdb::FloatTree, openvdb::tools::BoxSampler> interpolator2(grid->constTree(), grid->transform());
+	SamplerType interpolator2(accessor, grid->transform());
+//	openvdb::tools::GridSampler<openvdb::FloatTree, openvdb::tools::BoxSampler> interpolator2(accessor, grid->transform());
+	for (size_t j = r.begin(), je = r.end(); j < je; ++j) {
 		// Create an intersector for each thread
-		openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> intersector2(*grid);
-		for (int i = 0, ie = image->Width(); i < ie; ++i) {
+//		openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> intersector2(*grid);
+		IntersectorT intersector2(*grid);
+		for (size_t i = 0, ie = image->Width(); i < ie; ++i) {
 			MeshPotato::MPUtils::MPRay ray;
 			double x = (double)i/(image->Width() - 1.0);
                		double y = (double)j/(image->Height() - 1.0);
 			ray = camera->getRay(x,y);
 
-
-			const Color c = L(ray, intersector2);
+			const Color c = L(ray, intersector2, interpolator2);
 			std::vector<float> &pixel = image->pixel(i,j);
 			pixel[0] = c[0];
 			pixel[1] = c[1];
@@ -139,6 +149,7 @@ boost::shared_ptr<MeshPotato::MPUtils::Image> image;
 boost::shared_ptr<MeshPotato::MPUtils::DeepImage> deepimage;
 boost::shared_ptr<MeshPotato::MPUtils::Camera> camera;
 std::string outputImage;
+AccessorType accessor;
 };
 
 class RayMarcher {

@@ -1,5 +1,6 @@
 #include "MPUtils/Image.h"
 #include <iostream>
+
 using namespace std;
 namespace MeshPotato {
 namespace MPUtils {
@@ -38,6 +39,13 @@ void imageLinearInterpolation( float x, float dx, int nx, int& i, int& ii, float
 		for( size_t i=0;i<(size_t)mImpl->depth;i++ ){ pixel[i] = 0.0; }
 		mImpl->data.resize(mImpl->width*mImpl->height);
 	        for( size_t i=0;i<mImpl->data.size();i++ ){ mImpl->data[i] = pixel; }
+	}
+	Image::Image(const Image& other) : 
+		mImpl(new Image::Impl()) {
+			mImpl->width = other.mImpl->width;
+			mImpl->height = other.mImpl->height;
+			mImpl->depth = other.mImpl->depth;
+			mImpl->data = other.mImpl->data;
 	}
 
 

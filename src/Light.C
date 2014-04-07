@@ -7,7 +7,7 @@ namespace MeshPotato {
 				boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid> frustum;
 				MeshPotato::MPUtils::Color color;
 		};
-		boost::shared_ptr<FrustumLight> FrustumLight::Ptr(boost::shared_ptr<FrustumGrid> _frustum, MeshPotato::MPUtils::Color _color) {
+		VolumeColorPtr FrustumLight::Ptr(boost::shared_ptr<FrustumGrid> _frustum, MeshPotato::MPUtils::Color _color) {
 			return boost::shared_ptr<FrustumLight>(new FrustumLight(_frustum, _color));
 		}
 		FrustumLight::FrustumLight(boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid> _frustum, MeshPotato::MPUtils::Color _color) :
