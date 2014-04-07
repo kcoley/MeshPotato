@@ -2,6 +2,8 @@
 #define __FIELD_ALGEBRA_H__
 #include "MPVolume.h"
 #include <boost/shared_ptr.hpp>
+#include "MPNoise/Noise.h"
+#include "MPNoise/PerlinNoise.h"
 namespace MeshPotato {
 namespace MPVolume {
 template <typename T>
@@ -17,6 +19,34 @@ const typename Volume<T>::volumeDataType  eval(const MeshPotato::MPUtils::MPVec3
 const typename Volume<T>::volumeGradType grad(
 	  const MeshPotato::MPUtils::MPVec3 &P) const;
 private:
+class Impl;
+boost::shared_ptr<Impl> mImpl;
+};
+
+class AdvectVolume:public Volume <float> {
+public:
+AdvectVolume(const VolumeFloatPtr _f1
+	,const VolumeVectorPtr _v1
+	, const float dt);
+static boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > Ptr(
+	const VolumeFloatPtr _f1
+	,const VolumeVectorPtr _v2
+	, const float dt);
+const float eval(const MPUtils::MPVec3 &P) const;
+const MPUtils::MPVec3 grad(const MPUtils::MPVec3 &P) const;
+public:
+class Impl;
+boost::shared_ptr<Impl> mImpl;
+};
+
+class VectorNoise:public Volume <MPUtils::MPVec3> {
+public:
+VectorNoise(const MPNoise::Noise_t  _parms);
+static boost::shared_ptr<MeshPotato::MPVolume::Volume<MPUtils::MPVec3> > Ptr(
+	const MPNoise::Noise_t);
+const MPUtils::MPVec3  eval(const MPUtils::MPVec3 &P) const;
+const MPUtils::MPMat3 grad(const MPUtils::MPVec3 &P) const;
+public:
 class Impl;
 boost::shared_ptr<Impl> mImpl;
 };

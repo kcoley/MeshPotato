@@ -13,7 +13,7 @@ namespace MeshPotato {
 		class PerlinNoise
 		{
 			public:
-
+				boost::shared_ptr<PerlinNoise> Ptr() { return boost::shared_ptr<PerlinNoise>(new PerlinNoise()); }
 				PerlinNoise() { init(); }
 				~PerlinNoise(){}
 
@@ -38,6 +38,7 @@ namespace MeshPotato {
 		class PerlinNoiseGustavson
 		{
 			public:
+				boost::shared_ptr<PerlinNoiseGustavson> Ptr() { return boost::shared_ptr<PerlinNoiseGustavson>(new PerlinNoiseGustavson()); }
 
 				PerlinNoiseGustavson() : time (0) {}
 				~PerlinNoiseGustavson(){}

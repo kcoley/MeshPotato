@@ -162,6 +162,7 @@ namespace MeshPotato {
 			class FractalSum : public Noise
 		{
 			public:
+				static boost::shared_ptr<FractalSum<BaseNoise> > Ptr() { return boost::shared_ptr<FractalSum<BaseNoise> >(new FractalSum<BaseNoise>()); }
 
 				FractalSum() : 
 					octaves    (3.0), 

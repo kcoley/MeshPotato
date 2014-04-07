@@ -57,5 +57,56 @@ template class AddVolume<MPUtils::Color>;
 
 template class Union<float>;
 template class Union<MPUtils::MPVec3>;
+
+class AdvectVolume::Impl {
+public:
+VolumeFloatPtr f;
+VolumeVectorPtr U;
+float dt;
+};
+AdvectVolume::AdvectVolume(const VolumeFloatPtr _f
+        ,const VolumeVectorPtr _U
+        , const float _dt) :
+	mImpl(new AdvectVolume::Impl()) {
+		mImpl->f = _f;
+		mImpl->U = _U;
+		mImpl->dt = _dt;
+
+	}
+boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > AdvectVolume::Ptr( const VolumeFloatPtr _f1
+        ,const VolumeVectorPtr _v2
+        , const float dt) {
+	return boost::shared_ptr<Volume<float> >(new AdvectVolume(_f1, _v2, dt));
+}
+const float AdvectVolume::eval(const MPUtils::MPVec3 &P) const {
+	return mImpl->f->eval(P - (mImpl->U->eval(P)) * mImpl->dt);
+}
+const MPUtils::MPVec3 AdvectVolume::grad(const MPUtils::MPVec3 &P) const {}
+
+class VectorNoise::Impl {
+public:
+boost::shared_ptr<MPNoise::FractalSum<MPNoise::PerlinNoiseGustavson> >perlin;
+MPNoise::Noise_t parms;
+boost::shared_ptr<MPNoise::Noise> noise;
+};
+VectorNoise::VectorNoise(const MPNoise::Noise_t _parms):
+	mImpl(new VectorNoise::Impl()) {
+		mImpl->parms = _parms;
+		mImpl->perlin = MPNoise::FractalSum<MPNoise::PerlinNoiseGustavson>::Ptr();
+		mImpl->perlin->setParameters(mImpl->parms);
+		
+		mImpl->noise = mImpl->perlin;
+}
+boost::shared_ptr<MeshPotato::MPVolume::Volume<MPUtils::MPVec3> > VectorNoise::Ptr( const MPNoise::Noise_t _parms) {
+        return boost::shared_ptr<Volume<MPUtils::MPVec3> >(new VectorNoise(_parms));
+}
+
+const MPUtils::MPVec3 VectorNoise::eval(const MPUtils::MPVec3 &P) const {
+	return MPUtils::MPVec3(mImpl->noise->eval(P)
+		,mImpl->noise->eval(P + mImpl->parms.offset)
+		,mImpl->noise->eval(P - mImpl->parms.offset));
+
+}
+const MPUtils::MPMat3 VectorNoise::grad(const MPUtils::MPVec3 &P) const {}
 }
 }

@@ -79,6 +79,14 @@ struct MPVolumeFloatWrap : Volume<float>, wrapper<Volume<float> > {
 		return this->get_override("grad")();
 	}
 };
+struct MPVolumeVectorWrap : Volume<MPVec3>, wrapper<Volume<MPVec3> > {
+	const MPVec3 eval(const MPVec3& P) const {
+		return this->get_override("eval")();
+	}
+	const MPMat3 grad(const MPVec3& P) const {
+		return this->get_override("grad")();
+	}
+};
 struct MPVolumeColorWrap : Volume<Color>, wrapper<Volume<Color> > {
 	const Color eval(const MPVec3& P) const {
 		return this->get_override("eval")();
@@ -103,6 +111,10 @@ BOOST_PYTHON_MODULE(mpvolume) {
 	class_<MPVolumeFloatWrap, boost::noncopyable>("VolumeFloat")
 		.def("eval", pure_virtual(&Volume<float>::eval))	
 		.def("grad", pure_virtual(&Volume<float>::grad))	
+	;
+	class_<MPVolumeVectorWrap, boost::noncopyable>("VolumeVector")
+		.def("eval", pure_virtual(&Volume<MPVec3>::eval))	
+		.def("grad", pure_virtual(&Volume<MPMat3>::grad))	
 	;
 	class_<MPVolumeColorWrap, boost::noncopyable>("VolumeColor")
 		.def("eval", pure_virtual(&Volume<Color>::eval))	
@@ -154,6 +166,16 @@ BOOST_PYTHON_MODULE(mpvolume) {
 		.def("__init__", make_constructor(&Clamp<float>::Ptr))
 		.def("eval", &MeshPotato::MPVolume::Clamp<float>::eval)
 		.def("grad", &MeshPotato::MPVolume::Clamp<float>::grad)
+	;
+	class_<VectorNoise,bases<MPVolumeVectorWrap> >("VectorNoise", no_init)
+		.def("__init__", make_constructor(&VectorNoise::Ptr))
+		.def("eval", &MeshPotato::MPVolume::VectorNoise::eval)
+		.def("grad", &MeshPotato::MPVolume::VectorNoise::grad)
+	;
+	class_<AdvectVolume,bases<MPVolumeFloatWrap> >("AdvectVolume", no_init)
+		.def("__init__", make_constructor(&AdvectVolume::Ptr))
+		.def("eval", &MeshPotato::MPVolume::AdvectVolume::eval)
+		.def("grad", &MeshPotato::MPVolume::AdvectVolume::grad)
 	;
 	class_<FrustumLight, bases<MPVolumeColorWrap> >("FrustumLight", no_init)
 		.def("__init__", make_constructor(&FrustumLight::Ptr))
