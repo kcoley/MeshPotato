@@ -12,6 +12,7 @@
 #include <string>
 #include <openvdb/openvdb.h>
 #include <openvdb/tools/LevelSetUtil.h>
+#include <tbb/task_scheduler_init.h>
 using namespace boost::python;
 using namespace MeshPotato::MPVolume;
 using namespace MeshPotato::MPUtils;
@@ -23,7 +24,10 @@ object ConvertToFogVolume(object &grid) {
 	return object(grid_obj);
 
 }
-
+void SetTBBThreads(object numthreads) {
+int num_threads = extract<int>(numthreads);
+tbb::task_scheduler_init schedulerInit(num_threads);
+}
 MeshPotato::MPVolume::VolumeColorPtr CreateFrustumLight(MPVec3 light_pos, Color light_color, MPVec3 light_resolution, openvdb::FloatGrid grid, float dsmK=1.0) {
 	openvdb::FloatGrid::Ptr gridPtr = grid.copy();
 	boost::shared_ptr<MeshPotato::MPUtils::Camera> frustumCam = MeshPotato::MPVolume::buildFrustumCamera(light_pos, gridPtr);
@@ -192,4 +196,5 @@ BOOST_PYTHON_MODULE(mpvolume) {
 	def("CreateVDBFrustumLight", &CreateVDBFrustumLight);
 	def("RenderVDB", &RenderVDB);
 	def("ConvertToFogVolume", &ConvertToFogVolume);
+	def("SetTBBThreads", &SetTBBThreads);
 }
