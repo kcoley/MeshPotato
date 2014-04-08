@@ -27,9 +27,14 @@ openvdb::Coord getVDBCoord(boost::python::list& ls) {
 		std::cout << "List is not of three elements" << std::endl;
 	return coord;
 }
-openvdb::CoordBBox getVDBCoordBBox(openvdb::Coord &min, openvdb::Coord &max) {
-
+openvdb::CoordBBox getVDBCoordBBoxFunc(openvdb::Coord &min, openvdb::Coord &max) {
 	return openvdb::CoordBBox(min, max);
+}
+object getVDBCoordBBox(object min_obj, object max_obj) {
+	openvdb::Coord min = boost::python::extract<openvdb::Coord>(min_obj);
+	openvdb::Coord max = boost::python::extract<openvdb::Coord>(max_obj);
+
+	return object(getVDBCoordBBoxFunc(min, max));
 }
 
 BOOST_PYTHON_MODULE(mputils) {
