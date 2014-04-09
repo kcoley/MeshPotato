@@ -108,9 +108,10 @@ const MeshPotato::MPUtils::DeepPixelBuffer deepL(MPRay &ray, IntersectorT &inter
 }
 void operator() (const tbb::blocked_range<size_t>& r) const {
 //	openvdb::tools::GridSampler<openvdb::FloatTree, openvdb::tools::BoxSampler> interpolator2(grid->constTree(), grid->transform());
-	SamplerType interpolator2(accessor, grid->transform());
 //	openvdb::tools::GridSampler<openvdb::FloatTree, openvdb::tools::BoxSampler> interpolator2(accessor, grid->transform());
 	for (size_t j = r.begin(), je = r.end(); j < je; ++j) {
+	AccessorType accessor2(grid->getConstAccessor());
+	SamplerType interpolator2(accessor2, grid->transform());
 		// Create an intersector for each thread
 //		openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> intersector2(*grid);
 		IntersectorT intersector2(*grid);

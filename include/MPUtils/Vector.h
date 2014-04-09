@@ -15,7 +15,7 @@ namespace MeshPotato {
 		typedef openvdb::math::Vec3d  MPVec3;
 		typedef openvdb::math::Mat3<float> MPMat3;
 		typedef openvdb::math::Ray<double> MPRay;	
-		
+		typedef openvdb::CoordBBox BBox;		
 		typedef std::vector<openvdb::math::Vec4<uint32_t> > Polys;
 		typedef std::vector<openvdb::math::Vec3<float> >Verts;
 		

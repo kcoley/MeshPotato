@@ -68,5 +68,33 @@ const Cumulo::volumeDataType Cumulo::eval(const MPUtils::MPVec3 &P) const {
 }
 const Cumulo::volumeGradType Cumulo::grad(const MPUtils::MPVec3 &P) const {
 }
+/*
+class CumuloVDB::Impl {
+public:
+	VolumeFloatPtr f;
+	MPNoise::Noise_t wparms;
+	VolumeVectorPtr Y;
+	MPNoise::FractalSum<MPNoise::PerlinNoiseGustavson> perlin;
+	boost::shared_ptr<MPNoise::Noise> noise;
+	openvdb::FloatGrid::Ptr grid;
+};
+
+const openvdb::FloatGrid::Ptr  CumuloVDB::eval() const {
+	openvdb::FloatGrid::Ptr cumuloGrid = mImpl->grid->deepCopy();
+	openvdb::math::CPT_RANGE<openvdb::math::UniformScaleMap, openvdb::math::CD_2ND> range;
+	openvdb::math::UniformScaleMap::Ptr mapping(mImpl->grid->transformPtr()->map<openvdb::math::UniformScaleMap>());
+	openvdb::FloatGrid::Accessor cumuloAccessor = cumuloGrid->getAccessor();
+	for (FloatGrid::ValueOnCIter iter = grid->cbeginValueOn(); iter.test(); ++iter) {
+	openvdb::Coord ijk = iter.getCoord();
+	MPUtils::MPVec3 point = range.result(*mImpl->grid->transformPtr()->map<openvdb::math::UniformScaleMap>(), mImpl->grid->getAccessor(), ijk);
+	MPUtils::MPVec3 wsPoint = mImpl->grid->transformPtr()->indexToWorld(ijk);
+	MPUtils::MPVec3 vect(wsPoint.x(), wsPoint.y(), wsPoint.z());
+	float newVal = iter.getValue() - pow(fabs(mImpl->noise->eval(vect)),mImpl->wparms.NP0.gamma)*mImpl->wparms.NP0.amplitude;
+	cumuloAccessor.setValue(ijk, newVal);
+	}
+	openvdb::tools::sdfToFogVolume<openvdb::FloatGrid>(cumuloGrid.operator*());
+	return cumuloGrid;
+}
+*/
 }
 }

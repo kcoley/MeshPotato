@@ -33,7 +33,7 @@ MeshPotato::MPVolume::VolumeColorPtr CreateFrustumLight(MPVec3 light_pos, Color 
 	boost::shared_ptr<MeshPotato::MPUtils::Camera> frustumCam = MeshPotato::MPVolume::buildFrustumCamera(light_pos, gridPtr);
 	openvdb::BBoxd bbox(MeshPotato::MPUtils::MPVec3(0,0,0), light_resolution);
 	boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid > frustum = MeshPotato::MPVolume::FrustumGrid::Ptr(frustumCam, bbox);
-	MeshPotato::MPVolume::VolumeFloatPtr dsmgrid = MeshPotato::MPVolume::VDBVolumeGrid::Ptr(gridPtr);
+	MeshPotato::MPVolume::VolumeFloatPtr dsmgrid = MeshPotato::MPVolume::VDBVolumeGrid<float>::Ptr(gridPtr);
 	frustum->dsm(dsmgrid, dsmK);
 	VolumeColorPtr light = MeshPotato::MPVolume::FrustumLight::Ptr(frustum, light_color);
 	return light;
@@ -124,13 +124,13 @@ BOOST_PYTHON_MODULE(mpvolume) {
 		.def("eval", pure_virtual(&Volume<Color>::eval))	
 		.def("grad", pure_virtual(&Volume<Color>::grad))	
 	;
-	class_<VDBVolumeGrid, boost::shared_ptr<VDBVolumeGrid>, 
+	class_<VDBVolumeGrid<float>, boost::shared_ptr<VDBVolumeGrid<float> >, 
 			bases<MPVolumeFloatWrap> >("VDBVolumeGrid", no_init)
 		.def(init<openvdb::FloatGrid::Ptr>())
-		.def("ptr", &VDBVolumeGrid::Ptr)
+		.def("ptr", &VDBVolumeGrid<float>::Ptr)
 		.staticmethod("ptr")
-		.def("eval", &VDBVolumeGrid::eval)
-		.def("grad", &VDBVolumeGrid::grad)
+		.def("eval", &VDBVolumeGrid<float>::eval)
+		.def("grad", &VDBVolumeGrid<float>::grad)
 	;
 	class_<AddVolumeFloat,  bases<MPVolumeFloatWrap> >("AddVolumeFloat", no_init)
 		.def("__init__", make_constructor(&AddVolumeFloat::Ptr))
@@ -176,10 +176,15 @@ BOOST_PYTHON_MODULE(mpvolume) {
 		.def("eval", &MeshPotato::MPVolume::VectorNoise::eval)
 		.def("grad", &MeshPotato::MPVolume::VectorNoise::grad)
 	;
-	class_<AdvectVolume,bases<MPVolumeFloatWrap> >("AdvectVolume", no_init)
-		.def("__init__", make_constructor(&AdvectVolume::Ptr))
-		.def("eval", &MeshPotato::MPVolume::AdvectVolume::eval)
-		.def("grad", &MeshPotato::MPVolume::AdvectVolume::grad)
+	class_<AdvectVolumeFloat,bases<MPVolumeFloatWrap> >("AdvectVolumeFloat", no_init)
+		.def("__init__", make_constructor(&AdvectVolumeFloat::Ptr))
+		.def("eval", &MeshPotato::MPVolume::AdvectVolumeFloat::eval)
+		.def("grad", &MeshPotato::MPVolume::AdvectVolumeFloat::grad)
+	;
+	class_<AdvectVolumeVector,bases<MPVolumeVectorWrap> >("AdvectVolumeVector", no_init)
+		.def("__init__", make_constructor(&AdvectVolumeVector::Ptr))
+		.def("eval", &MeshPotato::MPVolume::AdvectVolumeVector::eval)
+		.def("grad", &MeshPotato::MPVolume::AdvectVolumeVector::grad)
 	;
 	class_<FrustumLight, bases<MPVolumeColorWrap> >("FrustumLight", no_init)
 		.def("__init__", make_constructor(&FrustumLight::Ptr))

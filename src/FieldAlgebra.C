@@ -58,13 +58,15 @@ template class AddVolume<MPUtils::Color>;
 template class Union<float>;
 template class Union<MPUtils::MPVec3>;
 
-class AdvectVolume::Impl {
+template<typename T>
+class AdvectVolume<T>::Impl {
 public:
-VolumeFloatPtr f;
+boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > f;
 VolumeVectorPtr U;
 float dt;
 };
-AdvectVolume::AdvectVolume(const VolumeFloatPtr _f
+template<typename T>
+AdvectVolume<T>::AdvectVolume(const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f
         ,const VolumeVectorPtr _U
         , const float _dt) :
 	mImpl(new AdvectVolume::Impl()) {
@@ -73,15 +75,21 @@ AdvectVolume::AdvectVolume(const VolumeFloatPtr _f
 		mImpl->dt = _dt;
 
 	}
-boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > AdvectVolume::Ptr( const VolumeFloatPtr _f1
+template<typename T>
+boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > AdvectVolume<T>::Ptr( const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f1
         ,const VolumeVectorPtr _v2
         , const float dt) {
-	return boost::shared_ptr<Volume<float> >(new AdvectVolume(_f1, _v2, dt));
+	return boost::shared_ptr<Volume<T> >(new AdvectVolume<T>(_f1, _v2, dt));
 }
-const float AdvectVolume::eval(const MPUtils::MPVec3 &P) const {
+template<typename T>
+const typename Volume<T>::volumeDataType AdvectVolume<T>::eval(const MPUtils::MPVec3 &P) const {
 	return mImpl->f->eval(P - (mImpl->U->eval(P)) * mImpl->dt);
 }
-const MPUtils::MPVec3 AdvectVolume::grad(const MPUtils::MPVec3 &P) const {}
+template<typename T>
+const typename Volume<T>::volumeGradType AdvectVolume<T>::grad(const MPUtils::MPVec3 &P) const {}
+
+template class AdvectVolume<float>;
+template class AdvectVolume<MPUtils::MPVec3>;
 
 class VectorNoise::Impl {
 public:

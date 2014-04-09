@@ -23,21 +23,25 @@ class Impl;
 boost::shared_ptr<Impl> mImpl;
 };
 
-class AdvectVolume:public Volume <float> {
+template <typename T>
+class AdvectVolume:public Volume <T> {
 public:
-AdvectVolume(const VolumeFloatPtr _f1
+AdvectVolume(const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f1
 	,const VolumeVectorPtr _v1
 	, const float dt);
-static boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > Ptr(
-	const VolumeFloatPtr _f1
+static boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > Ptr(
+	const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f1
 	,const VolumeVectorPtr _v2
 	, const float dt);
-const float eval(const MPUtils::MPVec3 &P) const;
-const MPUtils::MPVec3 grad(const MPUtils::MPVec3 &P) const;
-public:
+const typename Volume<T>::volumeDataType eval(const MPUtils::MPVec3 &P) const;
+const typename Volume<T>::volumeGradType grad(const MPUtils::MPVec3 &P) const;
+private:
 class Impl;
 boost::shared_ptr<Impl> mImpl;
 };
+typedef AdvectVolume<float> AdvectVolumeFloat;
+typedef AdvectVolume<MPUtils::MPVec3> AdvectVolumeVector;
+
 
 class VectorNoise:public Volume <MPUtils::MPVec3> {
 public:
@@ -74,6 +78,11 @@ boost::shared_ptr<Impl> mImpl;
 
 typedef Union<float> UnionFloat;
 typedef Union<MPUtils::MPVec3> UnionVector;
+
+//class FFTDivFree: public Volume<MPUtils::MPVec3> {
+//public:
+//FFTDivFree(const boost::shared_ptr<MeshPotato::MPVolume::VolumeGrid<T> > grid);
+//};
 }
 }
 #endif // __FIELD_ALGEBRA_H__

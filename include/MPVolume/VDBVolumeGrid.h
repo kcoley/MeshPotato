@@ -4,29 +4,54 @@
 #include "MPVolume/MPVolumeGrid.h"
 #include <openvdb/Grid.h>
 #include <openvdb/tools/Interpolation.h>
+#include <openvdb/openvdb.h>
 using MeshPotato::MPUtils::MPVec3;
-typedef openvdb::FloatGrid::Ptr VDBFloatGridPtr;
+
 namespace MeshPotato {
 	namespace MPVolume {
-		class VDBVolumeGrid: public MeshPotato::MPVolume::Volume<float> {
+		template<typename T>
+                struct GridType {
+                	typedef openvdb::FloatGrid VDBGridT;
+                };
+		template<>
+                struct GridType<float> {
+                	typedef openvdb::FloatGrid VDBGridT;
+                };
+		template<>
+                struct GridType<MPUtils::Color> {
+                	typedef openvdb::VectorGrid VDBGridT;
+                };
+		template<>
+                struct GridType<MPUtils::MPVec3> {
+                	typedef openvdb::VectorGrid VDBGridT;
+                };
+
+		template <typename T>
+		class VDBVolumeGrid: public MeshPotato::MPVolume::Volume<T> {
 			public:
-				static boost::shared_ptr<Volume<float> > Ptr(const openvdb::FloatGrid::Ptr _grid) {
-					return boost::shared_ptr<Volume<float> >(new VDBVolumeGrid(_grid)); 
+				typedef typename GridType<T>::VDBGridT GridT;  
+				typedef typename GridT::ConstAccessor AccessorT;  
+				typedef typename GridT::Ptr GridPtr;
+				typedef typename openvdb::tools::GridSampler<GridT, openvdb::tools::BoxSampler> SamplerT;
+				static boost::shared_ptr<Volume<T> > Ptr(
+					const GridPtr _grid) {
+					return boost::shared_ptr<Volume<T> >(new VDBVolumeGrid(_grid)); 
 				}
-				VDBVolumeGrid(const openvdb::FloatGrid::Ptr _grid) : grid(_grid), interpolator(grid->constTree(), grid->transform()) {}
+				VDBVolumeGrid(const GridPtr _grid) : 
+					grid(_grid), 
+					interpolator(grid->constTree(), grid->transform()) {}
 
 				openvdb::GridBase::Ptr getVDBGrid() const { return grid; }
 				~VDBVolumeGrid() {}
-				virtual const float eval(const MPUtils::MPVec3 &P) const {
+				const typename Volume<T>::volumeDataType  eval(const MPVec3 &P) const {
 					return interpolator.wsSample(P);
 
 				}
-				virtual const MPVec3 grad(const MPVec3 &P) const {
+				const typename Volume<T>::volumeGradType  grad(const MPVec3 &P) const {
 				}
-				virtual const float defaultValue() const {}
 			private:
-				openvdb::FloatGrid::Ptr grid;
-				openvdb::tools::GridSampler<openvdb::FloatTree, openvdb::tools::BoxSampler> interpolator;			
+				GridPtr grid;
+				SamplerT interpolator;			
 
 		};
 	}

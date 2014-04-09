@@ -40,7 +40,8 @@ FrustumGrid(boost::shared_ptr<MeshPotato::MPUtils::Camera> _cam, openvdb::BBoxd 
 
 	}     
 	const float eval(const MeshPotato::MPUtils::MPVec3 &P) const {
-		return  fastSampler.wsSample(P);     
+//		return  fastSampler.wsSample(P);     
+		return  interpolator.wsSample(P);     
 	}     
 	const void set(const openvdb::Coord &ijk, float value) {         
 		accessor.setValue(ijk, value);

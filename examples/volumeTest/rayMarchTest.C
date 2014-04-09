@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
 	sphere->setBackground(-1);
 
 	std::cout << "before marching" << std::endl;
-	MeshPotato::MPVolume::VolumeFloatPtr grid4 = MeshPotato::MPVolume::VDBVolumeGrid::Ptr(sphere);
+	MeshPotato::MPVolume::VolumeFloatPtr grid4 = MeshPotato::MPVolume::VDBVolumeGrid<float>::Ptr(sphere);
 	std::cout << "before marching" << std::endl;
 	MeshPotato::MPVolume::VolumeColorPtr basecolor = MeshPotato::MPVolume::ConstantVolume<MeshPotato::MPUtils::Color>::Ptr(MeshPotato::MPUtils::Color(0,0,0,0));		
 	//	boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > mysphere = MeshPotato::MPVolume::ImplicitSphere::Ptr(10, MPVec3(0,0,0));
@@ -105,7 +105,7 @@ int main(int argc, char **argv) {
 	cam->setNearPlane(nearP);
 	cam->setFarPlane(farP);
 
-	MeshPotato::MPVolume::VolumeFloatPtr bunnydsm = MeshPotato::MPVolume::VDBVolumeGrid::Ptr(inputGrid);
+	MeshPotato::MPVolume::VolumeFloatPtr bunnydsm = MeshPotato::MPVolume::VDBVolumeGrid<float>::Ptr(inputGrid);
 	std::cout << bunnydsm->eval(MeshPotato::MPUtils::MPVec3(0,0,0)) << std::endl;
 
 	//	openvdb::tools::Film film(imageWidth, imageHeight);
@@ -138,9 +138,9 @@ int main(int argc, char **argv) {
 	frustum->dsm(bunnydsm, dsmK);
 	frustum2->dsm(bunnydsm, dsmK);
 	frustum3->dsm(bunnydsm, dsmK);
-	boost::shared_ptr<MeshPotato::MPVolume::FrustumLight> lightR = MeshPotato::MPVolume::FrustumLight::Ptr(frustum, MeshPotato::MPUtils::Color(1,0,0,0));
-	boost::shared_ptr<MeshPotato::MPVolume::FrustumLight> lightG = MeshPotato::MPVolume::FrustumLight::Ptr(frustum2, MeshPotato::MPUtils::Color(0,1,0,0));
-	boost::shared_ptr<MeshPotato::MPVolume::FrustumLight> lightB = MeshPotato::MPVolume::FrustumLight::Ptr(frustum3, MeshPotato::MPUtils::Color(0,0,1,0));
+	MeshPotato::MPVolume::VolumeColorPtr lightR = MeshPotato::MPVolume::FrustumLight::Ptr(frustum, MeshPotato::MPUtils::Color(1,0,0,0));
+	MeshPotato::MPVolume::VolumeColorPtr lightG = MeshPotato::MPVolume::FrustumLight::Ptr(frustum2, MeshPotato::MPUtils::Color(0,1,0,0));
+	MeshPotato::MPVolume::VolumeColorPtr lightB = MeshPotato::MPVolume::FrustumLight::Ptr(frustum3, MeshPotato::MPUtils::Color(0,0,1,0));
 
 	MeshPotato::MPVolume::VolumeColorPtr addLight = MeshPotato::MPVolume::AddVolume<MeshPotato::MPUtils::Color>::Ptr(lightR, lightG);
 	MeshPotato::MPVolume::VolumeColorPtr addLights = MeshPotato::MPVolume::AddVolume<MeshPotato::MPUtils::Color>::Ptr(addLight, lightB);
@@ -156,7 +156,7 @@ int main(int argc, char **argv) {
 	image->reset(imageWidth, imageHeight);
 	deepimage->reset(imageWidth, imageHeight);
 	//	deepimage.reset(imageWidth, imageHeight);
-	MeshPotato::MPVolume::VDBRayMarcher<openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> > marcher(inputGrid, addLights, stepSize, scattering, image, deepimage, cam, outputImage);
+	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, addLights, stepSize, scattering, image, deepimage, cam, outputImage);
 	marcher.render(true);
 	marcher.writeImage();
 
