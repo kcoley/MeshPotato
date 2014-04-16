@@ -27,6 +27,17 @@ openvdb::Coord getVDBCoord(boost::python::list& ls) {
 		std::cout << "List is not of three elements" << std::endl;
 	return coord;
 }
+object getCoord(boost::python::list& ls) {
+	MeshPotato::MPUtils::Coord coord;
+	if (len(ls) == 3) {
+		coord.setX(boost::python::extract<float>(ls[0]));
+		coord.setY(boost::python::extract<float>(ls[1]));
+		coord.setZ(boost::python::extract<float>(ls[2]));
+	}
+	else
+		std::cout << "List is not of three elements" << std::endl;
+	return object(coord);
+}
 openvdb::CoordBBox getVDBCoordBBoxFunc(openvdb::Coord &min, openvdb::Coord &max) {
 	return openvdb::CoordBBox(min, max);
 }
@@ -37,12 +48,24 @@ object getVDBCoordBBox(object min_obj, object max_obj) {
 	return object(getVDBCoordBBoxFunc(min, max));
 }
 
+object getBBox(object min_obj, object max_obj) {
+	MeshPotato::MPUtils::MPVec3 min = boost::python::extract<MeshPotato::MPUtils::MPVec3>(min_obj);
+	MeshPotato::MPUtils::MPVec3 max = boost::python::extract<MeshPotato::MPUtils::MPVec3>(max_obj);
+
+	return object(MeshPotato::MPUtils::BBox(min,max));
+}
 BOOST_PYTHON_MODULE(mputils) {
 	class_<openvdb::Coord>("openvdb_coord")
 		.def("getVDBCoord", &getVDBCoord)
 		;
+	class_<MeshPotato::MPUtils::Coord>("Coord")
+		.def("getCoord", &getCoord)
+		;
 	class_<MPVec3>("mpvec3")
 		.def("getMPVec3", &getMPVec3)
+		;
+	class_<MeshPotato::MPUtils::BBox>("bbox")
+		.def("getBBox", &getBBox)
 		;
 	class_<openvdb::CoordBBox  >("coord_bbox", no_init)
 	        .def("getVDBCoordBBox", &getVDBCoord)
@@ -70,6 +93,8 @@ BOOST_PYTHON_MODULE(mputils) {
 	class_<boost::shared_ptr<MeshPotato::MPUtils::DeepImage> >("deepimage")
 		;
 	def("getVDBCoord", &getVDBCoord);
+	def("getCoord", &getCoord);
 	def("getVDBCoordBBox", &getVDBCoordBBox);
 	def("getMPVec3", &getMPVec3);
+	def("getBBox", &getBBox);
 }

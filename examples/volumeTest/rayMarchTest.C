@@ -20,17 +20,44 @@
 #include <limits>
 #include <MPVolume/Light.h>
 #include <tbb/task_scheduler_init.h>
-
+#include <MPVolume/DenseGrid.h>
+#include <MPVolume/FFTDivFree.h>
 using MeshPotato::MPVolume::VolumeFloatPtr;
-
+using MeshPotato::MPVolume::VolumeVectorPtr;
+using MeshPotato::MPVolume::VolumeGridFloatPtr;
+using MeshPotato::MPVolume::VolumeGridVectorPtr;
+using MeshPotato::MPUtils::MPVec3;
 int main(int argc, char **argv) {
+//	MeshPotato::MPUtils::BBox bbox_test(MeshPotato::MPUtils::MPVec3(-100,-100,-100), MeshPotato::MPUtils::MPVec3(100,100,100));
+
+//	MeshPotato::MPVolume::UniformGrid<float> uniformGrid;
+
+
+//	VolumeGridVectorPtr uniformGrid = MeshPotato::MPVolume::DenseGrid<MPVec3>::Ptr(bbox_test, 0.5);
+//	uniformGrid->set(MeshPotato::MPUtils::Coord(0,0,0), MPVec3(1,1,1));
+//	std::cout << "indexToWorld = " << uniformGrid->indexToWorld(MeshPotato::MPUtils::Coord(0,0,0)) << std::endl;;
+//	std::cout << "worldToIndex = " << uniformGrid->worldToIndex(MeshPotato::MPUtils::MPVec3(-100,-100,-100)) << std::endl;;
+//	std::cout << "worldToIndex = " << uniformGrid->worldToIndex(MeshPotato::MPUtils::MPVec3(-100,-100,-100)) << std::endl;;
+//	uniformGrid->add(MeshPotato::MPUtils::Coord(0,0,0), MPVec3(2,2,2));
+//	std::cout << uniformGrid->eval(MeshPotato::MPUtils::MPVec3(0,0,0)) << std::endl;
+//	MeshPotato::MPNoise::Noise_t noise0;
+//	VolumeVectorPtr vectorNoise = MeshPotato::MPVolume::VectorNoise::Ptr(noise0);
+//	VolumeVectorPtr div_free = MeshPotato::MPVolume::FFTDivFree(uniformGrid, vectorNoise);
+//	std::cout << "x = " << uniformGrid->nx() << std::endl;
+//	std::cout << "y = " << uniformGrid->ny() << std::endl;
+//	std::cout << "z = " << uniformGrid->nz() << std::endl;
+//	uniformGrid->stamp(vectorNoise);
+//	VolumeFloatPtr sphere_t = MeshPotato::MPVolume::ImplicitSphere::Ptr(1, MeshPotato::MPUtils::MPVec3(0,0,0));
+//	std::cout << div_free->eval(MeshPotato::MPUtils::MPVec3(0,0,0)) << std::endl;
+//	VolumeFloatPtr advect_sphere = MeshPotato::MPVolume::AdvectVolumeFloat::Ptr(sphere_t, div_free, 0.5);
+//	std::cout << "Uniform grid = " << uniformGrid->eval(MeshPotato::MPUtils::MPVec3(0,0,0)) << std::endl;
 	/////////////////////////Parse Command Line Arguments=================================================
 	MeshPotato::MPUtils::CmdLineFind clf(argc, argv);
 	std::string vdb_volumeFile = clf.find(std::string("-vdb"), std::string("bunny_cloud/bunny_cloud.vdb"), std::string("VDB Fog Volume File"));
 	std::string outputImage = clf.find(std::string("-name"), std::string("test.exr"), std::string("Name of output image"));
 	int imageWidth = clf.find("-NX", 960, "Image Width");
 	int imageHeight = clf.find("-NY", 540, "Image Height");
-	int numthreads = clf.find("-numthreads", 1, "Number of Threads");
+	int numthreads = clf.find("-numthreads", 0, "Number of Threads");
 	float stepSize = clf.find("-step", 1.0f, "Step size");
 	float fov = clf.find("-fov", 60.0f, "Field of View");
 	float nearP = clf.find("-near", 1.0f, "Near Plane");
@@ -40,9 +67,9 @@ int main(int argc, char **argv) {
 	MeshPotato::MPUtils::MPVec3 cam_pos = clf.find(std::string("-eye"), MeshPotato::MPUtils::MPVec3(0.0,18.0,90.0), std::string("Camera Position"));
 	MeshPotato::MPUtils::MPVec3 cam_rot = clf.find(std::string("-rot"), MeshPotato::MPUtils::MPVec3(0.0,0.0,-180.0), std::string("Camera Rotation"));
 
-	MeshPotato::MPUtils::MPVec3 fcam_pos = clf.find(std::string("-feye"), MeshPotato::MPUtils::MPVec3(0.0,18.0,20.0), std::string("Frustum Position 1"));
-	MeshPotato::MPUtils::MPVec3 fcam_pos2 = clf.find(std::string("-feye2"), MeshPotato::MPUtils::MPVec3(-30.0,18.0,0.0), std::string("Frustum Position 2"));
-	MeshPotato::MPUtils::MPVec3 fcam_pos3 = clf.find(std::string("-feye3"), MeshPotato::MPUtils::MPVec3(-30.0,18.0,0.0), std::string("Frustum Position 3"));
+	MeshPotato::MPUtils::MPVec3 fcam_pos = clf.find(std::string("-feye"), MeshPotato::MPUtils::MPVec3(0.0,50.0,0.0), std::string("Frustum Position 1"));
+	MeshPotato::MPUtils::MPVec3 fcam_pos2 = clf.find(std::string("-feye2"), MeshPotato::MPUtils::MPVec3(-50.0,0.0,0.0), std::string("Frustum Position 2"));
+	MeshPotato::MPUtils::MPVec3 fcam_pos3 = clf.find(std::string("-feye3"), MeshPotato::MPUtils::MPVec3(50.0,0.0,0.0), std::string("Frustum Position 3"));
 	//MeshPotato::MPUtils::MPVec3 fcam_rot = clf.find(std::string("-frot"), MeshPotato::MPUtils::MPVec3(0.0,0.0,180.0), std::string("Frustum Rotation"));
 	float fnearP = clf.find("-fnear", 20.0f, "Frustum Near Plane");
 	float ffarP = clf.find("-ffar", 60.0f, "Frustum Far Plane");
@@ -60,7 +87,7 @@ int main(int argc, char **argv) {
 	openvdb::FloatGrid::Ptr sphere = openvdb::tools::createLevelSetSphere<openvdb::FloatGrid>(10, openvdb::Vec3f(0, 0, 0), 0.05);
 	openvdb::tools::sdfToFogVolume<openvdb::FloatGrid>(*sphere);	
 
-	sphere->setBackground(-1);
+//	sphere->setBackground(-1);
 
 	std::cout << "before marching" << std::endl;
 	MeshPotato::MPVolume::VolumeFloatPtr grid4 = MeshPotato::MPVolume::VDBVolumeGrid<float>::Ptr(sphere);

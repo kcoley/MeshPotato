@@ -10,7 +10,7 @@ using namespace std;
 
 namespace MeshPotato {
 	namespace MPUtils {
-
+		class Image;
 		struct DeepPixel{
 			Color  color;
 			float depth_front;
@@ -55,6 +55,7 @@ namespace MeshPotato {
 				DeepPixelBuffer& value(int x, int y ) { return data[ index(x,y) ]; }
 				DeepPixelBuffer& pixel(int x ) { return data[x]; }
 
+				boost::shared_ptr<Image> flatten();
 				const int Width() const { return width; }
 				const int Height() const { return height; }
 				const int Depth() const { return depth; }

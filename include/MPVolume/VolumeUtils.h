@@ -20,9 +20,20 @@ namespace MeshPotato {
 			return baseGrid;
 
 }
-		openvdb::FloatGrid::Ptr makeVDBGrid(boost::shared_ptr<Volume<float> > &mpgrid, const openvdb::CoordBBox& indexBB, double h) {
-			openvdb::FloatGrid::Ptr vdbgrid = openvdb::FloatGrid::create(2.0);
+		openvdb::FloatGrid::Ptr makeVDBGrid(boost::shared_ptr<Volume<float> > &mpgrid, const MeshPotato::MPUtils::BBox& worldBB, double voxelSize) {
+			openvdb::FloatGrid::Ptr vdbgrid = openvdb::FloatGrid::create(voxelSize*10);
 			openvdb::FloatGrid::Accessor accessor = vdbgrid->getAccessor();
+			vdbgrid->transform().preScale(voxelSize);
+			vdbgrid->transform().postTranslate(worldBB.min());
+			openvdb::Coord max;
+			MPUtils::MPVec3 temp  = ((worldBB.max() - worldBB.min())/voxelSize);
+			max.x() = (1 + ceil(temp.x()));
+			max.y() = (1 + ceil(temp.y()));
+			max.z() = (1 + ceil(temp.z()));
+
+
+			openvdb::Coord min(0,0,0);
+			openvdb::CoordBBox indexBB(min,max);
 			const float outside = vdbgrid->background();
 			const float inside = -outside;
 			std::cout << "outside = " << outside << std::endl;
@@ -30,7 +41,8 @@ namespace MeshPotato {
 				for (openvdb::Int32 j = indexBB.min().y(); j <= indexBB.max().y(); ++j) {
 					for (openvdb::Int32 k = indexBB.min().z(); k <= indexBB.max().z(); ++k) {
 						// transform point (i, j, k) of index space into world space
-						MeshPotato::MPUtils::MPVec3 p(i * h, j * h, k * h);
+						MeshPotato::MPUtils::MPVec3 p = vdbgrid->transform().indexToWorld(openvdb::Coord(i,j,k));
+//						MeshPotato::MPUtils::MPVec3 p(i * voxelSize, j * h, k * h);
 						// compute level set function value
 						MeshPotato::MPUtils::MPVec3 P(p.x(), p.y(),p.z());
 						float value = -mpgrid->eval(P);
@@ -39,7 +51,7 @@ namespace MeshPotato {
 					}
 				}
 			}
-			vdbgrid->setTransform(openvdb::math::Transform::createLinearTransform(h));
+//			vdbgrid->setTransform(openvdb::math::Transform::createLinearTransform(voxelSize));
 			vdbgrid->signedFloodFill();
 			openvdb::tools::levelSetRebuild(*vdbgrid);
 			std::cout << "outside = " << outside << std::endl;
@@ -121,8 +133,13 @@ namespace MeshPotato {
 			maxAngle = max(maxAngle, 2*acos((point8 - eye).unit().dot(abboxview))*180/M_PI);
 			mindistance = min(mindistance, (point8 - eye).dot(abboxview));
 			maxdistance = max(maxdistance, (point8 - eye).dot(abboxview));
+			maxAngle += 20;
+			if (maxAngle > 90) {
+				std::cout<< "WARNING: Light is too close and may not illuminate the entire density!" << std::endl;
+			}
+			maxAngle = min(89.9999, maxAngle);
 			fnearP = mindistance;
-			ffarP = maxdistance;
+			ffarP = maxdistance + maxdistance;
 			std::cout << "Frustum Specs:" << std::endl;
 			std::cout << "BBOX:" << grid->indexToWorld(abbox.min()) << " " << grid->indexToWorld(abbox.max())<<std::endl;
 			std::cout << "Center = " << abboxcenter << std::endl;

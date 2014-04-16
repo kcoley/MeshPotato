@@ -16,7 +16,7 @@ PLUGINS=plugins
 VDBINCLUDE=/group/dpa/local/include
 VDBLIB=/group/dpa/local/openvdb/lib
 INCLUDES= -I ./include -I $(VDBINCLUDE) -I $(BOOST_INC) -I $(OIIO_INC) -I /group/dpa/include 
-LINKS= -L$(VDBLIB) -lopenvdb -L$(BOOST_LIB) -L$(OIIO_LIB) -lboost_filesystem -L/group/dpa/lib -lOpenImageIO 
+LINKS= -L$(VDBLIB) -lopenvdb -L$(BOOST_LIB) -L$(OIIO_LIB) -lboost_filesystem -L/group/dpa/lib -lOpenImageIO -lfftw3 
 MESHCONVERTERLIB=lib/libmeshpotato.a
 MESHPOTATOSHAREDLIBNAME=libmeshpotato.so
 MESHPOTATOSHAREDLIB=lib/libmeshpotato.so
@@ -53,7 +53,7 @@ pympnoise: $(OBJECTS)
 
 pympvolume: $(OBJECTS)
 	$(CC) $(CFLAGS) -I$(PYTHON_INCLUDE) $(PYMPVOLUME).C -o $(PYMPVOLUME).o
-	$(CC) -shared -Wl,-soname,mpvolume.so $(PYMPVOLUME).o -lpython2.7 -lboost_python -lboost_thread -lboost_system -lboost_filesystem -L./lib -L/group/dpa/local/openvdb/lib -lmeshpotato -lopenvdb /group/dpa/local/openvdb/python/lib/python2.7/pyopenvdb.so -lboost_system -o pymeshpotato/mpvolume.so 
+	$(CC) -shared -Wl,-soname,mpvolume.so $(PYMPVOLUME).o -lpython2.7 -lboost_python -lboost_thread -lboost_system -lboost_filesystem -L./lib -L/group/dpa/local/openvdb/lib -lmeshpotato -lopenvdb -lfftw3 /group/dpa/local/openvdb/python/lib/python2.7/pyopenvdb.so -lboost_system -o pymeshpotato/mpvolume.so 
 
 python: pympmesh pympvolume pymputils pympnoise
 clean:

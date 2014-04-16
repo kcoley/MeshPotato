@@ -99,12 +99,12 @@ FrustumGrid(boost::shared_ptr<MeshPotato::MPUtils::Camera> _cam, openvdb::BBoxd 
 			MeshPotato::MPUtils::ProgressMeter meter(bbox.max().y(), "dsm");
 			for (j = bbox.min().y(); j < bbox.max().y(); ++j) {
 					for (i = bbox.min().x(); i < bbox.max().x(); ++i) {
-						double x = (double)i/(xSize - 1);
-						double y = (double)j/(ySize - 1);
+						double x = (double)i/(xSize - 1.0);
+						double y = (double)j/(ySize - 1.0);
 						MPVec3 X = camera->eye();
 						MPVec3 d = camera->view(x,y);
 					
-						double deltaS = ((camera->farPlane() - camera->nearPlane())/(camera->view().dot(d)))/(zSize - 1);
+						double deltaS = ((camera->farPlane() - camera->nearPlane())/(camera->view().dot(d)))/(zSize - 1.0);
 						double value = 0;
 						X += camera->nearPlane()/((camera->view().dot(d)))*d;
 
