@@ -48,7 +48,7 @@ pymputils: $(OBJECTS)
 	$(CC) -shared -Wl,-soname,mputils.so $(PYMPUTILS).o -lpython2.7 -lboost_python -lboost_thread -lboost_system -lboost_filesystem -L./lib  -lmeshpotato -lboost_system -o pymeshpotato/mputils.so 
 pympnoise: $(OBJECTS)
 	$(CC) $(CFLAGS) -I $(PYTHON_INCLUDE) $(PYMPNOISE).C -o $(PYMPNOISE).o
-	$(CC) -shared -Wl,-soname,mpnoise.so $(PYMPNOISE).o -lpython2.7 -lboost_python -lboost_thread -lboost_system -lboost_filesystem -L./lib  -L/group/dpa/local/openvdb/lib -lopenvdb /group/dpa/local/openvdb/python/lib/python2.7/pyopenvdb.so -lmeshpotato -lboost_system -o pymeshpotato/mpnoise.so 
+	$(CC) -shared -Wl,-soname,mpnoise.so $(PYMPNOISE).o -lpython2.7 -lboost_python -lboost_thread -lboost_system -lboost_filesystem -L./lib -L/group/dpa/local/openvdb/lib -lmeshpotato -lopenvdb /group/dpa/local/openvdb/python/lib/python2.7/pyopenvdb.so -lmeshpotato -lboost_system -o pymeshpotato/mpnoise.so 
 
 
 pympvolume: $(OBJECTS)

@@ -321,6 +321,11 @@ BOOST_PYTHON_MODULE(mpvolume) {
 		.def("eval", &MeshPotato::MPVolume::VectorNoise::eval)
 		.def("grad", &MeshPotato::MPVolume::VectorNoise::grad)
 	;
+	class_<Identity,bases<MPVolumeVectorWrap> >("Identity", no_init)
+		.def("__init__", make_constructor(&Identity::Ptr))
+		.def("eval", &MeshPotato::MPVolume::Identity::eval)
+		.def("grad", &MeshPotato::MPVolume::Identity::grad)
+	;
 	class_<AdvectVolumeFloat,bases<MPVolumeFloatWrap> >("AdvectVolumeFloat", no_init)
 		.def("__init__", make_constructor(&AdvectVolumeFloat::Ptr))
 		.def("eval", &MeshPotato::MPVolume::AdvectVolumeFloat::eval)
@@ -345,8 +350,8 @@ BOOST_PYTHON_MODULE(mpvolume) {
 		.def("writeImage", &MeshPotato::MPVolume::RayMarcher::writeImage)
 	;
 
-	def("getVDBPtr", &getVDBPtr);	
-	def("makeVDBGrid", &MeshPotato::MPVolume::makeVDBGrid);
+	def("getVDBPtr", &getVDBPtr, "returns a VDB Pointer");	
+	def("makeVDBGrid", &MeshPotato::MPVolume::makeVDBGrid, "Converts a volume into a VDB grid");
 	def("getMPVolumeFromPyObject", &getMPVolumeFromPyObject);
 	def("CreateVDBFrustumLight", &CreateVDBFrustumLight);
 	def("RenderVDB", &RenderVDB);

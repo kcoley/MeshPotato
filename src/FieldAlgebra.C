@@ -116,5 +116,16 @@ const MPUtils::MPVec3 VectorNoise::eval(const MPUtils::MPVec3 &P) const {
 
 }
 const MPUtils::MPMat3 VectorNoise::grad(const MPUtils::MPVec3 &P) const {}
+
+Identity::Identity() {}
+boost::shared_ptr<MeshPotato::MPVolume::Volume<MPUtils::MPVec3> > Identity::Ptr() {
+        return boost::shared_ptr<Volume<MPUtils::MPVec3> >(new Identity());
+}
+
+const MPUtils::MPVec3 Identity::eval(const MPUtils::MPVec3 &P) const {
+        return P;
+}
+const MPUtils::MPMat3 Identity::grad(const MPUtils::MPVec3 &P) const {}
+
 }
 }

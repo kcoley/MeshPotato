@@ -55,6 +55,15 @@ class Impl;
 boost::shared_ptr<Impl> mImpl;
 };
 
+
+class Identity:public Volume <MPUtils::MPVec3> {
+public:
+Identity();
+static boost::shared_ptr<MeshPotato::MPVolume::Volume<MPUtils::MPVec3> > Ptr();
+const MPUtils::MPVec3  eval(const MPUtils::MPVec3 &P) const;
+const MPUtils::MPMat3 grad(const MPUtils::MPVec3 &P) const;
+};
+
 typedef AddVolume<float> AddVolumeFloat;
 typedef AddVolume<MPUtils::Color> AddVolumeColor;
 typedef AddVolume<MPUtils::MPVec3> AddVolumeVector;

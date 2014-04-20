@@ -37,7 +37,7 @@ struct InputMeshWrap: MeshPotato::MPMesh::InputMesh, wrapper<MeshPotato::MPMesh:
 object mpmesh() { 
 	object outObj = (	
       class_<MeshPotato::MPMesh::MeshObject>("MeshObject", init<>())
-              .def("loadMesh", &MeshPotato::MPMesh::MeshObject::loadMesh)
+              .def("loadMesh", &MeshPotato::MPMesh::MeshObject::loadMesh, "This loads a mesh object")
               .def("writeMesh", &MeshPotato::MPMesh::MeshObject::writeMesh)
 	);
 	return outObj;
