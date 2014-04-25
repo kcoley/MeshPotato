@@ -183,9 +183,14 @@ int main(int argc, char **argv) {
 	image->reset(imageWidth, imageHeight);
 	deepimage->reset(imageWidth, imageHeight);
 	//	deepimage.reset(imageWidth, imageHeight);
-	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, addLights, stepSize, scattering, image, deepimage, cam, outputImage);
+       AttributeTable table;
+	table.addDoubleAttr("step", stepSize);
+	table.addDoubleAttr("K", scattering);
+	table.addIntAttr("NX", imageWidth);
+	table.addIntAttr("NY", imageHeight);
+	MeshPotato::MPVolume::VDBRayMarcher marcher(inputGrid, addLights, cam, table);
 	marcher.render(true);
-	marcher.writeImage();
+	marcher.writeImage(outputImage);
 
 	/*
 	   for (int j = 0; j < imageHeight; ++j) {

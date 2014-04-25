@@ -105,22 +105,22 @@ namespace MeshPotato {
    void AttributeTable::addIntAttr(
       const std::string &attrName,
       const int &defaults) {
-        mImpl->intMap.insert(std::pair<std::string, int>(attrName, defaults) );
+        mImpl->intMap[attrName] = defaults;
       }
     void AttributeTable::addDoubleAttr(
       const std::string &attrName,
       const double &defaults) {
-        mImpl->doubleMap.insert(std::pair<std::string, double>(attrName, defaults) );
+        mImpl->doubleMap[attrName] = defaults;
       }
     void AttributeTable::addStringAttr(
       const std::string &attrName,
       const std::string &defaults) {
-        mImpl->stringMap.insert(std::pair<std::string, std::string>(attrName, defaults) );
+        mImpl->stringMap[attrName] = defaults;
       }
     void AttributeTable::addVectorAttr(
       const std::string &attrName,
       const MPUtils::MPVec3 &defaults) {
-    mImpl->vectorMap.insert(std::pair<std::string, MPUtils::MPVec3>(attrName, defaults) );
+        mImpl->vectorMap[attrName] = defaults;
     }
 
     std::vector<std::string> AttributeTable::stringAttrNames() const {

@@ -2,6 +2,7 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <iostream>
 #include <list>
+namespace py = boost::python;
 
 std::list<std::vector<std::string> > getPythonList(boost::python::list& ls) {
         std::list<std::vector<std::string> > items;
@@ -24,4 +25,13 @@ std::list<T> getListFromPython(boost::python::list& ls) {
 		items.push_back(listing);
         }
         return items;
+}
+
+template<class T>
+py::list std_vector_to_py_list(const std::vector<T>& v)
+{
+    py::object get_iter = py::iterator<std::vector<T> >();
+    py::object iter = get_iter(v);
+    py::list l(iter);
+    return l;
 }

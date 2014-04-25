@@ -5,6 +5,8 @@
 #include <MPUtils/DeepImage.h>
 #include <MPUtils/Vector.h>
 #include <openvdb/openvdb.h>
+#include <MPUtils/AttributeTable.h>
+#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 using namespace boost::python;
 using namespace MeshPotato::MPUtils;
 MPVec3 getMPVec3(boost::python::list& ls) {
@@ -73,6 +75,22 @@ BOOST_PYTHON_MODULE(mputils) {
 	class_<MeshPotato::MPUtils::Color>("Color")
 		.def(init<float, float, float, float>())
 		.def("set", &MeshPotato::MPUtils::Color::set)
+		;
+	class_<MeshPotato::MPUtils::AttributeTable>("AttributeTable")
+		.def(init<>())
+		.def("addIntAttr", &MeshPotato::MPUtils::AttributeTable::addIntAttr)
+		.def("addDoubleAttr", &MeshPotato::MPUtils::AttributeTable::addDoubleAttr)
+		.def("addVectorAttr", &MeshPotato::MPUtils::AttributeTable::addVectorAttr)
+		.def("addStringAttr", &MeshPotato::MPUtils::AttributeTable::addStringAttr)
+		.def("findIntAttr", &MeshPotato::MPUtils::AttributeTable::findIntAttr)
+		.def("findDoubleAttr", &MeshPotato::MPUtils::AttributeTable::findDoubleAttr)
+		.def("findVectorAttr", &MeshPotato::MPUtils::AttributeTable::findVectorAttr)
+		.def("findStringAttr", &MeshPotato::MPUtils::AttributeTable::findStringAttr)
+		.def("stringAttrNames", &MeshPotato::MPUtils::AttributeTable::stringAttrNames)
+		.def("intAttrNames", &MeshPotato::MPUtils::AttributeTable::intAttrNames)
+		.def("doubleAttrNames", &MeshPotato::MPUtils::AttributeTable::doubleAttrNames)
+		.def("vectorAttrNames", &MeshPotato::MPUtils::AttributeTable::vectorAttrNames)
+		.def("mergeTable", &MeshPotato::MPUtils::AttributeTable::mergeTable)
 		;
 	class_<MeshPotato::MPUtils::Image>("Image", no_init)
 		.def("__init__", make_constructor(&MeshPotato::MPUtils::Image::Ptr))

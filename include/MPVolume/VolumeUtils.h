@@ -42,7 +42,7 @@ namespace MeshPotato {
 					for (openvdb::Int32 k = indexBB.min().z(); k <= indexBB.max().z(); ++k) {
 						// transform point (i, j, k) of index space into world space
 						MeshPotato::MPUtils::MPVec3 p = vdbgrid->transform().indexToWorld(openvdb::Coord(i,j,k));
-//						MeshPotato::MPUtils::MPVec3 p(i * voxelSize, j * h, k * h);
+
 						// compute level set function value
 						MeshPotato::MPUtils::MPVec3 P(p.x(), p.y(),p.z());
 						float value = -mpgrid->eval(P);
@@ -51,10 +51,8 @@ namespace MeshPotato {
 					}
 				}
 			}
-//			vdbgrid->setTransform(openvdb::math::Transform::createLinearTransform(voxelSize));
 			vdbgrid->signedFloodFill();
 			openvdb::tools::levelSetRebuild(*vdbgrid);
-			std::cout << "outside = " << outside << std::endl;
 			vdbgrid->setGridClass(openvdb::GRID_LEVEL_SET);
 			return vdbgrid;
 		}

@@ -88,10 +88,70 @@ boost::shared_ptr<Impl> mImpl;
 typedef Union<float> UnionFloat;
 typedef Union<MPUtils::MPVec3> UnionVector;
 
-//class FFTDivFree: public Volume<MPUtils::MPVec3> {
-//public:
-//FFTDivFree(const boost::shared_ptr<MeshPotato::MPVolume::VolumeGrid<T> > grid);
-//};
+template <typename T>
+class Intersection: public MeshPotato::MPVolume::Volume<T> {
+public:
+Intersection(const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f1, 
+	  const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f2);
+static boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > Ptr(
+	  const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f1, 
+	  const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f2);
+
+const typename Volume<T>::volumeDataType  eval(const MeshPotato::MPUtils::MPVec3 &P) const;
+const typename Volume<T>::volumeGradType grad(
+	  const MeshPotato::MPUtils::MPVec3 &P) const;
+private:
+class Impl;
+boost::shared_ptr<Impl> mImpl;
+};
+
+typedef Intersection<float> IntersectionFloat;
+
+
+template <typename T>
+class Blend: public MeshPotato::MPVolume::Volume<T> {
+public:
+Blend(const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f1, 
+	  const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f2,
+	const float _A);
+	
+static boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > Ptr(
+	  const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f1, 
+	  const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f2,
+	  const float _A
+	);
+
+const typename Volume<T>::volumeDataType  eval(const MeshPotato::MPUtils::MPVec3 &P) const;
+const typename Volume<T>::volumeGradType grad(
+	  const MeshPotato::MPUtils::MPVec3 &P) const;
+private:
+class Impl;
+boost::shared_ptr<Impl> mImpl;
+};
+
+
+
+typedef Blend<float> BlendFloat;
+
+template <typename T>
+class Cutout: public MeshPotato::MPVolume::Volume<T> {
+public:
+Cutout(const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f1, 
+	  const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f2);
+static boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > Ptr(
+	  const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f1, 
+	  const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f2);
+
+const typename Volume<T>::volumeDataType  eval(const MeshPotato::MPUtils::MPVec3 &P) const;
+const typename Volume<T>::volumeGradType grad(
+	  const MeshPotato::MPUtils::MPVec3 &P) const;
+private:
+class Impl;
+boost::shared_ptr<Impl> mImpl;
+};
+typedef Cutout<float> CutoutFloat;
 }
 }
 #endif // __FIELD_ALGEBRA_H__
+
+

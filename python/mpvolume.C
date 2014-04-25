@@ -16,6 +16,7 @@
 #include <MPVolume/MPVolumeGrid.h>
 #include <MPVolume/DenseGrid.h>
 #include <MPVolume/FFTDivFree.h>
+#include <MPUtils/AttributeTable.h>
 
 using namespace boost::python;
 using namespace MeshPotato::MPVolume;
@@ -60,9 +61,12 @@ void RenderVDBFunc(openvdb::FloatGrid grid, VolumeColorPtr light, double step, d
 		openvdb::tools::sdfToFogVolume<openvdb::FloatGrid>(*gridPtr);
 	}
 	openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> inter(*gridPtr);
-	MeshPotato::MPVolume::VDBRayMarcher marcher = MeshPotato::MPVolume::VDBRayMarcher(gridPtr, light, step, k, image, deepimage, camera, name);
+	AttributeTable table;
+	table.addDoubleAttr("step", step);
+	table.addDoubleAttr("K", k);
+	MeshPotato::MPVolume::VDBRayMarcher marcher = MeshPotato::MPVolume::VDBRayMarcher(gridPtr, light, camera, table);
 	marcher.render(threaded);
-	marcher.writeImage();
+	marcher.writeImage(name);
 }
 void RenderVDB(object grid, object light, object step, object k, object image, object deepimage, object camera, object name, object threaded) {
 
@@ -287,10 +291,25 @@ BOOST_PYTHON_MODULE(mpvolume) {
 		.def("eval", &UnionFloat::eval)
 		.def("grad", &UnionFloat::grad)
 	;
+	class_<BlendFloat,  bases<MPVolumeFloatWrap> >("BlendFloat", no_init)
+		.def("__init__", make_constructor(&BlendFloat::Ptr))
+		.def("eval", &BlendFloat::eval)
+		.def("grad", &BlendFloat::grad)
+	;
+	class_<IntersectionFloat,  bases<MPVolumeFloatWrap> >("IntersectionFloat", no_init)
+		.def("__init__", make_constructor(&IntersectionFloat::Ptr))
+		.def("eval", &IntersectionFloat::eval)
+		.def("grad", &IntersectionFloat::grad)
+	;
 	class_<UnionVector,  bases<MPVolumeFloatWrap> >("UnionVector", no_init)
 		.def("__init__", make_constructor(&UnionVector::Ptr))
 		.def("eval", &UnionVector::eval)
 		.def("grad", &UnionVector::grad)
+	;
+	class_<CutoutFloat,  bases<MPVolumeFloatWrap> >("CutoutFloat", no_init)
+		.def("__init__", make_constructor(&CutoutFloat::Ptr))
+		.def("eval", &CutoutFloat::eval)
+		.def("grad", &CutoutFloat::grad)
 	;
 	class_<AddVolumeColor,  bases<MPVolumeColorWrap> >("AddVolumeColor", no_init)
 		.def("__init__", make_constructor(&AddVolumeColor::Ptr))
@@ -340,7 +359,7 @@ BOOST_PYTHON_MODULE(mpvolume) {
 		.def("__init__", make_constructor(&FrustumLight::Ptr))
 	;	
 	class_<VDBRayMarcher>("VDBRayMarcher", no_init)
-		.def(init<openvdb::FloatGrid::Ptr, VolumeColorPtr, double, double, boost::shared_ptr<Image>, boost::shared_ptr<DeepImage> , boost::shared_ptr<Camera> , std::string>())
+		.def(init<openvdb::FloatGrid::Ptr, VolumeColorPtr, boost::shared_ptr<Camera> , MeshPotato::MPUtils::AttributeTable>())
 		.def("render", &MeshPotato::MPVolume::VDBRayMarcher::render)
 		.def("writeImage", &MeshPotato::MPVolume::VDBRayMarcher::writeImage)
 	;

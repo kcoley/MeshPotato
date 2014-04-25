@@ -10,17 +10,14 @@ namespace MeshPotato {
 			struct GradType {
 				typedef int GType;
 			};
-
 		template<>
 			struct GradType<float> {
 				typedef MeshPotato::MPUtils::MPVec3 GType;
 			};
-
 		template<>
 			struct GradType<MeshPotato::MPUtils::MPVec3> {
 				typedef MeshPotato::MPUtils::MPMat3 GType;
 			};
-
 		template < typename T>
 			class Volume {
 				public:
@@ -32,7 +29,6 @@ namespace MeshPotato {
 					virtual const volumeDataType eval(const MeshPotato::MPUtils::MPVec3& P) const = 0;
 					virtual const volumeGradType grad(const MeshPotato::MPUtils::MPVec3& P) const = 0;
 			};
-
 
 	typedef boost::shared_ptr<MeshPotato::MPVolume::Volume<float> > VolumeFloatPtr;
 	typedef boost::shared_ptr<MeshPotato::MPVolume::Volume<MeshPotato::MPUtils::Color> > VolumeColorPtr;
