@@ -10,7 +10,11 @@ To get things working, you must first set the meshpotatobashrc to the appropriat
 Dependencies
 
 OpenEXR 2.1 
+
 OpenVDB 2.1 
+
 OpenImageIO
+
 Boost
+
 Boost.Python
