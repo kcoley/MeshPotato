@@ -9,6 +9,8 @@ To get things working, you must first set the meshpotatobashrc to the appropriat
 
 Dependencies
 
+TBB 
+
 OpenEXR 2.1 
 
 OpenVDB 2.1 
