@@ -62,6 +62,7 @@ namespace MeshPotato {
 	++it) 
 	{
 		stringMap[it->first] = it->second;
+		std::cout << stringMap[it->first] << std::endl;
 	}
 	for (std::map<std::string, int>::const_iterator it =
 	table.mImpl->intMap.begin(); it != table.mImpl->intMap.end(); 

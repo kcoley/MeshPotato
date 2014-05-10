@@ -364,7 +364,7 @@ BOOST_PYTHON_MODULE(mpvolume) {
 		.def("writeImage", &MeshPotato::MPVolume::VDBRayMarcher::writeImage)
 	;
 	class_<RayMarcher>("RayMarcher", no_init)
-		.def(init<VolumeFloatPtr, VolumeColorPtr, double, double, boost::shared_ptr<Camera>, MeshPotato::MPUtils::BBox, boost::shared_ptr<Image> >())
+		.def(init<VolumeFloatPtr, VolumeColorPtr, boost::shared_ptr<Camera>, MeshPotato::MPUtils::AttributeTable>())
 		.def("render", &MeshPotato::MPVolume::RayMarcher::render)
 		.def("writeImage", &MeshPotato::MPVolume::RayMarcher::writeImage)
 	;
