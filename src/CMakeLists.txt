@@ -1,0 +1,2 @@
+FILE(GLOB MP_SRC *.C)
+MESSAGE("MP_SRC = " ${MP_SRC})
