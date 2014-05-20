@@ -11,12 +11,14 @@ Dependencies
 
 TBB 
 
-OpenEXR 2.1 
+OpenEXR 2.x 
 
-OpenVDB 2.1 
+OpenVDB 2.x 
 
 OpenImageIO
 
 Boost
 
 Boost.Python
+
+FFTW
