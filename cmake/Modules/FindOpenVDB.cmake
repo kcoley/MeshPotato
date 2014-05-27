@@ -29,14 +29,14 @@
 
 MESSAGE("Loaded OpenVDB Module")
 # Look for the header file.
-FIND_PATH( OPENVDB_INCLUDE_DIR NAMES openvdb/openvdb.h)
+FIND_PATH( OPENVDB_INCLUDE_DIR NAMES openvdb/openvdb.h REQUIRED)
 
 # Look for the python header file.
-FIND_PATH( OPENVDB_INCLUDE_PYTHON_DIR NAMES pyopenvdb.h)
+FIND_PATH( OPENVDB_INCLUDE_PYTHON_DIR NAMES pyopenvdb.h REQUIRED)
 
 # Look for the library.
-FIND_LIBRARY( OPENVDB_LIBRARY NAMES openvdb)
-FIND_LIBRARY( OPENVDB_PYTHON_LIBRARY NAMES pyopenvdb.so)
+FIND_LIBRARY( OPENVDB_LIBRARY NAMES openvdb REQUIRED)
+FIND_LIBRARY( OPENVDB_PYTHON_LIBRARY NAMES pyopenvdb.so REQUIRED)
 
 # handle the QUIETLY and REQUIRED arguments and set OPENVDB_FOUND to TRUE if
 # all listed variables are TRUE

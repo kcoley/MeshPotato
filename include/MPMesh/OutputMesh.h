@@ -17,13 +17,19 @@
 
 namespace MeshPotato{
  namespace MPMesh {
+   /**
+   * \brief OutputMesh is the Abstract Base Class for writing Mesh Formats.
+   *
+   * OutputMesh retrieves the vertices, normals and faces from a mesh format.
+   * The faces can be an arbitrary n-gon planar.
+   **/
     class OutputMesh {
     public:
         virtual ~OutputMesh() {}
         virtual bool loadMesh(
-	    const std::list<std::vector<std::string> > &vertices, 
-	    const std::list<std::vector<std::string> > &normals, 
-	    const std::list<std::vector<std::string> > &faces, 
+	    const std::list<std::vector<std::string> > &vertices,
+	    const std::list<std::vector<std::string> > &normals,
+	    const std::list<std::vector<std::string> > &faces,
 	    const MPUtils::AttributeTable &table = MPUtils::AttributeTable()
         ) = 0;
 	virtual const char * getName() const = 0;

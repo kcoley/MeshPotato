@@ -9,7 +9,10 @@
 
 namespace MeshPotato {
 	namespace MPNoise {
-
+		/*!
+		* \class FFTNoise
+		* \brief Class for generating procedural FFT noise
+		*/
 		class FFTNoise : public Noise
 		{
 			public:

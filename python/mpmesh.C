@@ -8,6 +8,7 @@
 #include <MeshPotato/meshpotato.h>
 #include <MPPlugins/coreapi.h>
 using namespace boost::python;
+/*
 object processGrid(object inObj) {
 	object outObj;
 	try {
@@ -24,7 +25,7 @@ object processGrid(object inObj) {
 	}
 	return outObj;
 }
-
+*/
 struct InputMeshWrap: MeshPotato::MPMesh::InputMesh, wrapper<MeshPotato::MPMesh::InputMesh> {
 	bool loadMesh(const char *) {
 		return this->get_override("loadMesh")();
@@ -34,16 +35,16 @@ struct InputMeshWrap: MeshPotato::MPMesh::InputMesh, wrapper<MeshPotato::MPMesh:
 	}
 };
 
-object mpmesh() { 
-	object outObj = (	
+object mpmesh() {
+	object outObj = (
       class_<MeshPotato::MPMesh::MeshObject>("MeshObject", init<>())
               .def("loadMesh", &MeshPotato::MPMesh::MeshObject::loadMesh, "This loads a mesh object")
               .def("writeMesh", &MeshPotato::MPMesh::MeshObject::writeMesh)
 	);
 	return outObj;
 }
-object mpmesh2() { 
-	object outObj = (	
+object mpmesh2() {
+	object outObj = (
       class_<MeshPotato::MPMesh::MPMesh>("MPMesh", no_init)
               .def("SetName", &MeshPotato::MPMesh::MPMesh::SetName)
               .def("GetName", &MeshPotato::MPMesh::MPMesh::GetName)
@@ -65,7 +66,7 @@ BOOST_PYTHON_MODULE(mpmesh) {
 		.def_readwrite("exBandWidth", &MeshPotato::MeshSpec::exBandWidth)
 		.def_readwrite("inBandWidth", &MeshPotato::MeshSpec::inBandWidth)
 	;
-	boost::python::def("processGrid", &processGrid, "grid");
+//	boost::python::def("processGrid", &processGrid, "grid");
 	boost::python::def("mpmesh", &mpmesh2);
 	class_<MeshPotato::MPMesh::MPMesh>("MPMesh", init<>())
 	      .def(init<std::string>())
@@ -83,4 +84,3 @@ BOOST_PYTHON_MODULE(mpmesh) {
 
 	def("getPythonList", &getPythonList);
 }
-

@@ -20,8 +20,10 @@
 #include <vector>
 namespace MeshPotato {
 	namespace MPNoise {
-
-		struct Noise_t 
+		/*! \struct Noise_t
+		*  \brief A set of noise parameters
+		*/
+		struct Noise_t
 		{
 
 			Noise_t() :
@@ -94,7 +96,7 @@ namespace MeshPotato {
 			float falloff;
 		};
 
-		struct Wisp_t 
+		struct Wisp_t
 		{
 
 			Wisp_t() :
@@ -127,7 +129,7 @@ namespace MeshPotato {
 			int   seed;
 			int nbWispPoints;
 			MeshPotato::MPUtils::MPVec3 P0;
-			MeshPotato::MPUtils::Color color;	
+			MeshPotato::MPUtils::Color color;
 		};
 		class Noise
 		{
@@ -164,9 +166,9 @@ namespace MeshPotato {
 			public:
 				static boost::shared_ptr<FractalSum<BaseNoise> > Ptr() { return boost::shared_ptr<FractalSum<BaseNoise> >(new FractalSum<BaseNoise>()); }
 
-				FractalSum() : 
-					octaves    (3.0), 
-					fjump      (2.0), 
+				FractalSum() :
+					octaves    (3.0),
+					fjump      (2.0),
 					roughness  (0.5),
 					frequency  (0.666666),
 					translate  (MeshPotato::MPUtils::MPVec3(0,0,0)),
@@ -227,9 +229,9 @@ namespace MeshPotato {
 					octaves = parameters.octaves;
 					fjump = parameters.fjump;
 					roughness = parameters.roughness;
-					frequency = parameters.frequency; 
-					translate = parameters.translate; 
-					offset = parameters.offset; 
+					frequency = parameters.frequency;
+					translate = parameters.translate;
+					offset = parameters.offset;
 					axis = parameters.axis;
 					angle = parameters.angle;
 					_noise.setTime( parameters.time );
@@ -241,9 +243,9 @@ namespace MeshPotato {
 					parameters.octaves = octaves;
 					parameters.fjump = fjump;
 					parameters.roughness = roughness;
-					parameters.frequency = frequency; 
-					parameters.translate = translate; 
-					parameters.offset = offset; 
+					parameters.frequency = frequency;
+					parameters.translate = translate;
+					parameters.offset = offset;
 					parameters.axis = axis;
 					parameters.angle = angle;
 				}
@@ -286,6 +288,3 @@ namespace MeshPotato {
 	}
 }
 #endif
-
-
-

@@ -7,8 +7,11 @@
 namespace MeshPotato {
 
 
-	namespace MPNoise 
+	namespace MPNoise
 	{
+		/*! \class PerlinNoise
+		* \brief Class for generating Perlin noise
+		*/
 
 		class PerlinNoise
 		{
