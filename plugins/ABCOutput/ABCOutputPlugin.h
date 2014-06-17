@@ -6,13 +6,16 @@
 ///////////////////////////////////////////////////////////////////////////////
 //#define ABCOUTPUTPLUGIN_SOURCE 1
 
-#include "Config.h"
-#include <MPPlugins/Kernel.h>
+#include <MPPlugins/pluginapi.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <stdio.h>
 #include <list>
+#include <vector>
+#include <MeshPotato/meshpotato.h>
+using namespace MeshPotato::MPPlugins;
+using namespace std;
 
 // Alembic Includes
 #include <Alembic/AbcGeom/All.h>
@@ -24,43 +27,45 @@
 
 
 //#include "../MyEngine/Utilities.h"
-namespace MyEngine {
+namespace MeshPotato {
+	namespace MPMesh {
 
-	/// OpenGL graphics drver
-	//  class OpenGLGraphicsDriver : public GraphicsServer::GraphicsDriver {
-	class ABCOutputMeshDriver : public OutputMesh::OutputMeshDriver {
-	public:
-		/// <summary>Destroys an OpenGL graphics driver</summary>
-	ABCOUTPUTPLUGIN_API virtual ~ABCOutputMeshDriver(); 
+
+		class ABCOutputMesh : public OutputMesh {
+		public:
+			/// <summary>Gets the name of the mesh</summary>
+			virtual const char* getName() const;
+			virtual bool loadMesh(const std::list<std::vector<std::string> > &vertices,
+			const std::list<std::vector<std::string> > &normals,
+			const std::list<std::vector<std::string> > &faces,
+			const MeshPotato::MPUtils::AttributeTable  &table);
+			/// <summary>Destroys an OpenGL graphics driver</summary>
+			~ABCOutputMesh();
+
+
 
 			/// <summary>Gets the name of the graphics driver</summary>
-	ABCOUTPUTPLUGIN_API virtual const std::string &getName() const;
+			virtual bool loadMesh(std::list<std::vector<std::string> > &vertices,
+			std::list<std::vector<std::string> > &normals,
+			std::list<std::vector<std::string> > &faces,
+			MeshPotato::MeshSpec spec);
+			virtual bool writeMesh(const char *meshName);
 
-			/// <summary>Gets the name of the graphics driver</summary>
-	ABCOUTPUTPLUGIN_API virtual void loadMesh(std::list<vertex> &vertices, std::list<vertex> &normals, std::list<vertex> &faces, MeshPotato::MeshSpec spec);
-	ABCOUTPUTPLUGIN_API virtual bool writeMesh(const char *meshName);
-
-	ABCOUTPUTPLUGIN_API virtual const size_t getNumberVertices() const{
+			virtual const unsigned int getNumberVertices() const{
 				return vertices.size();
 			}
-	ABCOUTPUTPLUGIN_API virtual const size_t getNumberNormals() const{
+			virtual const unsigned int getNumberNormals() const{
 				return normals.size();
 			}
-	ABCOUTPUTPLUGIN_API virtual const size_t getNumberFaces() const{
+			virtual const unsigned int getNumberFaces() const{
 				return faces.size();
 			}
 
 
-			/// <summary>Creates a renderer</summary>
-			//    auto_ptr<Mesh> createRenderer() {
-			std::auto_ptr<MPMesh> createOutputMesh() {
-				//      return auto_ptr<Renderer>(new Renderer());
-				return std::auto_ptr<MPMesh>(new MPMesh());
-			}
-	private:
-			std::list<vertex> vertices;
-			std::list<vertex> normals;
-			std::list<vertex> faces;
+		private:
+			std::list<std::vector<std::string> > vertices;
+			std::list<std::vector<std::string> > normals;
+			std::list<std::vector<std::string> > faces;
 			size_t g_numVerts;
 			Alembic::Abc::float32_t *g_verts;
 			size_t g_numIndices;
@@ -68,24 +73,21 @@ namespace MyEngine {
 			size_t g_numCounts;
 			Alembic::Abc::int32_t *g_counts;
 			//Implement List here for dynamically growing amount of vertices
-	};
+		};
 
-	/// <summary>Retrieve the file extension we're going to expect</summary>
-	extern "C" ABCOUTPUTPLUGIN_API const std::string getExtension() {
-                return "abc_output";
-        }
+		PLUGIN_FUNC OutputMesh *CreateOutputMesh() {
+			return new ABCOutputMesh;
+		}
 
-	/// <summary>Retrieve the engine version we're going to expect</summary>
-	extern "C" ABCOUTPUTPLUGIN_API int getEngineVersion() {
-		return 1;
-	}
+		PLUGIN_FUNC void DestroyOutputMesh(OutputMesh * om) {
+			delete om;
+		}
 
-	/// <summary>Register the plugin to an engine kernel</summary>
-	/// <param name="kernel">Kernel the plugin will register to</summary>
-	extern "C" ABCOUTPUTPLUGIN_API void registerPlugin(Kernel &kernel) {
-		kernel.getOutputMesh().addOutputMeshDriver("abc",
-				std::auto_ptr<OutputMesh::OutputMeshDriver>(new ABCOutputMeshDriver())
-				);
-	}
-
-} // namespace MyEngine
+		PLUGIN_DISPLAY_NAME("ABC OutputMesh");
+		PLUGIN_INIT() {
+			std::cout << "ABC_OUTPUT_PLUGIN_INIT" << std::endl;
+			RegisterOutputMesh("abc", CreateOutputMesh, DestroyOutputMesh);
+			return 0;
+		}
+	} // namespace MyPlugins
+} // namespace MeshPotato
