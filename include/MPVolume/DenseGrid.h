@@ -1,5 +1,5 @@
-#ifndef __UNIFORMGRID_H__
-#define __UNIFORMGRID_H__
+#ifndef __DENSEGRID_H__
+#define __DENSEGRID_H__
 #include "MPUtils/Vector.h"
 #include "MPVolume/MPVolumeGrid.h"
 #include <openvdb/Grid.h>
@@ -137,4 +137,4 @@ namespace MeshPotato {
   }
 
 }
-#endif // __UNIFORMGRID_H__
+#endif // __DENSEGRID_H__

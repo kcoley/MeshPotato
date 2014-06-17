@@ -21,13 +21,16 @@ namespace MPMesh {
 	public:
 	~OBJOutputMesh() {}
 
-			/// <summary>Gets the name of the graphics driver</summary>
+			/// <summary>Gets the name of the mesh</summary>
 	virtual const char* getName() const {
 				return "OBJOutputMesh";
 	}
 
 			/// <summary>Gets the name of the graphics driver</summary>
-	virtual bool loadMesh(const std::list<std::vector<std::string> > &vertices, const std::list<std::vector<std::string> > &normals, const std::list<std::vector<std::string> > &faces, const MeshPotato::MPUtils::AttributeTable  &table) {
+	virtual bool loadMesh(const std::list<std::vector<std::string> > &vertices,
+												const std::list<std::vector<std::string> > &normals,
+												const std::list<std::vector<std::string> > &faces,
+												const MeshPotato::MPUtils::AttributeTable  &table) {
 				this->vertices = vertices;
 				this->normals = normals;
 				this->faces = faces;

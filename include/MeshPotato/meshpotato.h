@@ -1,11 +1,17 @@
-/*! \mainpage MeshPotato
+/*! \mainpage %MeshPotato
  *
  * \section intro_sec Introduction
- * This is MeshPotato.
+ * %MeshPotato is a C++/Python volume modeling and rendering API
+ * designed to simplify the creation of volumetric effects.
+ * \page page1 A documentation page
+ * \tableofcontents
+ * Leading text.
+ * <A HREF=test.txt>test</A>
  * \section install_sec Installation
  * \subsection step1 Step1: Ask Kacey...
  *
  */
+
 #ifndef __MESHPOTATO_H__
 #define __MESHPOTATO_H__
 #include <iostream>
@@ -25,7 +31,7 @@ namespace MeshPotato {
 	class MeshInput {
 		public:
 			MeshInput();
-			MeshInput(const MeshInput &mesh);	
+			MeshInput(const MeshInput &mesh);
 			~MeshInput();
 			//! Attempt to open the mesh file
 			/*!

@@ -8,60 +8,64 @@
 
 #include "ABCOutputPlugin.h"
 //#include "../MyEngine/Utilities.h"
-namespace MyEngine {
+namespace MeshPotato {
+	namespace MPMesh {
 
-	/// OpenGL graphics drver
-	//  class OpenGLGraphicsDriver : public GraphicsServer::GraphicsDriver {
-		/// <summary>Destroys an OpenGL graphics driver</summary>
-	ABCOUTPUTPLUGIN_API ABCOutputMeshDriver::~ABCOutputMeshDriver() {
+
+	ABCOutputMesh::~ABCOutputMesh() {
 		delete [] g_verts;
 		delete [] g_indices;
 		delete [] g_counts;
 	}
-			/// <summary>Gets the name of the graphics driver</summary>
-	ABCOUTPUTPLUGIN_API const std::string& ABCOutputMeshDriver::getName() const {
+
+	 const char* ABCOutputMesh::getName() const {
 				static std::string sName("ABC Output Mesh Driver");
-				return sName;
+				return sName.c_str();
 	}
 
-			/// <summary>Gets the name of the graphics driver</summary>
-	ABCOUTPUTPLUGIN_API void ABCOutputMeshDriver::loadMesh(std::list<vertex> &vertices, std::list<vertex> &normals, std::list<vertex> &faces, MeshPotato::MeshSpec spec = MeshPotato::MeshSpec()) {
+  bool ABCOutputMesh::loadMesh(std::list<std::vector<std::string> > &vertices,
+												std::list<std::vector<std::string> > &normals,
+												std::list<std::vector<std::string> > &faces,
+												MeshPotato::MeshSpec spec) {
 
+/*
 				int index = 0;
 				this->vertices = vertices;
 				this->normals = normals;
 				this->faces = faces;
-				
+
 				// Convert to alembic friendly versions
 				g_numVerts = vertices.size()*3;
 				g_verts = new Alembic::Abc::float32_t[g_numVerts];
 				//fill...
-				
-				for (std::list<vertex>::iterator itr = vertices.begin(); itr != vertices.end(); ++itr) {
-					g_verts[index++] = itr->x;
-					g_verts[index++] = itr->y;
-					g_verts[index++] = itr->z;
+
+				for (std::list<std::vector<std::string> >::const_iterator itr = vertices.begin(); itr != vertices.end(); ++itr) {
+					g_verts[index++] = (*itr)[0];
+					g_verts[index++] = (*itr)[1];
+					g_verts[index++] = (*itr)[2];
 				}
 				g_numIndices = faces.size()*3; // change 3 to dynamically based on face size
 				g_indices = new Alembic::Abc::int32_t[g_numIndices];
 				//fill...
 				index = 0;
-				for (std::list<vertex>::iterator itr = faces.begin(); itr !=faces.end(); ++itr) {
-					g_indices[index++] = itr->x;	
-					g_indices[index++] = itr->y;	
-					g_indices[index++] = itr->z;	
+				for (std::list<std::vector<std::string> >::const_iterator itr = faces.begin(); itr !=faces.end(); ++itr) {
+					g_indices[index++] = (*itr)[0];
+					g_indices[index++] = (*itr)[1];
+					g_indices[index++] = (*itr)[2];
 				}
 				g_numCounts = faces.size();
-				g_counts = new Alembic::Abc::int32_t[g_numCounts];	
+				g_counts = new Alembic::Abc::int32_t[g_numCounts];
 				//fill...
 				index = 0;
 				for(unsigned int i = 0; i < g_numCounts; ++i) {
 					g_counts[index++] = 3;
 				}
+*/
+			return true;
 
 
 	}
-	ABCOUTPUTPLUGIN_API bool ABCOutputMeshDriver::writeMesh(const char *meshName) {
+	 bool ABCOutputMesh::writeMesh(const char *meshName) {
 				// Open an Alembic file for writing
 		Alembic::AbcGeom::OArchive archive(
 			Alembic::AbcCoreHDF5::WriteArchive(),
@@ -88,12 +92,9 @@ namespace MyEngine {
 //		std::cout << "Writing: " << archive.getName() << std::endl;
 */
 		return true;
-			}
+}
 
 
-			/// <summary>Creates a renderer</summary>
-			//    auto_ptr<Mesh> createRenderer() {
-			//Implement List here for dynamically growing amount of vertices
 
 }
-	/// <summary>Register the plugin to an engine kernel</summary>
+}
