@@ -299,7 +299,7 @@ void MeshViewer::readFile(std::string &inName) {
   Vertex v;
   std::string inputExtension = boost::filesystem::extension(inName);
   inputExtension = inputExtension.erase(0,1);
-  MeshPotato::MPPlugins::InputMeshAPI *imesh = MeshPotato::MPPlugins::InputMeshFactory::CreateInputMesh(inputExtension);
+  MeshPotato::MPMesh::InputMesh *imesh = MeshPotato::MPPlugins::InputMeshFactory::CreateInputMesh(inputExtension);
   imesh->loadMesh(inName.c_str());
 
   std::list<std::vector<std::string> > verts = imesh->getVertices();
