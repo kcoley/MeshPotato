@@ -84,7 +84,6 @@ namespace MeshPotato {
 			// Linux
 			mImpl->mFileName = "lib" + name + ".so";
 #endif
-		std::cout << "name = " << mImpl->mFileName << std::endl;
 		}
 
 		PluginInstance::~PluginInstance() {
