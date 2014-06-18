@@ -78,12 +78,13 @@ namespace MeshPotato {
 		PluginInstance::PluginInstance(const std::string &name) {
 			mImpl = new Impl;
 			mImpl->mDisplayName = name;
-#if __APPLE__
-			mImpl->mFileName = "lib" + name + ".dylib";
-#else
+			#if __APPLE__
+			mImpl->mFileName = "lib" + name + "dylib";
+			#else
 			// Linux
 			mImpl->mFileName = "lib" + name + ".so";
 #endif
+		std::cout << "name = " << mImpl->mFileName << std::endl;
 		}
 
 		PluginInstance::~PluginInstance() {
@@ -113,8 +114,8 @@ namespace MeshPotato {
 			return true;
 		}
 		/*
-		   bool PluginInstance::Find(const boost::filesystem::path &dirpath, 
-		   const std::string &filename, 
+		   bool PluginInstance::Find(const boost::filesystem::path &dirpath,
+		   const std::string &filename,
 		   boost::filesystem::path &pluginfound) {
 		   if (!boost::filesystem::exists(dirpath)) return false;
 		   boost::filesystem::directory_iterator end_itr;
@@ -176,8 +177,11 @@ namespace MeshPotato {
 			// Search the plugin path for all plugins
 			fs::path root = getenv("MESHPOTATO_PLUGIN_PATH");
 			std::string ext = ".so";
-		
-			// abort if the plugin path does not exist	
+			#if __APPLE__
+			ext = ".dylib";
+			#endif
+
+			// abort if the plugin path does not exist
 			if (!fs::exists(root)) return false;
 
 			// If a directory, check recursively for plugins
@@ -192,6 +196,9 @@ namespace MeshPotato {
 						std::string str = it->path().filename().string();
 						unsigned first = str.find("lib");
 						unsigned last = str.find(".so");
+						#if __APPLE__
+						last = str.find("dylib");
+						#endif
 						if (first < str.size()) {
 							first += 3; //offset for 'lib'
 							std::string strNew = str.substr(first,last-(first));
