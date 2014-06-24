@@ -3,16 +3,17 @@
 #include "DenseGrid.h"
 namespace MeshPotato {
 	namespace MPVolume {
+		/// Base class for lights
 
 	class Light : public Volume<MPUtils::Color> {
 	};
 	class FrustumLight : public Light {
 	public:
 	static VolumeColorPtr Ptr(
-		boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid> _frustum, 
+		boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid> _frustum,
 		MeshPotato::MPUtils::Color _color);
 
-		FrustumLight(boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid> _frustum, 
+		FrustumLight(boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid> _frustum,
 		MeshPotato::MPUtils::Color _color);
 
 		virtual const FrustumLight::volumeDataType eval(const MeshPotato::MPUtils::MPVec3 &P) const;
@@ -30,7 +31,7 @@ namespace MeshPotato {
 
                DenseLight(boost::shared_ptr<MeshPotato::MPVolume::DenseGrid<float> > _grid,
                MeshPotato::MPUtils::Color _color);
-               
+
                virtual const DenseLight::volumeDataType eval(const MeshPotato::MPUtils::MPVec3 &P) const;
                virtual const DenseLight::volumeGradType grad(const MeshPotato::MPUtils::MPVec3 &P) const;
         private:

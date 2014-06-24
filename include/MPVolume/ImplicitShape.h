@@ -7,6 +7,7 @@
 #include <boost/shared_ptr.hpp>
 namespace MeshPotato {
 	namespace MPVolume {
+		/// Abstract Base class for implicit shapes
 		class ImplicitShape: public MeshPotato::MPVolume::Volume<float> {
 			public:
 			virtual const volumeDataType eval(const MeshPotato::MPUtils::MPVec3 &P) const = 0;
@@ -17,7 +18,7 @@ namespace MeshPotato {
 				static boost::shared_ptr<Volume<float> > Ptr(const float &_R,  const MeshPotato::MPUtils::MPVec3 &_C);
 				ImplicitSphere(const float &_R, const MeshPotato::MPUtils::MPVec3 &_C);
 				~ImplicitSphere();
-				const volumeDataType eval(const MeshPotato::MPUtils::MPVec3 &P) const; 
+				const volumeDataType eval(const MeshPotato::MPUtils::MPVec3 &P) const;
 				const volumeGradType grad(const MeshPotato::MPUtils::MPVec3& P) const;
 			private:
 				class Impl;
@@ -45,12 +46,12 @@ namespace MeshPotato {
 				class Impl;
 				boost::shared_ptr<Impl> mImpl;
 		};
-		
+
 		template<typename T>
 		class Clamp: public MeshPotato::MPVolume::Volume<T> {
 			public:
 			typedef typename GradType<T>::GType volumeGradType;
-			static boost::shared_ptr<Volume<T> > Ptr(const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> >&_f,  const float _e0, const float _e1) { 
+			static boost::shared_ptr<Volume<T> > Ptr(const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> >&_f,  const float _e0, const float _e1) {
 				return boost::shared_ptr<Clamp>(new Clamp<T>(_f, _e0, _e1));
 			}
 			Clamp(const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > &_f,  const float _e0, const float _e1) : f(_f), e0(_e0), e1(_e1) {}
@@ -68,7 +69,7 @@ namespace MeshPotato {
 		class ConstantVolume: public MeshPotato::MPVolume::Volume<T> {
 			public:
 			typedef typename GradType<T>::GType volumeGradType;
-			static boost::shared_ptr<Volume<T> > Ptr(const T _value) { 
+			static boost::shared_ptr<Volume<T> > Ptr(const T _value) {
 				return boost::shared_ptr<ConstantVolume>(new ConstantVolume<T>(_value));
 			}
 			ConstantVolume(const T _value) : value(_value) {}

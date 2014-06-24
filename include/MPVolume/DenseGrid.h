@@ -6,7 +6,7 @@
 /// \author Kacey Coley
 /// \date June 19, 2014
 /// \since 0.4
-/// 
+///
 /// DenseGrid is a data structure which allocates a set grid resolution.
 /// As opposed to a sparse grid, the dimension of a dense grid is rigidly defined
 
@@ -28,6 +28,7 @@ using MeshPotato::MPUtils::MPVec3;
 
 namespace MeshPotato {
   namespace MPVolume {
+
     template<typename T>
     struct MPGridType {
       typedef openvdb::FloatGrid VDBGridT;
@@ -83,8 +84,12 @@ namespace MeshPotato {
 
       }
 
-	/// \brief evaluates the grid at a particular worls space point using trilinear interpolation
-	/// \param[in] MPVec3 &P is a const vector representing a world space position
+      /*! \brief evaluates the grid at a particular world space point using trilinear
+      *           interpolation
+      *
+      * \param MPVec3 &P is a const vector representing a world space position
+      * \return const typename Volume<T>::volumeDataType
+      */
       const typename Volume<T>::volumeDataType  eval(const MPVec3 &P) const {
         return interpolator.wsSample(P);
       }

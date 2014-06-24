@@ -4,6 +4,7 @@
 using MeshPotato::MPUtils::MPVec3;
 namespace MeshPotato {
 	namespace MPVolume {
+		/// Base class for volume grids
 	template<typename T>
 	class VolumeGrid: public Volume<T> {
 	public:

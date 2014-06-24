@@ -14,25 +14,25 @@
 using namespace MeshPotato::MPUtils;
 namespace MeshPotato {
 namespace MPVolume {
-
+/// Raymarcher for vdb volumes
 class VDBRayMarcher {
 public:
 typedef openvdb::tools::VolumeRayIntersector<openvdb::FloatGrid> IntersectorT;
 typedef openvdb::FloatGrid::ConstAccessor  AccessorType;
 typedef openvdb::tools::BoxSampler SamplerT;
 typedef openvdb::tools::GridSampler<AccessorType, SamplerT> SamplerType;
-VDBRayMarcher(openvdb::FloatGrid::Ptr _grid, 
+VDBRayMarcher(openvdb::FloatGrid::Ptr _grid,
 	     VolumeColorPtr _dsm,
-	     boost::shared_ptr<MeshPotato::MPUtils::Camera> _camera, 
-	     const AttributeTable &_table = AttributeTable() 
+	     boost::shared_ptr<MeshPotato::MPUtils::Camera> _camera,
+	     const AttributeTable &_table = AttributeTable()
 	     );
 const MeshPotato::MPUtils::Color L(
-	MPRay &ray, 
-	IntersectorT &intersector2, 
+	MPRay &ray,
+	IntersectorT &intersector2,
 	SamplerType &interpolator2) const;
 const MeshPotato::MPUtils::DeepPixelBuffer deepL(
-	MPRay &ray, 
-	IntersectorT &intersector2, 
+	MPRay &ray,
+	IntersectorT &intersector2,
 	SamplerType &interpolator2) const;
 
 void operator() (const tbb::blocked_range<size_t>& r) const;
@@ -43,12 +43,13 @@ class Impl;
 boost::shared_ptr<Impl> mImpl;
 };
 
+/// Generic Raymarcher for Resolution Independent Volumes
 class RayMarcher {
 public:
 RayMarcher(
-	VolumeFloatPtr _grid, 
-	VolumeColorPtr _dsm, 
-	boost::shared_ptr<Camera> _camera, 
+	VolumeFloatPtr _grid,
+	VolumeColorPtr _dsm,
+	boost::shared_ptr<Camera> _camera,
 	const AttributeTable &_table /*= AttributeTable()*/
 	);
 

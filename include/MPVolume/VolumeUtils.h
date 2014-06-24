@@ -6,6 +6,7 @@
 #include <openvdb/tools/LevelSetRebuild.h>
 namespace MeshPotato {
 	namespace MPVolume {
+		/// Helper function for reading VDB grids
 		openvdb::GridBase::Ptr readVDBGrid(const std::string vdbFile) {
 
 		openvdb::GridBase::Ptr baseGrid;
@@ -20,6 +21,7 @@ namespace MeshPotato {
 			return baseGrid;
 
 }
+/// Helper function for writing VDB grids
 		openvdb::FloatGrid::Ptr makeVDBGrid(boost::shared_ptr<Volume<float> > &mpgrid, const MeshPotato::MPUtils::BBox& worldBB, double voxelSize) {
 			openvdb::FloatGrid::Ptr vdbgrid = openvdb::FloatGrid::create(voxelSize*10);
 			openvdb::FloatGrid::Accessor accessor = vdbgrid->getAccessor();
@@ -56,6 +58,8 @@ namespace MeshPotato {
 			vdbgrid->setGridClass(openvdb::GRID_LEVEL_SET);
 			return vdbgrid;
 		}
+
+		/// Helper function for building frustum cameras
 		boost::shared_ptr<MeshPotato::MPUtils::Camera> buildFrustumCamera(MeshPotato::MPUtils::MPVec3 eye, openvdb::FloatGrid::Ptr grid) {
 			boost::shared_ptr<MeshPotato::MPUtils::Camera> frustumCam = MeshPotato::MPUtils::Camera::Ptr();
 			//get bounding box of volume
@@ -164,6 +168,7 @@ namespace MeshPotato {
 
 
 		}
+		
 		double computeFOVDegrees(MeshPotato::MPUtils::MPVec3 point, MeshPotato::MPUtils::MPVec3 eye, MeshPotato::MPUtils::MPVec3 view) {
 			return 2*acos((point - eye).unit().dot(view))*180/M_PI;
 		}
@@ -184,7 +189,7 @@ namespace MeshPotato {
 		float x = (float)i/(xSize - 1);
 		float y = (float)j/(ySize - 1);
 		MeshPotato::MPUtils::Ray ray = vdbcam->getRay(i,j);
-		float deltaS; // (farPlane - nearPlane)/(cam->view*d))/(zSize - 1)	
+		float deltaS; // (farPlane - nearPlane)/(cam->view*d))/(zSize - 1)
 
 		for (int k = 0; k < zSize; ++k) {
 		float val = f->eval(X);
@@ -195,7 +200,7 @@ namespace MeshPotato {
 		}
 		}
 
-		}	
+		}
 
 		}
 		 */

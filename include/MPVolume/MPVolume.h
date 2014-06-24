@@ -18,6 +18,7 @@ namespace MeshPotato {
 			struct GradType<MeshPotato::MPUtils::MPVec3> {
 				typedef MeshPotato::MPUtils::MPMat3 GType;
 			};
+			/// Base class for volumes
 		template < typename T>
 			class Volume {
 				public:

@@ -26,19 +26,21 @@ namespace MeshPotato {
                 	typedef openvdb::VectorGrid VDBGridT;
                 };
 
+		/// OpenVDB Grid Wrapper
+
 		template <typename T>
 		class VDBVolumeGrid: public MeshPotato::MPVolume::Volume<T> {
 			public:
-				typedef typename GridType<T>::VDBGridT GridT;  
-				typedef typename GridT::ConstAccessor AccessorT;  
+				typedef typename GridType<T>::VDBGridT GridT;
+				typedef typename GridT::ConstAccessor AccessorT;
 				typedef typename GridT::Ptr GridPtr;
 				typedef typename openvdb::tools::GridSampler<GridT, openvdb::tools::BoxSampler> SamplerT;
 				static boost::shared_ptr<Volume<T> > Ptr(
 					const GridPtr _grid) {
-					return boost::shared_ptr<Volume<T> >(new VDBVolumeGrid(_grid)); 
+					return boost::shared_ptr<Volume<T> >(new VDBVolumeGrid(_grid));
 				}
-				VDBVolumeGrid(const GridPtr _grid) : 
-					grid(_grid), 
+				VDBVolumeGrid(const GridPtr _grid) :
+					grid(_grid),
 					interpolator(grid->constTree(), grid->transform()) {}
 
 				openvdb::GridBase::Ptr getVDBGrid() const { return grid; }
@@ -51,7 +53,7 @@ namespace MeshPotato {
 				}
 			private:
 				GridPtr grid;
-				SamplerT interpolator;			
+				SamplerT interpolator;
 
 		};
 	}
