@@ -68,11 +68,12 @@ namespace MeshPotato {
 	}
 	 bool ABCOutputMesh::writeMesh(const char *meshName) {
 
+/*
 				// Open an Alembic file for writing
 		Alembic::AbcGeom::OArchive archive(
 			Alembic::AbcCoreHDF5::WriteArchive(),
 			meshName);
-/*		Alembic::AbcGeom::OPolyMesh meshyObj(Alembic::AbcGeom::OObject(archive, Alembic::Abc::kTop), "mesh");
+		Alembic::AbcGeom::OPolyMesh meshyObj(Alembic::AbcGeom::OObject(archive, Alembic::Abc::kTop), "mesh");
 		Alembic::AbcGeom::OPolyMeshSchema &mesh = meshyObj.getSchema();
 
 		Alembic::AbcGeom::OV2fGeomParam::Sample uvsamp(V2fArraySample((const V2f *)g_uvs, g_numUVs),kFacevaryingScope );
