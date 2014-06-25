@@ -7,6 +7,7 @@
 //#define ABCOUTPUTPLUGIN_SOURCE 1
 
 #include "ABCOutputPlugin.h"
+#include "MeshData.h"
 //#include "../MyEngine/Utilities.h"
 namespace MeshPotato {
 	namespace MPMesh {
@@ -23,12 +24,12 @@ namespace MeshPotato {
 				return sName.c_str();
 	}
 
-  bool ABCOutputMesh::loadMesh(std::list<std::vector<std::string> > &vertices,
-												std::list<std::vector<std::string> > &normals,
-												std::list<std::vector<std::string> > &faces,
-												MeshPotato::MeshSpec spec) {
+  bool ABCOutputMesh::loadMesh(const std::list<std::vector<std::string> > &vertices,
+				const std::list<std::vector<std::string> > &normals,
+				const std::list<std::vector<std::string> > &faces,
+				const MeshPotato::MPUtils::AttributeTable &table) {
 
-/*
+
 				int index = 0;
 				this->vertices = vertices;
 				this->normals = normals;
@@ -40,18 +41,18 @@ namespace MeshPotato {
 				//fill...
 
 				for (std::list<std::vector<std::string> >::const_iterator itr = vertices.begin(); itr != vertices.end(); ++itr) {
-					g_verts[index++] = (*itr)[0];
-					g_verts[index++] = (*itr)[1];
-					g_verts[index++] = (*itr)[2];
+					g_verts[index++] = ::atof(((*itr)[0]).c_str());
+					g_verts[index++] = ::atof(((*itr)[1]).c_str());
+					g_verts[index++] = ::atof(((*itr)[2]).c_str());
 				}
 				g_numIndices = faces.size()*3; // change 3 to dynamically based on face size
 				g_indices = new Alembic::Abc::int32_t[g_numIndices];
 				//fill...
 				index = 0;
 				for (std::list<std::vector<std::string> >::const_iterator itr = faces.begin(); itr !=faces.end(); ++itr) {
-					g_indices[index++] = (*itr)[0];
-					g_indices[index++] = (*itr)[1];
-					g_indices[index++] = (*itr)[2];
+					g_indices[index++] = ::atoi(((*itr)[0]).c_str());
+					g_indices[index++] = ::atoi(((*itr)[1]).c_str());
+					g_indices[index++] = ::atoi(((*itr)[2]).c_str());;
 				}
 				g_numCounts = faces.size();
 				g_counts = new Alembic::Abc::int32_t[g_numCounts];
@@ -60,22 +61,23 @@ namespace MeshPotato {
 				for(unsigned int i = 0; i < g_numCounts; ++i) {
 					g_counts[index++] = 3;
 				}
-*/
+
 			return true;
 
 
 	}
 	 bool ABCOutputMesh::writeMesh(const char *meshName) {
+
 				// Open an Alembic file for writing
 		Alembic::AbcGeom::OArchive archive(
 			Alembic::AbcCoreHDF5::WriteArchive(),
 			meshName);
-//		Alembic::AbcGeom::OPolyMesh meshyObj(Alembic::AbcGeomOObject(archive, kTop), "mesh");
-//		Alembic::AbcGeom::OPolyMeshSchema &mesh = meshyObj.getSchema();
+/*		Alembic::AbcGeom::OPolyMesh meshyObj(Alembic::AbcGeom::OObject(archive, Alembic::Abc::kTop), "mesh");
+		Alembic::AbcGeom::OPolyMeshSchema &mesh = meshyObj.getSchema();
 
-//		OV2fGeomParam::Sample uvsamp(V2fArraySample((const V2f *)g_uvs, g_numUVs),kFacevaryingScope );
-//		ON3fGeomParam::Sample nsamp(N3fArraySample((const N3f *)g_normals, g_numNormals),kFacevaryingScope);
-/*
+		Alembic::AbcGeom::OV2fGeomParam::Sample uvsamp(V2fArraySample((const V2f *)g_uvs, g_numUVs),kFacevaryingScope );
+		Alembic::AbcGeom::ON3fGeomParam::Sample nsamp(N3fArraySample((const N3f *)g_normals, g_numNormals),kFacevaryingScope);
+
 		OPolyMeshSchema::Sample mesh_samp(
 			P3fArraySample((const V3f *)g_verts, g_numVerts),
 			Int32ArraySample(g_indices, g_numIndices),
