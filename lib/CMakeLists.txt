@@ -41,5 +41,16 @@ TARGET_LINK_LIBRARIES(meshpotato
         ${FFTW_LIBRARIES}
         ${PYTHON_LIBRARIES}
   )
+
+  TARGET_LINK_LIBRARIES(meshpotato_static
+          ${OPENVDB_LIBRARIES}
+          ${Boost_LIBRARIES}
+          ${OPENEXR_LIBRARIES}
+          ${HALF_LIBRARIES}
+          ${OPENIMAGEIO_LIBRARIES}
+          ${TBB_LIBRARIES}
+          ${FFTW_LIBRARIES}
+          ${PYTHON_LIBRARIES}
+    )
 INSTALL(TARGETS meshpotato DESTINATION lib)
 INSTALL(TARGETS meshpotato_static DESTINATION lib)
