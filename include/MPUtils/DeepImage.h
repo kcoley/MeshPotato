@@ -21,51 +21,29 @@ namespace MeshPotato {
 		class DeepImage
 		{
 			public:
-				static boost::shared_ptr<DeepImage> Ptr() {
-					return boost::shared_ptr<DeepImage>(new DeepImage());
-				}
-				DeepImage() :
-					width  (0),
-					height (0),
-					depth  (0)
-			{}
+				static boost::shared_ptr<DeepImage> Ptr();
+				DeepImage();
 
-				~DeepImage(){}
+				~DeepImage();
 
-				void reset(  int w, int h, int d=5 )
-				{
-					for (int x = 0; x < width; ++x) {
-						for (int y = 0; y < height; ++y) {
-							data[index(x,y)].clear();
-						}
-					}
-					width = w;
-					height = h;
-					depth = d;
-					data.resize(width*height);
-				}
+				void reset(  int w, int h, int d=5 );
 
-				const DeepPixelBuffer& value( int x, int y) const { return data[ index(x,y) ]; }
-				const DeepPixelBufferVector getDeepPixelBufferVector( int x, int y) { 
-					DeepPixelBuffer deeplist = data[index(x,y)];
-					DeepPixelBufferVector pixels(deeplist.begin(), deeplist.end());
-					return pixels; 
-				}
+				const DeepPixelBuffer& value( int x, int y) const;
+				const DeepPixelBufferVector getDeepPixelBufferVector( int x, int y);
 
-				DeepPixelBuffer& value(int x, int y ) { return data[ index(x,y) ]; }
-				DeepPixelBuffer& pixel(int x ) { return data[x]; }
+				DeepPixelBuffer& value(int x, int y );
+				DeepPixelBuffer& pixel(int x );
 
 				boost::shared_ptr<Image> flatten();
-				const int Width() const { return width; }
-				const int Height() const { return height; }
-				const int Depth() const { return depth; }
+				const int Width() const;
+				const int Height() const;
+				const int Depth() const;
 
 			private:
+				class Impl;
+				boost::shared_ptr<Impl> mImpl;
 
-				int width, height, depth;
-				std::vector< DeepPixelBuffer > data;
-
-				const size_t index( int x, int y ) const { return (size_t) ( x + width*y ) ; }
+				
 		};
 		void setPixel( DeepImage& img, int x, int y, const DeepPixelBuffer &value );
 		void setPixel( DeepImage& img, int x, int y, const DeepPixel &value );
