@@ -11,6 +11,7 @@
 #ifndef __COLOR_H__
 #define __COLOR_H__
 #include <iostream>
+#include <boost/shared_ptr.hpp>
 
 namespace MeshPotato {
 	namespace MPUtils 
@@ -21,102 +22,66 @@ namespace MeshPotato {
 		{
 			public:
 
-				Color(){ xyzw[0] = xyzw[1] = xyzw[2] = xyzw[3] = 0; }
+				Color();
 
-				Color(const Color& v)
-				{ 
-					xyzw[0] = v.xyzw[0];
-					xyzw[1] = v.xyzw[1];
-					xyzw[2] = v.xyzw[2]; 
-					xyzw[3] = v.xyzw[3]; 
-				}
+				Color(const Color& v);
 
-				Color(const double a, const double b, const double c, const double d)
-				{
-					xyzw[0] = a;
-					xyzw[1] = b;
-					xyzw[2] = c; 
-					xyzw[3] = d; 
-				}
+				Color(const double a, const double b, const double c, const double d);
 
-				~Color(){}
+				~Color();
 
 				//!  Set all four components
-				void set( const float vx, const float vy, const float vz, const float vw )
-				{
-					xyzw[0] = vx;
-					xyzw[1] = vy;
-					xyzw[2] = vz;
-					xyzw[3] = vw;
-				}
+				void set( const float vx, const float vy, const float vz, const float vw );
 
 				//! Add two colors together
-				const Color operator+        (const Color& v) const 
-				{ 
-					return Color(xyzw[0]+v.xyzw[0], xyzw[1]+v.xyzw[1], xyzw[2]+v.xyzw[2], xyzw[3]+v.xyzw[3]); 
-				}
+				const Color operator+(const Color& v) const ;
 
 				//! Subtract one color from another
-				const Color operator-        (const Color& v) const
-				{ 
-					return Color(xyzw[0]-v.xyzw[0], xyzw[1]-v.xyzw[1], xyzw[2]-v.xyzw[2], xyzw[3]-v.xyzw[3]); 
-				}
+				const Color operator-(const Color& v) const;
 
 				//! Unary minus
-				friend const Color operator- (const Color& v)
-				{ return Color(-v.xyzw[0],-v.xyzw[1],-v.xyzw[2], -v.xyzw[3]); }
+				friend const Color operator- (const Color& v);
 
 				//! Multiplication of a constant with a Color 
-				friend const Color operator* (const double w, const Color& v)
-				{ return v*w; }
+				friend const Color operator* (const double w, const Color& v);
 
 				//! Multiplication of a Color with a constant
-				const Color operator*        (const double v) const
-				{ return Color(xyzw[0]*v, xyzw[1]*v, xyzw[2]*v, xyzw[3]*v); }
+				const Color operator*(const double v) const;
 
-				const Color operator/        (const double v) const
-				{ return Color(xyzw[0]/v, xyzw[1]/v, xyzw[2]/v, xyzw[3]/v); }
+				const Color operator/(const double v) const;
 
 				//! component product
-				const Color operator*        (const Color& v) const  
-				{ return Color(xyzw[0]*v.xyzw[0] , xyzw[1]*v.xyzw[1] , xyzw[2]*v.xyzw[2] , xyzw[3]*v.xyzw[3]); }
+				const Color operator*(const Color& v) const ;
 
-				Color& operator=       (const Color& v)
-				{ xyzw[0] = v.xyzw[0]; xyzw[1] = v.xyzw[1]; xyzw[2] = v.xyzw[2]; xyzw[3]=v.xyzw[3]; return *this; }
+				Color& operator=(const Color& v);
 
-				Color& operator+=      (const Color& v)
-				{ xyzw[0] += v.xyzw[0]; xyzw[1] += v.xyzw[1]; xyzw[2] += v.xyzw[2]; xyzw[3] += v.xyzw[3]; return *this; }
+				Color& operator+=(const Color& v);
 
-				Color& operator-=      (const Color& v)
-				{ xyzw[0] -= v.xyzw[0]; xyzw[1] -= v.xyzw[1]; xyzw[2] -= v.xyzw[2]; xyzw[3] -= v.xyzw[3]; return *this; }
+				Color& operator-=(const Color& v);
 
-				Color& operator*=      (const double v)
-				{ xyzw[0] *= v; xyzw[1] *= v; xyzw[2] *= v; xyzw[3] *= v; return *this; }
+				Color& operator*=(const double v);
 
-				Color& operator/=      (const double v)
-				{ xyzw[0] /= v; xyzw[1] /= v; xyzw[2] /= v; xyzw[3] /= v; return *this; }
+				Color& operator/=(const double v);
 
 
-				const double& operator[] (const int v) const { return xyzw[v]; }
-				double& operator[] (const int v)       { return xyzw[v]; }
-				const double& operator() (const int v) const { return xyzw[v]; }
+				const double& operator[] (const int v) const;
+				double& operator[] (const int v);
+				const double& operator() (const int v) const;
 
-				const double X() const { return xyzw[0]; }
-				const double Y() const { return xyzw[1]; }
-				const double Z() const { return xyzw[2]; }
-				const double W() const { return xyzw[3]; }
+				const double X() const;
+				const double Y() const;
+				const double Z() const;
+				const double W() const;
 
 				//  Comparisons
 
-				const bool operator==         (const Color& v) const
-				{ return ( xyzw[0]==v.xyzw[0] && xyzw[1]==v.xyzw[1] && xyzw[2]==v.xyzw[2] && xyzw[3] == v.xyzw[3] ); }
+				const bool operator==(const Color& v) const;
 
-				const bool operator!=         (const Color& v) const
-				{ return ( xyzw[0]!=v.xyzw[0] || xyzw[1]!=v.xyzw[1] || xyzw[2]!=v.xyzw[2] || xyzw[3] != v.xyzw[3] ); }
+				const bool operator!=(const Color& v) const;
 				//  friend std::ostream& operator<<(std::ostream& os, const Color& col); 
 			private:
-				double xyzw[4];
-				friend std::ostream& operator<<(std::ostream& os, const Color& col); 
+				class Impl;
+				boost::shared_ptr<Impl> mImpl;
 		};
 		std::ostream& operator<<(std::ostream& out, const Color& col); 
 

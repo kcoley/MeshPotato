@@ -101,8 +101,9 @@ template <typename T>
 class Intersection: public MeshPotato::MPVolume::Volume<T> {
 public:
 Intersection(const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f1,
-	  const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f2);
-static boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > Ptr(
+	  		 const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f2);
+
+	static boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > Ptr(
 	  const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f1,
 	  const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f2);
 
@@ -160,6 +161,7 @@ class Impl;
 boost::shared_ptr<Impl> mImpl;
 };
 typedef Cutout<float> CutoutFloat;
+
 }
 }
 #endif // __FIELD_ALGEBRA_H__

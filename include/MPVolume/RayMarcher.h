@@ -26,18 +26,23 @@ VDBRayMarcher(openvdb::FloatGrid::Ptr _grid,
 	     boost::shared_ptr<MeshPotato::MPUtils::Camera> _camera,
 	     const AttributeTable &_table = AttributeTable()
 	     );
+
 const MeshPotato::MPUtils::Color L(
 	MPRay &ray,
 	IntersectorT &intersector2,
 	SamplerType &interpolator2) const;
+
 const MeshPotato::MPUtils::DeepPixelBuffer deepL(
 	MPRay &ray,
 	IntersectorT &intersector2,
 	SamplerType &interpolator2) const;
 
 void operator() (const tbb::blocked_range<size_t>& r) const;
+
 void writeImage(const std::string outputImage);
+
 void render(bool threaded) const;
+
 private:
 class Impl;
 boost::shared_ptr<Impl> mImpl;

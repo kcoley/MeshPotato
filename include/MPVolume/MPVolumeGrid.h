@@ -1,7 +1,7 @@
 #ifndef __MPVOLUMEGRID_H__
 #define __MPVOLUMEGRID_H__
 #include "MPVolume.h"
-using MeshPotato::MPUtils::MPVec3;
+
 namespace MeshPotato {
 	namespace MPVolume {
 		/// Base class for volume grids
@@ -21,10 +21,14 @@ namespace MeshPotato {
 		virtual const int nx() const = 0;
 		virtual const int ny() const = 0;
 		virtual const int nz() const = 0;
-	virtual	const MPUtils::MPVec3 indexToWorld(const MPUtils::Coord ijk) const =0;
-virtual const MPUtils::MPVec3 worldToIndex(const MPUtils::MPVec3 P) const =0;
+		virtual	const MPUtils::MPVec3 indexToWorld(const MPUtils::Coord ijk) const =0;
+		virtual const MPUtils::MPVec3 worldToIndex(const MPUtils::MPVec3 P) const =0;
 
 	};
+	typedef boost::shared_ptr<MeshPotato::MPVolume::VolumeGrid<float> > VolumeGridFloatPtr;
+    typedef boost::shared_ptr<MeshPotato::MPVolume::VolumeGrid<MPUtils::MPVec3> > VolumeGridVectorPtr;
+    typedef VolumeGrid<float> VolumeGridFloat;
+    typedef VolumeGrid<MPUtils::MPVec3> VolumeGridVector;
 	}
 }
 #endif // __MPVOLUMEGRID_H__
