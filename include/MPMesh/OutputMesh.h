@@ -27,17 +27,17 @@ namespace MeshPotato{
     public:
         virtual ~OutputMesh() {}
         virtual bool loadMesh(
-	    const std::list<std::vector<std::string> > &vertices,
-	    const std::list<std::vector<std::string> > &normals,
-	    const std::list<std::vector<std::string> > &faces,
-	    const MPUtils::AttributeTable &table = MPUtils::AttributeTable()
+      	     const std::list<std::vector<std::string> > &vertices,
+      	     const std::list<std::vector<std::string> > &normals,
+      	     const std::list<std::vector<std::string> > &faces,
+      	     const MPUtils::AttributeTable &table = MPUtils::AttributeTable()
         ) = 0;
-	virtual const char * getName() const = 0;
-	virtual bool writeMesh(const char *name) = 0;
-	virtual const unsigned int getNumberVertices() const = 0;
-	virtual const unsigned int getNumberNormals() const = 0;
-	virtual const unsigned int getNumberFaces() const = 0;
-    	};
+      	virtual const char * getName() const = 0;
+      	virtual bool writeMesh(const char *name) = 0;
+      	virtual const unsigned int getNumberVertices() const = 0;
+      	virtual const unsigned int getNumberNormals() const = 0;
+      	virtual const unsigned int getNumberFaces() const = 0;
+    };
  } // namespace MPMesh
 } // namespace MeshPotato
 

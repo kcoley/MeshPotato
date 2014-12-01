@@ -30,6 +30,25 @@ namespace MeshPotato {
 		r0 = t - (int)t;\
 		r1 = r0 - 1.;
 
+		class PerlinNoise::Impl {
+		public:
+			static const int  B = 0x100;
+				int p[B + B + 2];
+				float g3[B + B + 2][3];
+				float g2[B + B + 2][2];
+				float g1[B + B + 2];
+
+				void init();
+		};
+		
+		boost::shared_ptr<PerlinNoise> PerlinNoise::Ptr() { return boost::shared_ptr<PerlinNoise>(new PerlinNoise()); }
+
+		PerlinNoise::PerlinNoise() : mImpl(new Impl) { mImpl->init(); }
+
+		PerlinNoise::~PerlinNoise() {}
+
+		void PerlinNoise::setTime( const float time ) {}
+
 		const float PerlinNoise::eval( float arg ) const
 		{
 			int bx0, bx1;
@@ -41,8 +60,8 @@ namespace MeshPotato {
 
 			sx = s_curve(rx0);
 
-			u = rx0 * g1[ p[ bx0 ] ];
-			v = rx1 * g1[ p[ bx1 ] ];
+			u = rx0 * mImpl->g1[ mImpl->p[ bx0 ] ];
+			v = rx1 * mImpl->g1[ mImpl->p[ bx1 ] ];
 
 			return lerp(sx, u, v);
 		}
@@ -58,19 +77,19 @@ namespace MeshPotato {
 			setup(1, by0,by1, ry0,ry1);
 			setup(2, bz0,bz1, rz0,rz1);
 
-			i = p[ bx0 ];
-			j = p[ bx1 ];
+			i = mImpl->p[ bx0 ];
+			j = mImpl->p[ bx1 ];
 
-			b00 = p[ i + by0 ];
-			b10 = p[ j + by0 ];
-			b01 = p[ i + by1 ];
-			b11 = p[ j + by1 ];
+			b00 = mImpl->p[ i + by0 ];
+			b10 = mImpl->p[ j + by0 ];
+			b01 = mImpl->p[ i + by1 ];
+			b11 = mImpl->p[ j + by1 ];
 
 			t  = s_curve(rx0);
 			sy = s_curve(ry0);
 			sz = s_curve(rz0);
 
-#define at3(rx,ry,rz) ( rx * g3[i][0] + ry * g3[i][1] + rz * g3[i][2] )
+#define at3(rx,ry,rz) ( rx * mImpl->g3[i][0] + ry * mImpl->g3[i][1] + rz * mImpl->g3[i][2] )
 
 			i = b00 + bz0; u = at3(rx0,ry0,rz0);
 			i = b10 + bz0; v = at3(rx1,ry0,rz0);
@@ -122,7 +141,7 @@ namespace MeshPotato {
 			v[2] = v[2] / s;
 		}
 
-		void PerlinNoise::init(void)
+		void PerlinNoise::Impl::init(void)
 		{
 			int i, j, k;
 
@@ -194,6 +213,43 @@ namespace MeshPotato {
 #define LERP(t, a, b) ((a) + (t)*((b)-(a)))
 
 
+		class PerlinNoiseGustavson::Impl {
+		public:
+			Impl() : time (0) {}
+
+			float time;
+
+				float grad1( int hash, float x ) const {
+					int h = hash & 15;
+					float grad = 1.0 + (h & 7);  // Gradient value 1.0, 2.0, ..., 8.0
+					if (h&8) grad = -grad;         // and a random sign for the gradient
+					return ( grad * x );           // Multiply the gradient with the distance
+				}
+
+				float grad2( int hash, float x, float y ) const {
+					int h = hash & 7;      // Convert low 3 bits of hash code
+					float u = h<4 ? x : y;  // into 8 simple gradient directions,
+					float v = h<4 ? y : x;  // and compute the dot product with (x,y).
+					return ((h&1)? -u : u) + ((h&2)? -2.0*v : 2.0*v);
+				}
+
+				float grad3( int hash, float x, float y , float z ) const {
+					int h = hash & 15;     // Convert low 4 bits of hash code into 12 simple
+					float u = h<8 ? x : y; // gradient directions, and compute dot product.
+					float v = h<4 ? y : h==12||h==14 ? x : z; // Fix repeats at h = 12 to 15
+					return ((h&1)? -u : u) + ((h&2)? -v : v);
+				}
+
+				float grad4( int hash, float x, float y, float z, float t ) const {
+					int h = hash & 31;      // Convert low 5 bits of hash code into 32 simple
+					float u = h<24 ? x : y; // gradient directions, and compute dot product.
+					float v = h<16 ? y : z;
+					float w = h<8 ? z : t;
+					return ((h&1)? -u : u) + ((h&2)? -v : v) + ((h&4)? -w : w);
+				}
+		};
+
+
 		const float PerlinNoiseGustavson::eval( const float x ) const
 		{
 			int ix0, ix1;
@@ -208,8 +264,8 @@ namespace MeshPotato {
 
 			s = FADE( fx0 );
 
-			n0 = grad1( perm[ ix0 ], fx0 );
-			n1 = grad1( perm[ ix1 ], fx1 );
+			n0 = mImpl->grad1( perm[ ix0 ], fx0 );
+			n1 = mImpl->grad1( perm[ ix1 ], fx1 );
 			return 0.188f * ( LERP( s, n0, n1 ) );
 		}
 
@@ -223,11 +279,11 @@ namespace MeshPotato {
 			ix0 = FASTFLOOR( P[0] ); // Integer part of x
 			iy0 = FASTFLOOR( P[1] ); // Integer part of y
 			iz0 = FASTFLOOR( P[2] ); // Integer part of y
-			iw0 = FASTFLOOR( time ); // Integer part of w
+			iw0 = FASTFLOOR( mImpl->time ); // Integer part of w
 			fx0 = P[0] - ix0;        // Fractional part of x
 			fy0 = P[1] - iy0;        // Fractional part of y
 			fz0 = P[2]- iz0;        // Fractional part of z
-			fw0 = time - iw0;        // Fractional part of w
+			fw0 = mImpl->time - iw0;        // Fractional part of w
 			fx1 = fx0 - 1.0f;
 			fy1 = fy0 - 1.0f;
 			fz1 = fz0 - 1.0f;
@@ -246,44 +302,44 @@ namespace MeshPotato {
 			t = FADE( fy0 );
 			s = FADE( fx0 );
 
-			nxyz0 = grad4(perm[ix0 + perm[iy0 + perm[iz0 + perm[iw0]]]], fx0, fy0, fz0, fw0);
-			nxyz1 = grad4(perm[ix0 + perm[iy0 + perm[iz0 + perm[iw1]]]], fx0, fy0, fz0, fw1);
+			nxyz0 = mImpl->grad4(perm[ix0 + perm[iy0 + perm[iz0 + perm[iw0]]]], fx0, fy0, fz0, fw0);
+			nxyz1 = mImpl->grad4(perm[ix0 + perm[iy0 + perm[iz0 + perm[iw1]]]], fx0, fy0, fz0, fw1);
 			nxy0 = LERP( q, nxyz0, nxyz1 );
 
-			nxyz0 = grad4(perm[ix0 + perm[iy0 + perm[iz1 + perm[iw0]]]], fx0, fy0, fz1, fw0);
-			nxyz1 = grad4(perm[ix0 + perm[iy0 + perm[iz1 + perm[iw1]]]], fx0, fy0, fz1, fw1);
+			nxyz0 = mImpl->grad4(perm[ix0 + perm[iy0 + perm[iz1 + perm[iw0]]]], fx0, fy0, fz1, fw0);
+			nxyz1 = mImpl->grad4(perm[ix0 + perm[iy0 + perm[iz1 + perm[iw1]]]], fx0, fy0, fz1, fw1);
 			nxy1 = LERP( q, nxyz0, nxyz1 );
 
 			nx0 = LERP ( r, nxy0, nxy1 );
 
-			nxyz0 = grad4(perm[ix0 + perm[iy1 + perm[iz0 + perm[iw0]]]], fx0, fy1, fz0, fw0);
-			nxyz1 = grad4(perm[ix0 + perm[iy1 + perm[iz0 + perm[iw1]]]], fx0, fy1, fz0, fw1);
+			nxyz0 = mImpl->grad4(perm[ix0 + perm[iy1 + perm[iz0 + perm[iw0]]]], fx0, fy1, fz0, fw0);
+			nxyz1 = mImpl->grad4(perm[ix0 + perm[iy1 + perm[iz0 + perm[iw1]]]], fx0, fy1, fz0, fw1);
 			nxy0 = LERP( q, nxyz0, nxyz1 );
 
-			nxyz0 = grad4(perm[ix0 + perm[iy1 + perm[iz1 + perm[iw0]]]], fx0, fy1, fz1, fw0);
-			nxyz1 = grad4(perm[ix0 + perm[iy1 + perm[iz1 + perm[iw1]]]], fx0, fy1, fz1, fw1);
+			nxyz0 = mImpl->grad4(perm[ix0 + perm[iy1 + perm[iz1 + perm[iw0]]]], fx0, fy1, fz1, fw0);
+			nxyz1 = mImpl->grad4(perm[ix0 + perm[iy1 + perm[iz1 + perm[iw1]]]], fx0, fy1, fz1, fw1);
 			nxy1 = LERP( q, nxyz0, nxyz1 );
 
 			nx1 = LERP ( r, nxy0, nxy1 );
 
 			n0 = LERP( t, nx0, nx1 );
 
-			nxyz0 = grad4(perm[ix1 + perm[iy0 + perm[iz0 + perm[iw0]]]], fx1, fy0, fz0, fw0);
-			nxyz1 = grad4(perm[ix1 + perm[iy0 + perm[iz0 + perm[iw1]]]], fx1, fy0, fz0, fw1);
+			nxyz0 = mImpl->grad4(perm[ix1 + perm[iy0 + perm[iz0 + perm[iw0]]]], fx1, fy0, fz0, fw0);
+			nxyz1 = mImpl->grad4(perm[ix1 + perm[iy0 + perm[iz0 + perm[iw1]]]], fx1, fy0, fz0, fw1);
 			nxy0 = LERP( q, nxyz0, nxyz1 );
 
-			nxyz0 = grad4(perm[ix1 + perm[iy0 + perm[iz1 + perm[iw0]]]], fx1, fy0, fz1, fw0);
-			nxyz1 = grad4(perm[ix1 + perm[iy0 + perm[iz1 + perm[iw1]]]], fx1, fy0, fz1, fw1);
+			nxyz0 = mImpl->grad4(perm[ix1 + perm[iy0 + perm[iz1 + perm[iw0]]]], fx1, fy0, fz1, fw0);
+			nxyz1 = mImpl->grad4(perm[ix1 + perm[iy0 + perm[iz1 + perm[iw1]]]], fx1, fy0, fz1, fw1);
 			nxy1 = LERP( q, nxyz0, nxyz1 );
 
 			nx0 = LERP ( r, nxy0, nxy1 );
 
-			nxyz0 = grad4(perm[ix1 + perm[iy1 + perm[iz0 + perm[iw0]]]], fx1, fy1, fz0, fw0);
-			nxyz1 = grad4(perm[ix1 + perm[iy1 + perm[iz0 + perm[iw1]]]], fx1, fy1, fz0, fw1);
+			nxyz0 = mImpl->grad4(perm[ix1 + perm[iy1 + perm[iz0 + perm[iw0]]]], fx1, fy1, fz0, fw0);
+			nxyz1 = mImpl->grad4(perm[ix1 + perm[iy1 + perm[iz0 + perm[iw1]]]], fx1, fy1, fz0, fw1);
 			nxy0 = LERP( q, nxyz0, nxyz1 );
 
-			nxyz0 = grad4(perm[ix1 + perm[iy1 + perm[iz1 + perm[iw0]]]], fx1, fy1, fz1, fw0);
-			nxyz1 = grad4(perm[ix1 + perm[iy1 + perm[iz1 + perm[iw1]]]], fx1, fy1, fz1, fw1);
+			nxyz0 = mImpl->grad4(perm[ix1 + perm[iy1 + perm[iz1 + perm[iw0]]]], fx1, fy1, fz1, fw0);
+			nxyz1 = mImpl->grad4(perm[ix1 + perm[iy1 + perm[iz1 + perm[iw1]]]], fx1, fy1, fz1, fw1);
 			nxy1 = LERP( q, nxyz0, nxyz1 );
 
 			nx1 = LERP ( r, nxy0, nxy1 );
@@ -292,5 +348,14 @@ namespace MeshPotato {
 
 			return 0.87f * ( LERP( s, n0, n1 ) );
 		}
+
+		boost::shared_ptr<PerlinNoiseGustavson> PerlinNoiseGustavson::Ptr() { return boost::shared_ptr<PerlinNoiseGustavson>(new PerlinNoiseGustavson()); }
+
+		PerlinNoiseGustavson::PerlinNoiseGustavson() : mImpl(new Impl())  {}
+		
+		PerlinNoiseGustavson::~PerlinNoiseGustavson(){}
+
+
+		void PerlinNoiseGustavson::setTime( const float t ) { mImpl->time = t; }
 	}
 }

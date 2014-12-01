@@ -1,4 +1,5 @@
 #include "MeshPotato/meshpotato.h"
+#include <boost/shared_ptr.hpp>
 
 //! Global namespace for project
 namespace MeshPotato {
@@ -11,30 +12,30 @@ namespace MeshPotato {
 			public:
 				//Constructors
 
-
 				//! Default Constructor
 				MPMesh();
 
 				//! Conversion Constructor
-				MPMesh(std::string);
+				MPMesh(const std::string &);
 				//! Copy Constructor
-				MPMesh(const MPMesh&);				
+				MPMesh(const MPMesh &);				
 				//! Destructor
 				~MPMesh();
 
 				//! Name
 				const std::string GetName() const;
 
-				void SetName(std::string); 
+				void SetName(const std::string &); 
 
 				//! Read in a mesh
-				const int Read(const std::string);
+				const int Read(const std::string &);
 
 				//! Write out a mesh
-				const int Write(const std::string);
+				const int Write(const std::string &);
 
 			private:
-				std::string name;
+				class Impl;
+				boost::shared_ptr<Impl> mImpl;
 		};
 		std::ostream& operator<<(std::ostream& out, const MPMesh& mesh);
 

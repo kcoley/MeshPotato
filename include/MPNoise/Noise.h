@@ -17,6 +17,7 @@
 #include "MPUtils/Vector.h"
 #include "MPUtils/Color.h"
 #include "MPUtils/OfficialColors.h"
+#include <boost/shared_ptr.hpp>
 #include <vector>
 namespace MeshPotato {
 	namespace MPNoise {
@@ -164,106 +165,27 @@ namespace MeshPotato {
 			class FractalSum : public Noise
 		{
 			public:
-				static boost::shared_ptr<FractalSum<BaseNoise> > Ptr() { return boost::shared_ptr<FractalSum<BaseNoise> >(new FractalSum<BaseNoise>()); }
+				static boost::shared_ptr<FractalSum<BaseNoise> > Ptr();
 
-				FractalSum() :
-					octaves    (3.0),
-					fjump      (2.0),
-					roughness  (0.5),
-					frequency  (0.666666),
-					translate  (MeshPotato::MPUtils::MPVec3(0,0,0)),
-					offset     (0.0),
-					axis       (MeshPotato::MPUtils::MPVec3(0,0,1)),
-					angle      (0.0)
-			{}
+				FractalSum();
 
-				~FractalSum(){}
+				~FractalSum();
 
-				const float eval( const float x ) const
-				{
-					float exponent = 1;
-					float amplitude = 1;
-					float accum = 0;
-					int ioct = (int)octaves;
-					for( int oc=0;oc<ioct;oc++ )
-					{
-						const float X = (x - translate[0]) * frequency * exponent;
-						accum += amplitude * _noise.eval( X );
-						exponent *= fjump;
-						amplitude *= roughness;
-					}
-					const float X = (x - translate[0]) * frequency * exponent;
-					float val = amplitude * _noise.eval( X );
-					accum += (octaves - (int)octaves) * val;
-					return (accum + offset);
-				}
+				const float eval( const float x ) const;
 
-				const float eval( const MeshPotato::MPUtils::MPVec3& x ) const
-				{
-					float exponent = 1;
-					float amplitude = 1;
-					float accum = 0;
-					int ioct = (int)octaves;
-					MeshPotato::MPUtils::MPVec3 X = (x - translate);
-					if( angle != 0.0 )
-					{
-						float ca = cos(angle);
-						float sa = sin(angle);
-						X = X*ca + axis*(axis*X)*(1.0-ca) + (axis.cross(X))*sa;
-					}
-					X *= frequency*exponent;
-					for( int oc=0;oc<ioct;oc++ )
-					{
-						accum += amplitude * _noise.eval( X );
-						X *= fjump;
-						amplitude *= roughness;
-					}
-					float val = amplitude * _noise.eval( X );
-					accum += (octaves - (int)octaves) * val;
-					return (accum+offset);
-				}
+				const float eval( const MeshPotato::MPUtils::MPVec3& x ) const;
 
 
-				void setParameters( const Noise_t& parameters )
-				{
-					octaves = parameters.octaves;
-					fjump = parameters.fjump;
-					roughness = parameters.roughness;
-					frequency = parameters.frequency;
-					translate = parameters.translate;
-					offset = parameters.offset;
-					axis = parameters.axis;
-					angle = parameters.angle;
-					_noise.setTime( parameters.time );
-				}
+				void setParameters( const Noise_t& parameters );
 
 
-				void getParameters( Noise_t& parameters ) const
-				{
-					parameters.octaves = octaves;
-					parameters.fjump = fjump;
-					parameters.roughness = roughness;
-					parameters.frequency = frequency;
-					parameters.translate = translate;
-					parameters.offset = offset;
-					parameters.axis = axis;
-					parameters.angle = angle;
-				}
+				void getParameters( Noise_t& parameters ) const;
 
 
 
 			private:
-
-				BaseNoise _noise;
-
-				float octaves;
-				float fjump;
-				float roughness;
-				float frequency;
-				MeshPotato::MPUtils::MPVec3 translate;
-				float offset;
-				MeshPotato::MPUtils::MPVec3 axis;
-				float angle;
+				class Impl;
+				boost::shared_ptr<Impl> mImpl;
 		};
 
 
