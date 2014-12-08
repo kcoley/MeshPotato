@@ -1,5 +1,3 @@
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
-
 SET(Boost_NEEDED_LIBS filesystem
                       python
                       thread
