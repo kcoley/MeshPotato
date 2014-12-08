@@ -1,22 +1,9 @@
-FIND_PACKAGE(Boost COMPONENTS ${Boost_NEEDED_LIBS} REQUIRED)
-FIND_PACKAGE(PythonLIBS)
-Find_PACKAGE(Alembic)
-SET(Boost_NEEDED_LIBS filesystem
-                      python
-                      thread
-                      system
-                      )
-SET(PLUGIN_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/include
-      ${Boost_INCLUDE_DIRS}
-      ${PYTHON_INCLUDE_PATH}
-      ${ALEMBIC_INCLUDE_DIRS}
-  )
-SET(PLUGIN_LIBRARY_DIRS meshpotato
-      ${PYTHON_LIBRARIES}
-      ${Boost_LIBRARIES}
-      ${ALEMBIC_LIBRARIES}
-  )
-INCLUDE_DIRECTORIES(${PLUGIN_INCLUDE_DIRS})
+# SET(PLUGIN_LIBRARY_DIRS meshpotato
+#       ${PYTHON_LIBRARIES}
+#       ${Boost_LIBRARIES}
+#       ${ALEMBIC_LIBRARIES}
+#   )
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
 
 ADD_DEFINITIONS( "-std=c++11" )
 

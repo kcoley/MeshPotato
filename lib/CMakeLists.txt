@@ -1,18 +1,3 @@
-SET(Boost_NEEDED_LIBS filesystem
-                      python
-                      thread
-                      system
-                      )
-
-FIND_PACKAGE(OpenVDB REQUIRED)
-FIND_PACKAGE(Boost COMPONENTS ${Boost_NEEDED_LIBS} REQUIRED)
-FIND_PACKAGE(OpenEXR REQUIRED)
-FIND_PACKAGE(OpenImageIO REQUIRED)
-FIND_PACKAGE(TBB REQUIRED)
-FIND_PACKAGE(Half REQUIRED)
-FIND_PACKAGE(FFTW REQUIRED)
-
-
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include
       ${OPENVDB_INCLUDE_DIRS}
       ${Boost_INCLUDE_DIRS}
