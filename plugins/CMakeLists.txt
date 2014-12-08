@@ -1,15 +1,3 @@
-# Comment out whilst doing clean up
-# SET(PLUGIN_LIBRARY_DIRS meshpotato
-#       ${OPENVDB_LIBRARIES}
-#       ${OPENVDB_PYTHON_LIBRARY}
-#       ${PYTHON_LIBRARIES}
-#       ${Boost_LIBRARIES}
-#       ${OPENEXR_LIBRARIES}
-#       ${HALF_LIBRARIES}
-#       ${OPENIMAGEIO_LIBRARIES}
-#       ${TBB_LIBRARIES}
-#       ${FFTW_LIBRARIES})
-
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
 
 ADD_SUBDIRECTORY(OBJOutput)

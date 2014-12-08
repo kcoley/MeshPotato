@@ -1,8 +1,3 @@
-# SET(PLUGIN_LIBRARY_DIRS meshpotato
-#       ${PYTHON_LIBRARIES}
-#       ${Boost_LIBRARIES}
-#       ${ALEMBIC_LIBRARIES}
-#   )
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
 
 ADD_DEFINITIONS( "-std=c++11" )
