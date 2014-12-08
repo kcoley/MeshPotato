@@ -4,9 +4,6 @@ SET(Boost_NEEDED_LIBS filesystem
                       thread
                       system
                       )
-SET(Boost_USE_STATIC_LIBS     OFF)
-#SET(Boost_USE_MULTITHREADED    ON)
-SET(Boost_USE_STATIC_RUNTIME     OFF)
 
 FIND_PACKAGE(OpenVDB REQUIRED)
 FIND_PACKAGE(Boost COMPONENTS ${Boost_NEEDED_LIBS} REQUIRED)
