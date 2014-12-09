@@ -72,3 +72,7 @@ TARGET_LINK_LIBRARIES(mpnoise meshpotato
     ${FFTW_LIBRARIES}
   )
 INSTALL(TARGETS mpnoise DESTINATION pymeshpotato)
+
+# Python module package initialization file
+FILE ( WRITE __init__.py "# pymeshpotato module" )
+INSTALL ( FILES __init__.py DESTINATION pymeshpotato)
