@@ -1,14 +1,3 @@
-FIND_PACKAGE(Boost COMPONENTS ${Boost_NEEDED_LIBS} REQUIRED)
-FIND_PACKAGE(PythonLIBS)
-SET(Boost_NEEDED_LIBS filesystem
-                      python
-                      thread
-                      system
-                      )
-SET(Boost_USE_STATIC_LIBS     OFF)
-SET(Boost_USE_MULTITHREADED    ON)
-SET(Boost_USE_STATIC_RUNTIME     OFF)
-
 SET(PLUGIN_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/include
       ${Boost_INCLUDE_DIRS}
       ${PYTHON_INCLUDE_PATH}
