@@ -1,9 +1,24 @@
-///////////////////////////////////////////////////////////////////////////////
-// InputMesh		                                                             //
-//                                                                           //
-// Kacey Coley								                                               //
-// Abstract Base Class for reading mesh types into MeshPotato                //
-///////////////////////////////////////////////////////////////////////////////
+/// \author Kacey Coley
+/// \date December 11, 2014
+/// \since 0.1
+///
+/// Abstract Base Class for reading mesh types into MeshPotato
+///
+/// Copyright 2014 Kacey Coley
+///   Licensed under the Apache License, Version 2.0 (the "License");
+///   you may not use this file except in compliance with the License.
+///   You may obtain a copy of the License at
+///
+///   http://www.apache.org/licenses/LICENSE-2.0
+///
+///   Unless required by applicable law or agreed to in writing, software
+///   distributed under the License is distributed on an "AS IS" BASIS,
+///   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+///   See the License for the specific language governing permissions and
+///   limitations under the License.
+///
+
+
 #ifndef __INPUTMESH_H__
 #define __INPUTMESH_H__
 
@@ -19,12 +34,12 @@ namespace MeshPotato{
  namespace MPMesh {
    /**
    * \class InputMesh
-   * \brief InputMesh is the Abstract Base Class for reading Mesh Formats.
    *
    * InputMesh stores the vertices, normals and faces or a mesh.  The faces
    * can be an arbitrary n-gon planar, though it is recommended to use triangles
    * or quadrilaterals.
    **/
+   /// Class for storing Mesh Data
     class InputMesh {
     public:
         virtual ~InputMesh() {}

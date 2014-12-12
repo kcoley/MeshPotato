@@ -41,7 +41,9 @@ namespace MeshPotato {
 				void init();
 		};
 		
-		boost::shared_ptr<PerlinNoise> PerlinNoise::Ptr() { return boost::shared_ptr<PerlinNoise>(new PerlinNoise()); }
+		boost::shared_ptr<PerlinNoise> PerlinNoise::Ptr() { 
+			return boost::shared_ptr<PerlinNoise>(new PerlinNoise()); 
+		}
 
 		PerlinNoise::PerlinNoise() : mImpl(new Impl) { mImpl->init(); }
 

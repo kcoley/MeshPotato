@@ -3,6 +3,17 @@
 
 namespace MeshPotato {
 	namespace MPVolume {
+
+		const Light::volumeDataType Light::eval(const MPUtils::MPVec3 &P) const {}
+		const Light::volumeGradType Light::grad(const MPUtils::MPVec3 &P) const {}
+		Light::~Light() {}
+
+
+
+
+
+
+
 		class FrustumLight::Impl {
 			public:
 				boost::shared_ptr<MeshPotato::MPVolume::FrustumGrid> frustum;
