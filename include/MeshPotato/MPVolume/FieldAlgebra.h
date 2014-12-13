@@ -30,11 +30,12 @@ namespace MPVolume {
 template <typename T>
 class AddVolume: public MeshPotato::MPVolume::Volume<T> {
 public:
-AddVolume(const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f1,
-	  const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f2);
-static boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > Ptr(
-	  const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f1,
-	  const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f2);
+	AddVolume(const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f1,
+	  		  const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f2);
+	
+	static boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > Ptr(
+	  		  const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f1,
+	  		  const boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > _f2);
 
 /// returns the sum of the two volumes at a point in world space
 const typename Volume<T>::volumeDataType  eval(const MeshPotato::MPUtils::MPVec3 &P) const;
