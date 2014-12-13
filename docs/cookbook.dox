@@ -1,0 +1,66 @@
+/**
+
+@page cookBook MeshPotato CookBook
+
+The following are a collection of code snippets and examples to
+demonstrate the usage of MeshPotato.
+
+@section Contents
+- @ref make_a_sphere
+- @ref csgOperations
+- @ref volumeTransformations
+- @ref volumeGrids
+  - @ref stampingToGrids
+- @ref advectingVolumes
+- @ref convertToVDB
+- @ref lightingVolumes
+  - @ref deepShadowMaps
+- @ref raymarching
+- @ref deepImages
+
+
+
+@section make_a_sphere Making a Sphere in MeshPotato
+This code snippet demonstrates how to create a sphere using MeshPotato:
+
+C++:
+@code
+#include <MeshPotato/MPVolume/ImplicitShape.h>
+
+int main(void) {
+	// create a sphere as an implicit function
+	float radius = 4.0;
+	MPVec3 center(0,0,0);
+	ImplicitShape sphere = MeshPotato::MPVolume::ImplicitSphere(radius, center);
+
+	// Define a bounding box for the sphere
+	MPVec3 minBB(-5, -5, -5);
+	MPVec3 maxBB(5, 5, 5);
+
+	// Create a VDB levelset from the Sphere with a voxel size of 0.1
+	vdbSphere = makeVDBGrid(sphere, MPBBox(minBB, maxBB), 0.1);
+
+	// Convert the vdb levelset to a fog volume
+	fogVolume = vdbSphere.toFogVolume();
+
+	return 0;
+}
+@endcode
+Python:
+@code
+#Import pymeshpotato modules
+import pyopenvdb as pvdb
+import pymeshpotato.mpvolume as mpvolume
+import pymeshpotato.mputils as mputils
+#Create a volume
+ 
+# Create A Sphere
+sphere = mpvolume.ImplicitSphere(4.0, mputils.getMPVec3([0,0,0]))
+ 
+# Convert to VDB Fog Volume
+minBB = mputils.getMPVec3([-5, -5, -5])
+maxBB = mputils.getMPVec3([5, 5, 5])
+vdb_sphere = mpvolume.makeVDBGrid(sphere, mputils.getBBox(minBB,maxBB),0.1)
+fog_volume = mpvolume.ConvertToFogVolume(vdb_sphere)
+@endcode
+*/
