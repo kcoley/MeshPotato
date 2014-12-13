@@ -1,9 +1,9 @@
 /**
 
-@page cookBook MeshPotato CookBook
+@page cookBook %MeshPotato CookBook
 
 The following are a collection of code snippets and examples to
-demonstrate the usage of MeshPotato.
+demonstrate the usage of %MeshPotato.
 
 @section Contents
 - @ref make_a_sphere
@@ -20,8 +20,8 @@ demonstrate the usage of MeshPotato.
 
 
 
-@section make_a_sphere Making a Sphere in MeshPotato
-This code snippet demonstrates how to create a sphere using MeshPotato:
+@section make_a_sphere Making a Sphere in %MeshPotato
+This code snippet demonstrates how to create a sphere using %MeshPotato:
 
 C++:
 @code

@@ -1,5 +1,5 @@
 ///
-/// \mainpage MeshPotato API Documentation
+/// \mainpage %MeshPotato API Documentation
 /// 
 /// \section sec_Contents Contents
 ///
@@ -9,11 +9,12 @@
 ///
 /// \section sec_Overview Overview
 ///
-/// Overview Section text here.
+/// %MeshPotato is a C++/Python API for volumetric modeling and rendering.
+/// Its purpose is to assist in the creation of tools for volumetric effects.
 ///
 /// \section sec_Detail Detailed Description
 ///
-/// See @subpage cookBook "CookBook" to get started using @b MeshPotato.
+/// Checkout @subpage cookBook "CookBook" to get started using @b %MeshPotato.
 ///
 /// \section sec_SeeAlso See Also
 ///
