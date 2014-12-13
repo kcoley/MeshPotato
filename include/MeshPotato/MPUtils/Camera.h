@@ -22,7 +22,7 @@
 #define __CAMERA_H__
 
 
-#include "MPUtils/Vector.h"
+#include "MeshPotato/MPUtils/Vector.h"
 #include <openvdb/Grid.h>
 namespace MeshPotato {
 namespace MPUtils {

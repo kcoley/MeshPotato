@@ -1,6 +1,6 @@
 #include <boost/python.hpp>
-#include <MPNoise/Noise.h>
-#include <MPNoise/PerlinNoise.h>
+#include <MeshPotato/MPNoise/Noise.h>
+#include <MeshPotato/MPNoise/PerlinNoise.h>
 //#include <MPNoise/FFTNoise.h>
 using namespace boost::python;
 

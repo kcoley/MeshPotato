@@ -1,5 +1,5 @@
 
-#include "MPUtils/OIIOFiles.h"
+#include "MeshPotato/MPUtils/OIIOFiles.h"
 #include <OpenEXR/half.h>
 #include <iostream>
 #include <cmath>

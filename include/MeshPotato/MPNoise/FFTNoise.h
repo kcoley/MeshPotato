@@ -20,9 +20,9 @@
 #ifndef __FFTNOISE_H__
 #define __FFTNOISE_H__
 
-#include "MPUtils/Vector.h"
-#include "MPVolume/MPVolume.h"
-#include "MPVolume/MPVolumeGrid.h"
+#include "MeshPotato/MPUtils/Vector.h"
+#include "MeshPotato/MPVolume/MPVolume.h"
+#include "MeshPotato/MPVolume/MPVolumeGrid.h"
 #include "Noise.h"
 
 namespace MeshPotato {

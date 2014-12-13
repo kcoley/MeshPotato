@@ -1,22 +1,22 @@
 #include <boost/python.hpp>
-#include <MPVolume/MPVolume.h>
-#include <MPVolume/VDBVolumeGrid.h>
-#include <MPVolume/FieldAlgebra.h>
-#include <MPVolume/VolumeUtils.h>
-#include <MPVolume/ImplicitShape.h>
-#include <MPVolume/RayMarcher.h>
-#include <MPVolume/FrustumGrid.h>
-#include <MPVolume/Light.h>
-#include <MPVolume/VolumeUtils.h>
-#include <MPUtils/Camera.h>
+#include <MeshPotato/MPVolume/MPVolume.h>
+#include <MeshPotato/MPVolume/VDBVolumeGrid.h>
+#include <MeshPotato/MPVolume/FieldAlgebra.h>
+#include <MeshPotato/MPVolume/VolumeUtils.h>
+#include <MeshPotato/MPVolume/ImplicitShape.h>
+#include <MeshPotato/MPVolume/RayMarcher.h>
+#include <MeshPotato/MPVolume/FrustumGrid.h>
+#include <MeshPotato/MPVolume/Light.h>
+#include <MeshPotato/MPVolume/VolumeUtils.h>
+#include <MeshPotato/MPUtils/Camera.h>
 #include <string>
 #include <openvdb/openvdb.h>
 #include <openvdb/tools/LevelSetUtil.h>
 #include <tbb/task_scheduler_init.h>
-#include <MPVolume/MPVolumeGrid.h>
-#include <MPVolume/DenseGrid.h>
-#include <MPVolume/FFTDivFree.h>
-#include <MPUtils/AttributeTable.h>
+#include <MeshPotato/MPVolume/MPVolumeGrid.h>
+#include <MeshPotato/MPVolume/DenseGrid.h>
+#include <MeshPotato/MPVolume/FFTDivFree.h>
+#include <MeshPotato/MPUtils/AttributeTable.h>
 
 using namespace boost::python;
 using namespace MeshPotato::MPVolume;

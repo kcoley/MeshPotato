@@ -24,10 +24,10 @@
 #include <string>
 #include <list>
 #include <vector>
-#include "MPPlugins/defines.h"
-#include"MPPlugins/pluginapi.h"
+#include "MeshPotato/MPPlugins/defines.h"
+#include "MeshPotato/MPPlugins/pluginapi.h"
 #include "MeshPotato/meshpotato.h"
-#include "MPUtils/AttributeTable.h"
+#include "MeshPotato/MPUtils/AttributeTable.h"
 
 namespace MeshPotato{
  namespace MPMesh {

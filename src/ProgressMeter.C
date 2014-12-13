@@ -1,4 +1,4 @@
-#include "MPUtils/ProgressMeter.h"
+#include "MeshPotato/MPUtils/ProgressMeter.h"
 #include <ctime>
 #include <iostream>
 #include <sstream>

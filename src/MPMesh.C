@@ -1,4 +1,4 @@
-#include "MPMesh/MPMesh.h"
+#include "MeshPotato/MPMesh/MPMesh.h"
 #include <iostream>
 
 namespace MeshPotato {

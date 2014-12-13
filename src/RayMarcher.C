@@ -1,9 +1,9 @@
-#include "MPVolume/RayMarcher.h"
-#include <MPVolume/FrustumGrid.h>
-#include "MPUtils/DeepImage.h"
-#include "MPUtils/Image.h"
-#include "MPUtils/OIIOFiles.h"
-#include "MPUtils/AttributeTable.h"
+#include "MeshPotato/MPVolume/RayMarcher.h"
+#include "MeshPotato/MPVolume/FrustumGrid.h"
+#include "MeshPotato/MPUtils/DeepImage.h"
+#include "MeshPotato/MPUtils/Image.h"
+#include "MeshPotato/MPUtils/OIIOFiles.h"
+#include "MeshPotato/MPUtils/AttributeTable.h"
 
 
 using namespace MeshPotato::MPUtils;

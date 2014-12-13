@@ -21,9 +21,9 @@
 #ifndef __PLUGINAPI_H__
 #define __PLUGINAPI_H__
 #include "defines.h"
-#include "MPMesh/InputMesh.h"
-#include "MPVolume/MPVolume.h"
-#include "MPMesh/OutputMesh.h"
+#include "MeshPotato/MPMesh/InputMesh.h"
+#include "MeshPotato/MPVolume/MPVolume.h"
+#include "MeshPotato/MPMesh/OutputMesh.h"
 namespace MeshPotato {
 	namespace MPMesh {
 		// Forward Declaration for OutputMesh

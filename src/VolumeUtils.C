@@ -1,5 +1,5 @@
-#include "MPVolume/MPVolume.h"
-#include "MPVolume/FrustumGrid.h"
+#include "MeshPotato/MPVolume/MPVolume.h"
+#include "MeshPotato/MPVolume/FrustumGrid.h"
 #include <openvdb/tools/LevelSetRebuild.h>
 #include <iostream>
 #include <openvdb/version.h>

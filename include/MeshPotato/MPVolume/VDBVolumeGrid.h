@@ -20,8 +20,8 @@
 
 #ifndef __VDBVOLUMEGRID_H__
 #define __VDBVOLUMEGRID_H__
-#include "MPUtils/Vector.h"
-#include "MPVolume/MPVolumeGrid.h"
+#include "MeshPotato/MPUtils/Vector.h"
+#include "MeshPotato/MPVolume/MPVolumeGrid.h"
 #include <openvdb/Grid.h>
 #include <openvdb/tools/Interpolation.h>
 #include <openvdb/openvdb.h>

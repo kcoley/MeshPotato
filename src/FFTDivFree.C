@@ -1,4 +1,4 @@
-#include "MPVolume/FFTDivFree.h"
+#include "MeshPotato/MPVolume/FFTDivFree.h"
 #include <fftw3.h>
 namespace MeshPotato {
 	namespace MPVolume {

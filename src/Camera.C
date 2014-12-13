@@ -1,5 +1,5 @@
-#include "MPUtils/Camera.h"
-#include "MPUtils/Vector.h"
+#include "MeshPotato/MPUtils/Camera.h"
+#include "MeshPotato/MPUtils/Vector.h"
 namespace MeshPotato {
 namespace MPUtils {
    class Camera::Impl {

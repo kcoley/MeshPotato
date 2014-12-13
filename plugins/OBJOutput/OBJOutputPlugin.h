@@ -6,7 +6,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 //#define OBJOUTPUTPLUGIN_SOURCE 1
 
-#include <MPPlugins/pluginapi.h>
+#include <MeshPotato/MPPlugins/pluginapi.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>

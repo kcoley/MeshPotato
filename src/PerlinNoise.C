@@ -8,7 +8,7 @@
 #include <cstdio>
 #include <cmath>
 
-#include "MPNoise/PerlinNoise.h"
+#include "MeshPotato/MPNoise/PerlinNoise.h"
 using namespace std;
 namespace MeshPotato {
 	namespace MPNoise {

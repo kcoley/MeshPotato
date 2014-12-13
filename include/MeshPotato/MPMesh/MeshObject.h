@@ -18,15 +18,15 @@
 ///   limitations under the License.
 ///
 
-#include "MPPlugins/pluginmanager.h"
+#include "MeshPotato/MPPlugins/pluginmanager.h"
 #include <iostream>
 #include <string>
 #include <stdexcept>
-#include <MeshPotato/meshpotato.h>
+#include "MeshPotato/meshpotato.h"
 #include <list>
 #include <vector>
 #include <boost/shared_ptr.hpp>
-#include "MPUtils/AttributeTable.h"
+#include "MeshPotato/MPUtils/AttributeTable.h"
 
 namespace MeshPotato {
 namespace MPMesh {

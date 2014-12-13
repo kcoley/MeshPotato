@@ -1,6 +1,6 @@
-#include "MPUtils/DeepImage.h"
-#include "MPUtils/Image.h"
-#include "MPUtils/Color.h"
+#include "MeshPotato/MPUtils/DeepImage.h"
+#include "MeshPotato/MPUtils/Image.h"
+#include "MeshPotato/MPUtils/Color.h"
 #include <iostream>
 using namespace std;
 namespace MeshPotato {

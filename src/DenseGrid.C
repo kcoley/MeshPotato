@@ -1,4 +1,4 @@
-#include "MPVolume/DenseGrid.h"
+#include "MeshPotato/MPVolume/DenseGrid.h"
 
 
 namespace MeshPotato {

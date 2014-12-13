@@ -20,9 +20,9 @@
 
 #ifndef __NOISE_H__
 #define __NOISE_H__
-#include "MPUtils/Vector.h"
-#include "MPUtils/Color.h"
-#include "MPUtils/OfficialColors.h"
+#include "MeshPotato/MPUtils/Vector.h"
+#include "MeshPotato/MPUtils/Color.h"
+#include "MeshPotato/MPUtils/OfficialColors.h"
 #include <boost/shared_ptr.hpp>
 #include <vector>
 namespace MeshPotato {

@@ -1,4 +1,4 @@
-#include "MPUtils/Color.h"
+#include "MeshPotato/MPUtils/Color.h"
 namespace MeshPotato {
 namespace MPUtils {
 	class Color::Impl {

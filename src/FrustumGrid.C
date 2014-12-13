@@ -1,12 +1,12 @@
-#include "MPVolume/FrustumGrid.h"
-#include "MPUtils/Vector.h"
-#include "MPVolume/VDBVolumeGrid.h"
+#include "MeshPotato/MPVolume/FrustumGrid.h"
+#include "MeshPotato/MPUtils/Vector.h"
+#include "MeshPotato/MPVolume/VDBVolumeGrid.h"
 #include <openvdb/Grid.h>
 #include <openvdb/tools/Interpolation.h>
 #include <openvdb/tools/RayIntersector.h>
-#include "MPUtils/Camera.h"
+#include "MeshPotato/MPUtils/Camera.h"
 #include <iostream>
-#include "MPUtils/ProgressMeter.h"
+#include "MeshPotato/MPUtils/ProgressMeter.h"
 namespace MeshPotato {
 namespace MPVolume {
 	class FrustumGrid::Impl {

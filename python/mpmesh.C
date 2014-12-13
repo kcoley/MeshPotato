@@ -1,12 +1,12 @@
-#include <MPMesh/MeshObject.h>
+#include <MeshPotato/MPMesh/MeshObject.h>
 #include <openvdb/openvdb.h>
 #include <pyopenvdb.h>
 #include <boost/python.hpp>
-#include <MPMesh/MPMesh.h>
-#include <MPPlugins/pluginapi.h>
+#include <MeshPotato/MPMesh/MPMesh.h>
+#include <MeshPotato/MPPlugins/pluginapi.h>
 #include "pymeshpotato.h"
 #include <MeshPotato/meshpotato.h>
-#include <MPPlugins/coreapi.h>
+#include <MeshPotato/MPPlugins/coreapi.h>
 using namespace boost::python;
 /*
 object processGrid(object inObj) {

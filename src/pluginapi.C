@@ -1,5 +1,5 @@
-#include "MPPlugins/coreapi.h"
-#include "MPPlugins/pluginapi.h"
+#include "MeshPotato/MPPlugins/coreapi.h"
+#include "MeshPotato/MPPlugins/pluginapi.h"
 
 namespace MeshPotato {
 	namespace MPPlugins {

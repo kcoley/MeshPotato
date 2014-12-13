@@ -1,5 +1,5 @@
-#include "MPNoise/Noise.h"
-#include "MPNoise/PerlinNoise.h"
+#include "MeshPotato/MPNoise/Noise.h"
+#include "MeshPotato/MPNoise/PerlinNoise.h"
 namespace MeshPotato {
 	namespace MPNoise {
 

@@ -20,10 +20,10 @@
 
 #ifndef __IMPLICITSHAPE_H__
 #define __IMPLICITSHAPE_H__
-#include "MPVolume/MPVolume.h"
-#include "MPUtils/Vector.h"
-#include "MPNoise/Noise.h"
-#include "MPNoise/PerlinNoise.h"
+#include "MeshPotato/MPVolume/MPVolume.h"
+#include "MeshPotato/MPUtils/Vector.h"
+#include "MeshPotato/MPNoise/Noise.h"
+#include "MeshPotato/MPNoise/PerlinNoise.h"
 #include <boost/shared_ptr.hpp>
 namespace MeshPotato {
 	namespace MPVolume {
@@ -35,7 +35,7 @@ namespace MeshPotato {
 		};
 		class ImplicitSphere : public ImplicitShape {
 			public:
-				static boost::shared_ptr<Volume<float> > Ptr(const float &_R,  const MeshPotato::MPUtils::MPVec3 &_C);
+				static VolumeFloatPtr Ptr(const float &_R,  const MeshPotato::MPUtils::MPVec3 &_C);
 				ImplicitSphere(const float &_R, const MeshPotato::MPUtils::MPVec3 &_C);
 				~ImplicitSphere();
 				const volumeDataType eval(const MeshPotato::MPUtils::MPVec3 &P) const;
@@ -57,7 +57,7 @@ namespace MeshPotato {
 		};
 		class Cumulo : public ImplicitShape {
 			public:
-				static boost::shared_ptr<Cumulo> Ptr(VolumeFloatPtr  &_f,  MPNoise::Noise_t &_noiseparms, VolumeVectorPtr &Y);
+				static VolumeFloatPtr Ptr(VolumeFloatPtr  &_f,  MPNoise::Noise_t &_noiseparms, VolumeVectorPtr &Y);
 				Cumulo(VolumeFloatPtr  &_f,  MPNoise::Noise_t &_noiseparms, VolumeVectorPtr &Y);
 				~Cumulo();
 				const volumeDataType eval(const MeshPotato::MPUtils::MPVec3 &P) const;

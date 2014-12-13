@@ -5,7 +5,7 @@
 // the article and can be freely used.                                       //
 ///////////////////////////////////////////////////////////////////////////////
 #define OBJINPUTPLUGIN_SOURCE 1
-#include <MPPlugins/pluginapi.h>
+#include <MeshPotato/MPPlugins/pluginapi.h>
 #include <iostream>
 #include <iterator>
 #include <fstream>
@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <list>
 #include <stdlib.h>
-#include <MPUtils/AttributeTable.h>
+#include <MeshPotato/MPUtils/AttributeTable.h>
 using namespace MeshPotato::MPPlugins;
 namespace MeshPotato {
 namespace MPMesh {

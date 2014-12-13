@@ -21,7 +21,7 @@
 #ifndef __ATTRIBUTETABLE_H__
 #define __ATTRIBUTETABLE_H__
 #include <boost/shared_ptr.hpp>
-#include "MPUtils/Vector.h"
+#include "MeshPotato/MPUtils/Vector.h"
 namespace MeshPotato {
 	namespace MPUtils {
 		class AttributeTable {

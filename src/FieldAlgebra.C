@@ -1,6 +1,6 @@
-#include "MPVolume/FieldAlgebra.h" 
-#include "MPUtils/Color.h"
-#include "MPUtils/Vector.h"
+#include "MeshPotato/MPVolume/FieldAlgebra.h" 
+#include "MeshPotato/MPUtils/Color.h"
+#include "MeshPotato/MPUtils/Vector.h"
 #include <cmath>
 namespace MeshPotato {
 	namespace MPVolume {

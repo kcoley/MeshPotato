@@ -18,8 +18,8 @@
 ///   limitations under the License.
 ///
 
-#include "MPUtils/Vector.h"
-#include "MPVolume/MPVolume.h"
+#include "MeshPotato/MPUtils/Vector.h"
+#include "MeshPotato/MPVolume/MPVolume.h"
 using MeshPotato::MPUtils::MPVec3;
 namespace MeshPotato {
 namespace MPVolume {

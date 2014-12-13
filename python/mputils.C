@@ -1,11 +1,11 @@
 #include <boost/python.hpp>
-#include <MPUtils/Color.h>
-#include <MPUtils/Camera.h>
-#include <MPUtils/Image.h>
-#include <MPUtils/DeepImage.h>
-#include <MPUtils/Vector.h>
+#include <MeshPotato/MPUtils/Color.h>
+#include <MeshPotato/MPUtils/Camera.h>
+#include <MeshPotato/MPUtils/Image.h>
+#include <MeshPotato/MPUtils/DeepImage.h>
+#include <MeshPotato/MPUtils/Vector.h>
 #include <openvdb/openvdb.h>
-#include <MPUtils/AttributeTable.h>
+#include <MeshPotato/MPUtils/AttributeTable.h>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 using namespace boost::python;
 using namespace MeshPotato::MPUtils;

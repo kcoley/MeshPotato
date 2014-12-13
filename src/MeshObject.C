@@ -1,7 +1,7 @@
-#include "MPMesh/MeshObject.h"
+#include "MeshPotato/MPMesh/MeshObject.h"
 #include <boost/shared_ptr.hpp>
-#include <MPPlugins/coreapi.h>
-#include "MPPlugins/pluginmanager.h"
+#include "MeshPotato/MPPlugins/coreapi.h"
+#include "MeshPotato/MPPlugins/pluginmanager.h"
 #include <boost/filesystem.hpp>
 namespace MeshPotato {
 namespace MPMesh {

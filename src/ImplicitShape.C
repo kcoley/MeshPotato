@@ -1,4 +1,4 @@
-#include "MPVolume/ImplicitShape.h" 
+#include "MeshPotato/MPVolume/ImplicitShape.h" 
 namespace MeshPotato {
 namespace MPVolume {
 //TODO: Implement Copy Constructor and Assignment Operator
@@ -8,9 +8,10 @@ public:
 	MeshPotato::MPUtils::MPVec3 C;
 };
 
-boost::shared_ptr<Volume<float> > ImplicitSphere::Ptr(const float &_R, const MeshPotato::MPUtils::MPVec3 &_C) {
-	return boost::shared_ptr<Volume<float> >(new ImplicitSphere(_R, _C));	
+VolumeFloatPtr ImplicitSphere::Ptr(const float &_R, const MeshPotato::MPUtils::MPVec3 &_C) {
+	return VolumeFloatPtr(new ImplicitSphere(_R, _C));	
 }
+
 ImplicitSphere::ImplicitSphere(const float &_R,const MeshPotato::MPUtils::MPVec3 &_C) : mImpl(new ImplicitSphere::Impl()) {
 mImpl->R = _R; 
 mImpl->C = _C;
@@ -22,8 +23,8 @@ const ImplicitSphere::volumeDataType ImplicitSphere::eval(const MeshPotato::MPUt
 }
 const ImplicitSphere::volumeGradType ImplicitSphere::grad(const MeshPotato::MPUtils::MPVec3 &P) const {}
 
-boost::shared_ptr<Volume<float> > PyroclasticSphere::Ptr(const float &_R, const MeshPotato::MPUtils::MPVec3 &_C, const MeshPotato::MPNoise::Noise_t &_noiseparms) {
- return boost::shared_ptr<PyroclasticSphere>(new PyroclasticSphere(_R, _C, _noiseparms));
+VolumeFloatPtr PyroclasticSphere::Ptr(const float &_R, const MeshPotato::MPUtils::MPVec3 &_C, const MeshPotato::MPNoise::Noise_t &_noiseparms) {
+ return VolumeFloatPtr(new PyroclasticSphere(_R, _C, _noiseparms));
 }
 
 class PyroclasticSphere::Impl {
@@ -34,6 +35,7 @@ public:
         MeshPotato::MPNoise::FractalSum<MeshPotato::MPNoise::PerlinNoiseGustavson> perlin;
         MeshPotato::MPNoise::Noise* noise;
 };
+
 PyroclasticSphere::PyroclasticSphere(const float &_R, const MeshPotato::MPUtils::MPVec3 &_C, const MeshPotato::MPNoise::Noise_t &_noiseparms) : mImpl(new PyroclasticSphere::Impl()) {
 	mImpl->R = _R;
 	mImpl->C = _C;
@@ -58,6 +60,7 @@ public:
 	MPNoise::FractalSum<MPNoise::PerlinNoiseGustavson> perlin;
 	boost::shared_ptr<MPNoise::Noise> noise;
 };
+
 const Cumulo::volumeDataType Cumulo::eval(const MPUtils::MPVec3 &P) const {
 	if (mImpl->f->eval(P) > -1) {
 		return mImpl->f->eval(P) + pow(fabs(mImpl->noise->eval(mImpl->Y->eval(P))), mImpl->parms.gamma) * mImpl->parms.amplitude;

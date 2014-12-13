@@ -1,5 +1,5 @@
-#include "MPVolume/Light.h"
-#include "MPVolume/DenseGrid.h"
+#include "MeshPotato/MPVolume/Light.h"
+#include "MeshPotato/MPVolume/DenseGrid.h"
 
 namespace MeshPotato {
 	namespace MPVolume {

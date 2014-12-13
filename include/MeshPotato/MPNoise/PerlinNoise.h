@@ -21,7 +21,7 @@
 #ifndef __PERLINNOISE_H__
 #define __PERLINNOISE_H__
 
-#include "MPUtils/Vector.h"
+#include "MeshPotato/MPUtils/Vector.h"
 #include <boost/shared_ptr.hpp>
 namespace MeshPotato {
 

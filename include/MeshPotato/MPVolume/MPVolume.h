@@ -20,8 +20,8 @@
 
 #ifndef __MPVOLUME_H__
 #define __MPVOLUME_H__
-#include "MPUtils/Vector.h"
-#include "MPUtils/Color.h"
+#include "MeshPotato/MPUtils/Vector.h"
+#include "MeshPotato/MPUtils/Color.h"
 #include <boost/shared_ptr.hpp>
 namespace MeshPotato {
 	//! Handles Volumetric Operations

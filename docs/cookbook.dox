@@ -26,30 +26,21 @@ This code snippet demonstrates how to create a sphere using %MeshPotato:
 C++:
 @code
 #include <MeshPotato/MPVolume/ImplicitShape.h>
+#include <MeshPotato/MPUtils/Vector.h>
 
+using namespace MeshPotato::MPVolume;
+using namespace MeshPotato::MPUtils;
 int main(void) {
-	// create a sphere as an implicit function
+	// create an implicit sphere with a given radius and center
 	float radius = 4.0;
 	MPVec3 center(0,0,0);
-	ImplicitShape sphere = MeshPotato::MPVolume::ImplicitSphere(radius, center);
+	VolumeFloatPtr sphere = ImplicitSphere::Ptr(radius, center);
 
-	// Define a bounding box for the sphere
-	MPVec3 minBB(-5, -5, -5);
-	MPVec3 maxBB(5, 5, 5);
-
-	// Create a VDB levelset from the Sphere with a voxel size of 0.1
-	vdbSphere = makeVDBGrid(sphere, MPBBox(minBB, maxBB), 0.1);
-
-	// Convert the vdb levelset to a fog volume
-	fogVolume = vdbSphere.toFogVolume();
-
-	return 0;
+ 	return 0;
 }
 @endcode
 Python:
 @code
-#Import pymeshpotato modules
-import pyopenvdb as pvdb
 import pymeshpotato.mpvolume as mpvolume
 import pymeshpotato.mputils as mputils
 #Create a volume

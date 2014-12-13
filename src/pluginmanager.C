@@ -1,4 +1,4 @@
-#include "MPPlugins/pluginmanager.h"
+#include "MeshPotato/MPPlugins/pluginmanager.h"
 #include <string>
 #include <map>
 #include <set>

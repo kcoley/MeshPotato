@@ -21,9 +21,9 @@
 #define __COREAPI_H__
 
 #include "defines.h"
-#include "MPMesh/OutputMesh.h"
-#include "MPMesh/InputMesh.h"
-#include "MPVolume/MPVolume.h"
+#include "MeshPotato/MPMesh/OutputMesh.h"
+#include "MeshPotato/MPMesh/InputMesh.h"
+#include "MeshPotato/MPVolume/MPVolume.h"
 #include <string>
 #include <map>
 

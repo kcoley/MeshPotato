@@ -20,12 +20,12 @@
 
 #ifndef __FRUSTUM_GRID_H__
 #define __FRUSTUM_GRID_H__
-#include "MPUtils/Vector.h"
-#include "MPVolume/VDBVolumeGrid.h"
+#include "MeshPotato/MPUtils/Vector.h"
+#include "MeshPotato/MPVolume/VDBVolumeGrid.h"
 #include <openvdb/Grid.h>
 #include <openvdb/tools/Interpolation.h>
 #include <openvdb/tools/RayIntersector.h>
-#include "MPUtils/Camera.h"
+#include "MeshPotato/MPUtils/Camera.h"
 
 namespace MeshPotato {
 namespace MPVolume {

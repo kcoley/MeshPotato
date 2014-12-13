@@ -22,8 +22,8 @@
 #define __FIELD_ALGEBRA_H__
 #include "MPVolume.h"
 #include <boost/shared_ptr.hpp>
-#include "MPNoise/Noise.h"
-#include "MPNoise/PerlinNoise.h"
+#include "MeshPotato/MPNoise/Noise.h"
+#include "MeshPotato/MPNoise/PerlinNoise.h"
 namespace MeshPotato {
 namespace MPVolume {
 	/// Add two resolution independent volumes together
