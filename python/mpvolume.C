@@ -8,6 +8,7 @@
 #include <MeshPotato/MPVolume/FrustumGrid.h>
 #include <MeshPotato/MPVolume/Light.h>
 #include <MeshPotato/MPVolume/VolumeUtils.h>
+#include <MeshPotato/MPVolume/Transformation.h>
 #include <MeshPotato/MPUtils/Camera.h>
 #include <string>
 #include <openvdb/openvdb.h>
@@ -334,6 +335,21 @@ BOOST_PYTHON_MODULE(mpvolume) {
 		.def("__init__", make_constructor(&Clamp<float>::Ptr))
 		.def("eval", &MeshPotato::MPVolume::Clamp<float>::eval)
 		.def("grad", &MeshPotato::MPVolume::Clamp<float>::grad)
+	;
+	class_<TranslateVolumeFloat, bases<MPVolumeFloatWrap> >("TranslateVolumeFloat", no_init)
+		.def("__init__", make_constructor(&TranslateVolumeFloat::Ptr))
+		.def("eval", &MeshPotato::MPVolume::TranslateVolumeFloat::eval)
+		.def("grad", &MeshPotato::MPVolume::TranslateVolumeFloat::grad)
+	;
+	class_<RotateVolumeFloat, bases<MPVolumeFloatWrap> >("RotateVolumeFloat", no_init)
+		.def("__init__", make_constructor(&RotateVolumeFloat::Ptr))
+		.def("eval", &MeshPotato::MPVolume::RotateVolumeFloat::eval)
+		.def("grad", &MeshPotato::MPVolume::RotateVolumeFloat::grad)
+	;
+	class_<ScaleVolumeFloat, bases<MPVolumeFloatWrap> >("ScaleVolumeFloat", no_init)
+		.def("__init__", make_constructor(&ScaleVolumeFloat::Ptr))
+		.def("eval", &MeshPotato::MPVolume::ScaleVolumeFloat::eval)
+		.def("grad", &MeshPotato::MPVolume::ScaleVolumeFloat::grad)
 	;
 	class_<VectorNoise,bases<MPVolumeVectorWrap> >("VectorNoise", no_init)
 		.def("__init__", make_constructor(&VectorNoise::Ptr))

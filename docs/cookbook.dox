@@ -114,4 +114,57 @@ intersectSpheres = mpvolume.IntersectionFloat(sphere, sphere2)
 cutoutSpheres = mpvolume.CutoutFloat(sphere, sphere2)
 
 @endcode
+
+@section volumeTransformations Transforming Volumes
+
+C++
+@code
+#include <MeshPotato/MPVolume/ImplicitShape.h> // Sphere
+#include <MeshPotato/MPVolume/FieldAlgebra.h> // Blend, Union, Intersection, Cutout
+#include <MeshPotato/MPUtils/Vector.h> // MPVec3
+#include <MeshPotato/MPVolume/Transformation.h>
+#include <iostream>
+using namespace MeshPotato::MPVolume;
+using namespace MeshPotato::MPUtils;
+int main(void) {
+	// create an implicit sphere with a given radius and center
+	float radius = 4.0;
+	MPVec3 center(0,0,0);
+	VolumeFloatPtr sphere = ImplicitSphere::Ptr(radius, center);
+	// use world space position (0,1,0)
+	MPVec3 P(0,1,0);
+	std::cout << sphere->eval(P) << std::endl;
+	// Translate a sphere by (0,3,0) in world space
+	VolumeFloatPtr translateSphere = TranslateVolumeFloat::Ptr(sphere, MPVec3(0,3,0));
+	std::cout << translateSphere->eval(P) << std::endl;
+
+	// Rotate a sphere about the xyz axis (0,1,0) by 20 degrees in x
+	VolumeFloatPtr rotateSphere = RotateVolumeFloat::Ptr(sphere, MPVec3(0,1,0), MPVec3(20,0,0));
+	std::cout << rotateSphere->eval(P) << std::endl;
+
+	// Scale a volume by two
+	VolumeFloatPtr scaleSphere = ScaleVolumeFloat::Ptr(sphere, 2);
+	std::cout << scaleSphere->eval(P) << std::endl;
+
+ 	return 0;
+}
+@endcode
+
+Python
+@code
+import pyopenvdb as pvdb
+import pymeshpotato.mpvolume as mpvolume
+import pymeshpotato.mputils as mputils
+#Create a volume
+
+# Create A Sphere
+sphere = mpvolume.ImplicitSphere(4.0, mputils.getMPVec3([0,0,0]))
+
+# Transform Sphere
+translateSphere = mpvolume.TranslateVolumeFloat(sphere, mputils.getMPVec3([0,3,0]))
+rotateSphere = mpvolume.RotateVolumeFloat(sphere, mputils.getMPVec3([0,1,0]), mputils.getMPVec3([20,0,0]))
+scaleSphere = mpvolume.ScaleVolumeFloat(sphere, 2)
+
+
+@endcode
 */
