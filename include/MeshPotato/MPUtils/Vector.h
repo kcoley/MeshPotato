@@ -41,6 +41,5 @@ namespace MeshPotato {
 		typedef std::vector<openvdb::math::Vec4<uint32_t> > Polys;
 		typedef std::vector<openvdb::math::Vec3<float> >Verts;
 		
-
 	}
 }

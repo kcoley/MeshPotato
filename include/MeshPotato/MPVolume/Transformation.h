@@ -22,27 +22,76 @@
 
 namespace MeshPotato {
     namespace MPVolume {
+    	/// Translates a volume
         template <typename T>
-        /// Translates a volume
 	    class TranslateVolume : public Volume<T> {
 	    public:
 	        typedef typename GradType<T>::GType volumeGradType;
-		static boost::shared_ptr<Volume<T> > Ptr(const boost::shared_ptr<Volume<T> > &_f,
-							 const MeshPotato::MPUtils::MPVec3 &_D) {
-		    return boost::shared_ptr<TranslateVolume<T> >(new TranslateVolume<T>(_f, _D)); }
+			
+			static boost::shared_ptr<Volume<T> > Ptr(const boost::shared_ptr<Volume<T> > &_f,
+							 const MeshPotato::MPUtils::MPVec3 &_D);
 
-		TranslateVolume(const boost::shared_ptr<Volume<T> > &_f,
-				const MeshPotato::MPUtils::MPVec3 &_D) :
-		    f(_f), D(_D) {}
+			TranslateVolume(const boost::shared_ptr<Volume<T> > &_f,
+							const MeshPotato::MPUtils::MPVec3 &_D);
 
-		virtual const T eval(const MeshPotato::MPUtils::MPVec3 &P) const {
-		    return f->eval(P - D);
-					}
+			virtual const T eval(const MeshPotato::MPUtils::MPVec3 &P) const;
 
-		virtual const volumeGradType grad(const MeshPotato::MPUtils::MPVec3& P) const {}
+			virtual const volumeGradType grad(const MeshPotato::MPUtils::MPVec3& P) const;
 		private:
-			boost::shared_ptr<MeshPotato::MPVolume::Volume<T> > f;
-			MeshPotato::MPUtils::MPVec3 D;
+			class Impl;
+			boost::shared_ptr<Impl> mImpl;
 	   };
+
+	   typedef TranslateVolume<float> TranslateVolumeFloat;
+	   typedef TranslateVolume<MPUtils::MPVec3> TranslateVolumeVector;
+
+	   /// Rotates a volume
+	   template <typename T>
+	   class RotateVolume: public Volume<T> {
+	   public:
+	   	typedef typename GradType<T>::GType volumeGradType;
+
+	   	static boost::shared_ptr<Volume<T> > Ptr(const boost::shared_ptr<Volume<T> > &_f,
+	   						const MeshPotato::MPUtils::MPVec3 &axis,
+	   						const MeshPotato::MPUtils::MPVec3 &angle);
+
+	   	RotateVolume(const boost::shared_ptr<Volume<T> > &f,
+	   				 const MeshPotato::MPUtils::MPVec3 &axis,
+	   				 const MeshPotato::MPUtils::MPVec3 &angle);
+
+	   	virtual const T eval (const MeshPotato::MPUtils::MPVec3 &P) const;
+
+	   	virtual const volumeGradType grad(const MeshPotato::MPUtils::MPVec3 &P) const;
+	   private:
+	   	class Impl;
+	   	boost::shared_ptr<Impl> mImpl;
+	   };
+
+	   typedef RotateVolume<float> RotateVolumeFloat;
+
+	   	/// Scales a volume
+	    template <typename T>
+	    class ScaleVolume : public Volume<T> {
+	    public:
+	        typedef typename GradType<T>::GType volumeGradType;
+			
+			static boost::shared_ptr<Volume<T> > Ptr(
+						const boost::shared_ptr<Volume<T> > &f,
+						const float scale);
+
+			ScaleVolume(const boost::shared_ptr<Volume<T> > &f,
+						const float scale);
+
+			virtual const T eval(const MeshPotato::MPUtils::MPVec3 &P) const;
+
+			virtual const volumeGradType grad(
+						const MeshPotato::MPUtils::MPVec3& P) const;
+		private:
+			class Impl;
+			boost::shared_ptr<Impl> mImpl;
+	   };
+
+	   typedef ScaleVolume<float> ScaleVolumeFloat;
+
     }
 }
