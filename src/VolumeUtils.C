@@ -23,8 +23,9 @@ namespace MeshPotato {
 
 }
 /// Helper function for writing VDB grids
-		openvdb::FloatGrid::Ptr makeVDBGrid(boost::shared_ptr<Volume<float> > &mpgrid, const MeshPotato::MPUtils::BBox& worldBB, double voxelSize) {
+		openvdb::FloatGrid::Ptr makeVDBGrid(VolumeFloatPtr &mpgrid, const MeshPotato::MPUtils::BBox& worldBB, double voxelSize) {
 			openvdb::FloatGrid::Ptr vdbgrid = openvdb::FloatGrid::create(voxelSize*10);
+
 			openvdb::FloatGrid::Accessor accessor = vdbgrid->getAccessor();
 			vdbgrid->transform().preScale(voxelSize);
 			vdbgrid->transform().postTranslate(worldBB.min());
@@ -39,7 +40,6 @@ namespace MeshPotato {
 			openvdb::CoordBBox indexBB(min,max);
 			const float outside = vdbgrid->background();
 			const float inside = -outside;
-			std::cout << "outside = " << outside << std::endl;
 			for (openvdb::Int32 i = indexBB.min().x(); i <= indexBB.max().x(); ++i) {
 				for (openvdb::Int32 j = indexBB.min().y(); j <= indexBB.max().y(); ++j) {
 					for (openvdb::Int32 k = indexBB.min().z(); k <= indexBB.max().z(); ++k) {
@@ -54,6 +54,7 @@ namespace MeshPotato {
 					}
 				}
 			}
+						
 			// In OpenVDB 3.0, signedFloodFill has been moved to openvdb::tools
 			// for backwards-compatibility, we check the openvdb version number
 			#if OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER <= 2

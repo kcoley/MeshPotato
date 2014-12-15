@@ -27,8 +27,8 @@ namespace MeshPotato {
 	namespace MPVolume {
 		/// Helper function for reading VDB grids
 		openvdb::GridBase::Ptr readVDBGrid(const std::string &vdbFile);
-/// Helper function for writing VDB grids
-		openvdb::FloatGrid::Ptr makeVDBGrid(boost::shared_ptr<Volume<float> > &mpgrid, const MeshPotato::MPUtils::BBox& worldBB, double voxelSize);
+		/// Helper function for writing VDB grids
+		openvdb::FloatGrid::Ptr makeVDBGrid(VolumeFloatPtr &mpgrid, const MeshPotato::MPUtils::BBox& worldBB, double voxelSize);
 
 		/// Helper function for building frustum cameras
 		boost::shared_ptr<MeshPotato::MPUtils::Camera> buildFrustumCamera(MeshPotato::MPUtils::MPVec3 &eye, openvdb::FloatGrid::Ptr grid);

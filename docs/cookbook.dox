@@ -1,11 +1,12 @@
 /**
 
-@page cookBook MeshPotato CookBook
+@page cookBook %MeshPotato CookBook
 
 The following are a collection of code snippets and examples to
 demonstrate the usage of %MeshPotato.
 
 @section Contents
+- @ref setup
 - @ref make_a_sphere
   - @ref compiling
 - @ref csgOperations
@@ -19,6 +20,19 @@ demonstrate the usage of %MeshPotato.
 - @ref raymarching
 - @ref deepImages
 
+
+@section setup Setting Up MeshPotato
+In order to use %MeshPotato, the following environment variables may need to be set:
+
+MESHPOTATO_PLUGIN_PATH - set this to the %MeshPotato install directory and any directory containing %MeshPotato plugins
+
+PYTHONPATH - add the directory containing pymeshpotato to the python path
+
+LD_LIBRARY_PATH - directory containing the %MeshPotato DSO (Note: for Mac OS X users, set the DYLD_LIBRARY_PATH instead)
+
+It is assumed that the OpenVDB library and OpenVDB python library have also been set with the LD_LIBRARY_PATH(DYLD_LIBRARY_PATH for Mac OS X users)
+
+It is also assumed that the PYTHONPATH has been set to the OpenVDB python module
 
 
 @section make_a_sphere Making a Sphere in MeshPotato
@@ -44,6 +58,7 @@ Python:
 @code
 import pymeshpotato.mpvolume as mpvolume
 import pymeshpotato.mputils as mputils
+import pyopenvdb #for handling VDB grids
 
 # Create an implicit sphere with a given radius and center
 radius = 4.0
