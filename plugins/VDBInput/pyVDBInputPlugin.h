@@ -3,7 +3,7 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <list>
 #include <vector>
-#include <MPUtils/AttributeTable.h>
+#include <MeshPotato/MPUtils/AttributeTable.h>
 using namespace boost::python;
 using namespace MeshPotato::MPMesh;
 
@@ -31,6 +31,5 @@ BOOST_PYTHON_MODULE(pyVDBInputPlugin) {
 		.def("getVertices", &VDBInputMesh::getVertices)
 		.def("getNormals", &VDBInputMesh::getNormals)
 		.def("getFaces", &VDBInputMesh::getFaces)
-		; 
+		;
 }
-

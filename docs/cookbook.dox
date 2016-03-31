@@ -42,34 +42,48 @@ C++:
 @code
 #include <MeshPotato/MPVolume/ImplicitShape.h> // Sphere
 #include <MeshPotato/MPUtils/Vector.h> // MPVec3
+#include <MeshPotato/MPVolume/VolumeUtils.h> // BBox
 
 using namespace MeshPotato::MPVolume;
 using namespace MeshPotato::MPUtils;
-int main(void) {
-	// Create an implicit sphere with a given radius and center
-	float radius = 4.0;
-	MPVec3 center(0,0,0);
-	VolumeFloatPtr sphere = ImplicitSphere::Ptr(radius, center);
 
- 	return 0;
+int main(void) {
+// Create an implicit sphere with a given radius and center
+float radius = 4.0;
+MPVec3 center(0,0,0);
+VolumeFloatPtr sphere = ImplicitSphere::Ptr(radius, center);
+
+// Create a bounding box for the volume
+BBox box = BBox(MPVec3(-4,-4,-4), MPVec3(4,4,4));
+
+// Convert the volume into a vdb grid
+openvdb::FloatGrid::Ptr vdb = makeVDBGrid(sphere, box, 0.5);
+
+// Write the vdb grid to disk
+openvdb::io::File file("sphere.vdb");
+openvdb::GridPtrVec grid;
+grid.push_back(vdb);
+file.write(grid);
+file.close();
+
+return 0;
 }
 @endcode
 Python:
 @code
 import pymeshpotato.mpvolume as mpvolume
 import pymeshpotato.mputils as mputils
-import pyopenvdb #for handling VDB grids
+import pyopenvdb as vdb
 
-# Create an implicit sphere with a given radius and center
 radius = 4.0
 center = mputils.getMPVec3([0,0,0])
 sphere = mpvolume.ImplicitSphere(radius, center)
- 
-# Convert to VDB Fog Volume
-minBB = mputils.getMPVec3([-5, -5, -5])
-maxBB = mputils.getMPVec3([5, 5, 5])
-vdb_sphere = mpvolume.makeVDBGrid(sphere, mputils.getBBox(minBB,maxBB),0.1)
-fog_volume = mpvolume.ConvertToFogVolume(vdb_sphere)
+
+minBB = mputils.getMPVec3([-4, -4, -4])
+maxBB = mputils.getMPVec3([4, 4, 4])
+
+vdb_sphere = mpvolume.makeVDBGrid(sphere, mputils.getBBox(minBB, maxBB), 0.5)
+vdb.write("sphere.vdb", grids=[vdb_sphere])
 @endcode
 
 @section compiling Compiling the example

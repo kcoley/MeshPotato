@@ -1,5 +1,5 @@
-#include <MPPlugins/pluginapi.h>
-#include <MPUtils/Vector.h>
+#include <MeshPotato/MPPlugins/pluginapi.h>
+#include <MeshPotato/MPUtils/Vector.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -118,7 +118,7 @@ namespace MeshPotato {
 					return faces.size();
 				}
 				virtual void setVoxelSize(float ) {
-					this->voxelSize = voxelSize;					
+					this->voxelSize = voxelSize;
 				}
 
 			private:

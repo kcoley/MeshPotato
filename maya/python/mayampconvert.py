@@ -4,7 +4,7 @@ import pymeshpotato.mpmesh as mepo
 import pymeshpotato.pyVDBOutputPlugin as vdbout
 import maya.cmds as cmds
 import os
- 
+
 
 """
 def printMessage(*args):
@@ -22,7 +22,7 @@ pathToFile = meshpotato_dir + '/maya/python/mpconvertForMaya/ui/mpconvertForMaya
 
 ## Load our window and put it into a variable.
 qtWin = cmds.loadUI(uiFile=pathToFile)
- 
+
 #cmds.deleteUI("qtWin", window=True)
 ## Open our window
 def main():
@@ -57,7 +57,7 @@ class MPConvert(object):
         MPConvert.use = self
         #self.filePath = filePath
         self.uiFile = os.environ['MESHPOTATO_DIR']+'/maya/python/mpconvertForMaya/ui/mpconvertForMaya.ui'
-        self.qtWin = 'mpConvertPtrWindow' 
+        self.qtWin = 'mpConvertPtrWindow'
     def create(self, verbose=False):
         if cmds.window(self.qtWin, exists = True):
             cmds.deleteUI(self.qtWin)
@@ -85,7 +85,6 @@ class MPConvert(object):
     def getFilePath(self):
         return cmds.textField("filePathField", query = True, text = True)
     def useVDBView(self):
-        return cmds.checkBox("vdbViewCheckBox", query = True, value = True)	
+        return cmds.checkBox("vdbViewCheckBox", query = True, value = True)
     def useMeshViewer(self):
-        return cmds.checkBox("meshViewerCheckBox", query = True, value = True)	
-
+        return cmds.checkBox("meshViewerCheckBox", query = True, value = True)
