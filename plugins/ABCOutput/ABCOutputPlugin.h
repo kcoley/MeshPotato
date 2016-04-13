@@ -6,7 +6,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 //#define ABCOUTPUTPLUGIN_SOURCE 1
 
-#include <MPPlugins/pluginapi.h>
+#include <MeshPotato/MPPlugins/pluginapi.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -21,6 +21,7 @@
 // the HDF5 implementation, currently the only one available.
 #include <Alembic/AbcCoreHDF5/All.h>
 #include <Alembic/Abc/ErrorHandler.h>
+#include <Alembic/AbcGeom/OPolyMesh.h>
 #include <Alembic/AbcCoreFactory/IFactory.h>
 
 #include <assert.h>

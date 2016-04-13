@@ -14,6 +14,7 @@ TARGET_LINK_LIBRARIES(meshpotato
         ${TBB_LIBRARIES}
         ${FFTW_LIBRARIES}
         ${PYTHON_LIBRARIES}
+        ${HDF5_LIBRARIES}
   )
 
   TARGET_LINK_LIBRARIES(meshpotato_static
@@ -25,6 +26,7 @@ TARGET_LINK_LIBRARIES(meshpotato
           ${TBB_LIBRARIES}
           ${FFTW_LIBRARIES}
           ${PYTHON_LIBRARIES}
+        ${HDF5_LIBRARIES}
     )
 INSTALL(TARGETS meshpotato DESTINATION lib)
 INSTALL(TARGETS meshpotato_static DESTINATION lib)

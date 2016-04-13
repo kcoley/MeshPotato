@@ -4,11 +4,11 @@
 // This code serves as an example to the plugin architecture discussed in    //
 // the article and can be freely used.                                       //
 ///////////////////////////////////////////////////////////////////////////////
-#include <MPUtils/CmdLineFind.h>
-#include <MPUtils/LuxVector.h>
-#include <MPUtils/Vector.h>
-#include <MPPlugins/coreapi.h>
-#include <MPPlugins/pluginmanager.h>
+#include <MeshPotato/MPUtils/CmdLineFind.h>
+#include <MeshPotato/MPUtils/Vector.h>
+#include <MeshPotato/MPUtils/Vector.h>
+#include <MeshPotato/MPPlugins/coreapi.h>
+#include <MeshPotato/MPPlugins/pluginmanager.h>
 #include <MeshPotato/meshpotato.h>
 #include <boost/filesystem.hpp>
 int main(int argc, char **argv) {
@@ -31,12 +31,15 @@ for (std::vector<MeshPotato::MPPlugins::PluginInstance*>::iterator iter = plugin
      clf.usage("-h");
      std::cout << "Invalid number of args" << std::endl;
      exit(0);
- } 
+ }
 std::string inputExtension = boost::filesystem::extension(file1);
 std::string outputExtension = boost::filesystem::extension(file2);
+
 outputExtension = outputExtension.erase(0,1);
+std::cout << "outputExtension = " << outputExtension << std::endl;
 inputExtension = inputExtension.erase(0,1);
 MeshPotato::MPMesh::OutputMesh *omesh = MeshPotato::MPPlugins::OutputMeshFactory::CreateOutputMesh(outputExtension);
+std::cout << "Output Mesh Type = " << omesh->getName();
   if (! omesh) {
 	std::cout << "Failed to register outputmesh!" << std::endl;
 	return 1;
@@ -52,10 +55,10 @@ MeshPotato::MPMesh::OutputMesh *omesh = MeshPotato::MPPlugins::OutputMeshFactory
   table.addDoubleAttr("exBandWidth", exBandWidth);
   table.addDoubleAttr("inBandWidth", inBandWidth);
   omesh->loadMesh(imesh->getVertices(), imesh->getNormals(), imesh->getFaces(),
-   table);	
+   table);
   omesh->writeMesh(file2.c_str());
-  delete omesh; 
-  delete imesh; 
-  clf.printFinds(); 
+  delete omesh;
+  delete imesh;
+  clf.printFinds();
 
 }
