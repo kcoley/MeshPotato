@@ -53,8 +53,8 @@ extern const Alembic::Abc::uint32_t g_uindices[];
 extern const size_t g_numCounts;
 extern const Alembic::Abc::int32_t g_counts[];
 
-extern const size_t g_numNormals;
-extern const Alembic::Abc::float32_t g_normals[];
+ size_t g_numNormals;
+Alembic::Abc::float32_t* g_normals;
 
 extern const size_t g_numUVs;
 extern const Alembic::Abc::float32_t g_uvs[];
