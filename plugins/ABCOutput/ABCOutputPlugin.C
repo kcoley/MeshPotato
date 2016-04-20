@@ -75,9 +75,9 @@ namespace MeshPotato {
 				index = 0;
 
 				for (std::list<std::vector<std::string> >::const_iterator itr = normals.begin(); itr !=normals.end(); ++itr) {
-					g_normals[index++] = ::atoi(((*itr)[0]).c_str());
-					g_normals[index++] = ::atoi(((*itr)[1]).c_str());
-					g_normals[index++] = ::atoi(((*itr)[2]).c_str());
+					g_normals[index++] = ::atof(((*itr)[0]).c_str());
+					g_normals[index++] = ::atof(((*itr)[1]).c_str());
+					g_normals[index++] = ::atof(((*itr)[2]).c_str());
 				}
 /*
 				for (int i = 0; i < g_numIndices; ++i) {
