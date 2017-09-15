@@ -1,5 +1,5 @@
 
-#include "MPUtils/OIIOFiles.h"
+#include "MeshPotato/MPUtils/OIIOFiles.h"
 #include <OpenEXR/half.h>
 #include <iostream>
 #include <cmath>
@@ -309,7 +309,7 @@ void writeOIIOImage( const char* fname, DeepImage& img, float brightness, float 
 	if (!worked) {
 		std::string error = geterror();
 		if (error.empty())
-			std::cout << "didn't work" << std::endl;
+			std::cout << "Deep Images Not Supported" << std::endl;
 		else
 			std::cout << error << std::endl;
 	}

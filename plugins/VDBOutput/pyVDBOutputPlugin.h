@@ -3,7 +3,7 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <list>
 #include <vector>
-#include <MPUtils/AttributeTable.h>
+#include <MeshPotato/MPUtils/AttributeTable.h>
 using namespace boost::python;
 using namespace MeshPotato::MPMesh;
 struct OutputMeshWrap: MeshPotato::MPMesh::OutputMesh, wrapper<MeshPotato::MPMesh::OutputMesh> {
@@ -31,4 +31,3 @@ BOOST_PYTHON_MODULE(pyVDBOutputPlugin) {
 		.def("getNumberVertices", &VDBOutputMesh::getNumberVertices)
 		;
 }
-

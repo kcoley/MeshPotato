@@ -37,8 +37,8 @@
 
 #include "MeshViewer.h"
 #include "Utility.h"
-#include <MPPlugins/coreapi.h>
-#include <MPPlugins/pluginmanager.h>
+#include <MeshPotato/MPPlugins/coreapi.h>
+#include <MeshPotato/MPPlugins/pluginmanager.h>
 #include <boost/filesystem.hpp>
 // Global Objects
 MeshViewer *viewer;

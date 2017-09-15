@@ -1,4 +1,4 @@
-#include "MPPlugins/coreapi.h"
+#include "MeshPotato/MPPlugins/coreapi.h"
 #include <iostream>
 
 namespace MeshPotato {

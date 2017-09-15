@@ -1,5 +1,7 @@
-#include <MPPlugins/pluginapi.h>
-#include <MPUtils/Vector.h>
+#include <MeshPotato/MPPlugins/pluginapi.h>
+#include <MeshPotato/MPUtils/Vector.h>
+#include <openvdb/openvdb.h>
+#include <openvdb/tools/MeshToVolume.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -94,11 +96,12 @@ namespace MeshPotato {
 				verts[i] = transform->worldToIndex(verts[i]);
 			}
 
-			openvdb::tools::MeshToVolume<openvdb::FloatGrid> levelset(transform);
-			levelset.convertToLevelSet(verts, polys, exBandWidth, inBandWidth);
+			openvdb::FloatGrid::Ptr levelset = openvdb::tools::meshToLevelSet<openvdb::FloatGrid>(*transform, verts, polys);
+//			levelset->convertToLevelSet(verts, polys, exBandWidth, inBandWidth);
 			// Export Mesh
 			openvdb::io::File file(meshName);
-			grid = levelset.distGridPtr();
+			//grid = levelset->distGridPtr();
+			grid = levelset;
 			openvdb::GridPtrVec grids;
 			grids.push_back(grid);
 			file.write(grids);
@@ -118,7 +121,7 @@ namespace MeshPotato {
 					return faces.size();
 				}
 				virtual void setVoxelSize(float ) {
-					this->voxelSize = voxelSize;					
+					this->voxelSize = voxelSize;
 				}
 
 			private:

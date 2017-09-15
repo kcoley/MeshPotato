@@ -1,4 +1,4 @@
-#include "MPUtils/Image.h"
+#include "MeshPotato/MPUtils/Image.h"
 #include <iostream>
 
 using namespace std;

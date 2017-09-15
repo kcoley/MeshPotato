@@ -1,4 +1,4 @@
-#include "MPPlugins/version.h"
+#include "MeshPotato/MPPlugins/version.h"
 
 int Version::GetMajor() {
 	return MESHPOTATO_API_MAJOR;

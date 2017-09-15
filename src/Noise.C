@@ -1,7 +1,134 @@
-
-#include "MPNoise/Noise.h"
+#include "MeshPotato/MPNoise/Noise.h"
+#include "MeshPotato/MPNoise/PerlinNoise.h"
 namespace MeshPotato {
 	namespace MPNoise {
+
+		Noise::Noise(){}
+		Noise::~Noise(){}
+
+		const float Noise::eval( const float x ) const { return 0; }
+		const float Noise::eval( const MeshPotato::MPUtils::MPVec3& x ) const { 
+			return 0; 
+		}
+
+		void Noise::setParameters( const Noise_t& parameters ){}
+		void Noise::getParameters( Noise_t& parameters ) const {}
+
+
+
+
+
+		template <typename BaseNoise>
+		class FractalSum<BaseNoise>::Impl {
+		public:
+			Impl() : 
+					noise         (),
+					octaves    (3.0),
+					fjump      (2.0),
+					roughness  (0.5),
+					frequency  (0.666666),
+					translate  (MeshPotato::MPUtils::MPVec3(0,0,0)),
+					offset     (0.0),
+					axis       (MeshPotato::MPUtils::MPVec3(0,0,1)),
+					angle      (0.0)
+					{}
+
+				BaseNoise noise;
+
+				float octaves;
+				float fjump;
+				float roughness;
+				float frequency;
+				MeshPotato::MPUtils::MPVec3 translate;
+				float offset;
+				MeshPotato::MPUtils::MPVec3 axis;
+				float angle;
+		};
+
+		template <typename BaseNoise>
+		boost::shared_ptr<FractalSum<BaseNoise> > FractalSum<BaseNoise>::Ptr() { 
+			return boost::shared_ptr<FractalSum<BaseNoise> >(new FractalSum<BaseNoise>()); }
+
+		template <typename BaseNoise>
+		FractalSum<BaseNoise>::FractalSum() : mImpl(new Impl()) {}
+
+		template <typename BaseNoise>
+		FractalSum<BaseNoise>::~FractalSum(){}
+
+		template <typename BaseNoise>
+		const float FractalSum<BaseNoise>::eval( const float x ) const
+		{
+			float exponent = 1;
+			float amplitude = 1;
+			float accum = 0;
+			int ioct = (int)mImpl->octaves;
+			for( int oc=0;oc<ioct;oc++ )
+			{
+				const float X = (x - mImpl->translate[0]) * mImpl->frequency * exponent;
+				accum += amplitude * mImpl->noise.eval( X );
+				exponent *= mImpl->fjump;
+				amplitude *= mImpl->roughness;
+			}
+			const float X = (x - mImpl->translate[0]) * mImpl->frequency * exponent;
+			float val = amplitude * mImpl->noise.eval( X );
+			accum += (mImpl->octaves - (int)mImpl->octaves) * val;
+			return (accum + mImpl->offset);
+		}
+
+		template <typename BaseNoise>
+		const float FractalSum<BaseNoise>::eval( const MeshPotato::MPUtils::MPVec3& x ) const
+		{
+			float exponent = 1;
+			float amplitude = 1;
+			float accum = 0;
+			int ioct = (int)mImpl->octaves;
+			MeshPotato::MPUtils::MPVec3 X = (x - mImpl->translate);
+			if( mImpl->angle != 0.0 )
+			{
+				float ca = cos(mImpl->angle);
+				float sa = sin(mImpl->angle);
+				X = X*ca + mImpl->axis*(mImpl->axis*X)*(1.0-ca) + (mImpl->axis.cross(X))*sa;
+			}
+			X *= mImpl->frequency*exponent;
+			for( int oc=0;oc<ioct;oc++ )
+			{
+				accum += amplitude * mImpl->noise.eval( X );
+				X *= mImpl->fjump;
+				amplitude *= mImpl->roughness;
+			}
+			float val = amplitude * mImpl->noise.eval( X );
+			accum += (mImpl->octaves - (int)mImpl->octaves) * val;
+			return (accum+mImpl->offset);
+		}
+
+		template <typename BaseNoise>
+		void FractalSum<BaseNoise>::setParameters( const Noise_t& parameters )
+		{
+			mImpl->octaves = parameters.octaves;
+			mImpl->fjump = parameters.fjump;
+			mImpl->roughness = parameters.roughness;
+			mImpl->frequency = parameters.frequency;
+			mImpl->translate = parameters.translate;
+			mImpl->offset = parameters.offset;
+			mImpl->axis = parameters.axis;
+			mImpl->angle = parameters.angle;
+			mImpl->noise.setTime( parameters.time );
+		}
+
+		template <typename BaseNoise>
+		void FractalSum<BaseNoise>::getParameters( Noise_t& parameters ) const
+		{
+			parameters.octaves = mImpl->octaves;
+			parameters.fjump = mImpl->fjump;
+			parameters.roughness = mImpl->roughness;
+			parameters.frequency = mImpl->frequency;
+			parameters.translate = mImpl->translate;
+			parameters.offset = mImpl->offset;
+			parameters.axis = mImpl->axis;
+			parameters.angle = mImpl->angle;
+		}
+
+		template class FractalSum<PerlinNoiseGustavson>;
 
 
 
@@ -54,6 +181,13 @@ namespace MeshPotato {
 
 			return value;
 		}
+
+		PRN::PRN(){}
+		PRN::~PRN(){}
+
+		const float PRN::eval(){ return 0; }
+
+		void PRN::setParameters( const Noise_t &parameters ){}
 
 	}
 }

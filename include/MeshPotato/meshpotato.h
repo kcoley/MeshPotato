@@ -1,16 +1,22 @@
-/*! \mainpage %MeshPotato
- *
- * \section intro_sec Introduction
- * %MeshPotato is a C++/Python volume modeling and rendering API
- * designed to simplify the creation of volumetric effects.
- * \page page1 A documentation page
- * \tableofcontents
- * Leading text.
- * <A HREF=test.txt>test</A>
- * \section install_sec Installation
- * \subsection step1 Step1: Ask Kacey...
- *
- */
+/// \author Kacey Coley
+/// \date December 11, 2014
+/// \since 0.1
+///
+///  Class for representing Mesh Specifications
+///
+///   Copyright 2014 Kacey Coley
+///   Licensed under the Apache License, Version 2.0 (the "License");
+///   you may not use this file except in compliance with the License.
+///   You may obtain a copy of the License at
+///
+///   http://www.apache.org/licenses/LICENSE-2.0
+///
+///   Unless required by applicable law or agreed to in writing, software
+///   distributed under the License is distributed on an "AS IS" BASIS,
+///   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+///   See the License for the specific language governing permissions and
+///   limitations under the License.
+///
 
 #ifndef __MESHPOTATO_H__
 #define __MESHPOTATO_H__

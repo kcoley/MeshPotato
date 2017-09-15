@@ -1,0 +1,199 @@
+/**
+
+@page cookBook %MeshPotato CookBook
+
+The following are a collection of code snippets and examples to
+demonstrate the usage of %MeshPotato.
+
+@section Contents
+- @ref setup
+- @ref make_a_sphere
+  - @ref compiling
+- @ref csgOperations
+- @ref volumeTransformations
+- @ref volumeGrids
+  - @ref stampingToGrids
+- @ref advectingVolumes
+- @ref convertToVDB
+- @ref lightingVolumes
+  - @ref deepShadowMaps
+- @ref raymarching
+- @ref deepImages
+
+
+@section setup Setting Up MeshPotato
+In order to use %MeshPotato, the following environment variables may need to be set:
+
+MESHPOTATO_PLUGIN_PATH - set this to the %MeshPotato install directory and any directory containing %MeshPotato plugins
+
+PYTHONPATH - add the directory containing pymeshpotato to the python path
+
+LD_LIBRARY_PATH - directory containing the %MeshPotato DSO (Note: for Mac OS X users, set the DYLD_LIBRARY_PATH instead)
+
+It is assumed that the OpenVDB library and OpenVDB python library have also been set with the LD_LIBRARY_PATH(DYLD_LIBRARY_PATH for Mac OS X users)
+
+It is also assumed that the PYTHONPATH has been set to the OpenVDB python module
+
+
+@section make_a_sphere Making a Sphere in MeshPotato
+This code snippet demonstrates how to create a sphere using %MeshPotato:
+
+C++:
+@code
+#include <MeshPotato/MPVolume/ImplicitShape.h> // Sphere
+#include <MeshPotato/MPUtils/Vector.h> // MPVec3
+#include <MeshPotato/MPVolume/VolumeUtils.h> // BBox
+
+using namespace MeshPotato::MPVolume;
+using namespace MeshPotato::MPUtils;
+
+int main(void) {
+// Create an implicit sphere with a given radius and center
+float radius = 4.0;
+MPVec3 center(0,0,0);
+VolumeFloatPtr sphere = ImplicitSphere::Ptr(radius, center);
+
+// Create a bounding box for the volume
+BBox box = BBox(MPVec3(-4,-4,-4), MPVec3(4,4,4));
+
+// Convert the volume into a vdb grid
+openvdb::FloatGrid::Ptr vdb = makeVDBGrid(sphere, box, 0.5);
+
+// Write the vdb grid to disk
+openvdb::io::File file("sphere.vdb");
+openvdb::GridPtrVec grid;
+grid.push_back(vdb);
+file.write(grid);
+file.close();
+
+return 0;
+}
+@endcode
+Python:
+@code
+import pymeshpotato.mpvolume as mpvolume
+import pymeshpotato.mputils as mputils
+import pyopenvdb as vdb
+
+radius = 4.0
+center = mputils.getMPVec3([0,0,0])
+sphere = mpvolume.ImplicitSphere(radius, center)
+
+minBB = mputils.getMPVec3([-4, -4, -4])
+maxBB = mputils.getMPVec3([4, 4, 4])
+
+vdb_sphere = mpvolume.makeVDBGrid(sphere, mputils.getBBox(minBB, maxBB), 0.5)
+vdb.write("sphere.vdb", grids=[vdb_sphere])
+@endcode
+
+@section compiling Compiling the example
+@code
+g++ example.cpp -lmeshpotato -lopenvdb
+@endcode
+
+
+@section csgOperations Performing CSG Operations on Volumes
+
+C++
+@code
+#include <MeshPotato/MPVolume/ImplicitShape.h> // Sphere
+#include <MeshPotato/MPVolume/FieldAlgebra.h> // Blend, Union, Intersection, Cutout
+#include <MeshPotato/MPUtils/Vector.h> // MPVec3
+
+using namespace MeshPotato::MPVolume;
+using namespace MeshPotato::MPUtils;
+int main(void) {
+	// Create an implicit sphere with a given radius and center
+	float radius = 4.0;
+	MPVec3 center(0,0,0);
+	VolumeFloatPtr sphere = ImplicitSphere::Ptr(radius, center);
+	VolumeFloatPtr sphere2 = ImplicitSphere::Ptr(radius, MPVec3(-2, 0, 0));
+
+	// CSG operations on spheres
+	VolumeFloatPtr blendSpheres = BlendFloat::Ptr(sphere, sphere2, 1.0);
+
+	VolumeFloatPtr unionSpheres = UnionFloat::Ptr(sphere, sphere2);
+
+	VolumeFloatPtr intersectSpheres = IntersectionFloat::Ptr(sphere, sphere2);
+
+	VolumeFloatPtr cutoutSpheres = CutoutFloat::Ptr(sphere, sphere2);
+
+ 	return 0;
+}
+@endcode
+
+Python:
+@code
+import pymeshpotato.mpvolume as mpvolume
+import pymeshpotato.mputils as mputils
+
+# Create an implicit sphere with a given radius and center
+radius = 4.0
+center = mputils.getMPVec3([0,0,0])
+center2 = mputils.getMPVec3([-2,0,0])
+sphere = mpvolume.ImplicitSphere(radius, center)
+sphere2 = mpvolume.ImplicitSphere(radius, center2)
+
+blendSpheres = mpvolume.BlendFloat(sphere, sphere2, 1.0)
+
+unionSpheres = mpvolume.UnionFloat(sphere, sphere2)
+
+intersectSpheres = mpvolume.IntersectionFloat(sphere, sphere2)
+
+cutoutSpheres = mpvolume.CutoutFloat(sphere, sphere2)
+
+@endcode
+
+@section volumeTransformations Transforming Volumes
+
+C++
+@code
+#include <MeshPotato/MPVolume/ImplicitShape.h> // Sphere
+#include <MeshPotato/MPVolume/FieldAlgebra.h> // Blend, Union, Intersection, Cutout
+#include <MeshPotato/MPUtils/Vector.h> // MPVec3
+#include <MeshPotato/MPVolume/Transformation.h>
+#include <iostream>
+using namespace MeshPotato::MPVolume;
+using namespace MeshPotato::MPUtils;
+int main(void) {
+	// create an implicit sphere with a given radius and center
+	float radius = 4.0;
+	MPVec3 center(0,0,0);
+	VolumeFloatPtr sphere = ImplicitSphere::Ptr(radius, center);
+	// use world space position (0,1,0)
+	MPVec3 P(0,1,0);
+	std::cout << sphere->eval(P) << std::endl;
+	// Translate a sphere by (0,3,0) in world space
+	VolumeFloatPtr translateSphere = TranslateVolumeFloat::Ptr(sphere, MPVec3(0,3,0));
+	std::cout << translateSphere->eval(P) << std::endl;
+
+	// Rotate a sphere about the xyz axis (0,1,0) by 20 degrees in x
+	VolumeFloatPtr rotateSphere = RotateVolumeFloat::Ptr(sphere, MPVec3(0,1,0), MPVec3(20,0,0));
+	std::cout << rotateSphere->eval(P) << std::endl;
+
+	// Scale a volume by two
+	VolumeFloatPtr scaleSphere = ScaleVolumeFloat::Ptr(sphere, 2);
+	std::cout << scaleSphere->eval(P) << std::endl;
+
+ 	return 0;
+}
+@endcode
+
+Python
+@code
+import pyopenvdb as pvdb
+import pymeshpotato.mpvolume as mpvolume
+import pymeshpotato.mputils as mputils
+#Create a volume
+
+# Create A Sphere
+sphere = mpvolume.ImplicitSphere(4.0, mputils.getMPVec3([0,0,0]))
+
+# Transform Sphere
+translateSphere = mpvolume.TranslateVolumeFloat(sphere, mputils.getMPVec3([0,3,0]))
+rotateSphere = mpvolume.RotateVolumeFloat(sphere, mputils.getMPVec3([0,1,0]), mputils.getMPVec3([20,0,0]))
+scaleSphere = mpvolume.ScaleVolumeFloat(sphere, 2)
+
+
+@endcode
+*/

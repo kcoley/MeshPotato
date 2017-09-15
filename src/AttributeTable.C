@@ -1,4 +1,4 @@
-#include "MPUtils/AttributeTable.h"
+#include "MeshPotato/MPUtils/AttributeTable.h"
 #include  <map>
 namespace MeshPotato {
   namespace MPUtils {

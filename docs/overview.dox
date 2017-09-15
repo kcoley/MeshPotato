@@ -1,0 +1,43 @@
+///
+/// \mainpage MeshPotato API Documentation
+/// 
+/// \section sec_Contents Contents
+///
+/// \li \ref sec_Overview
+/// \li \ref sec_Detail
+/// \li \ref sec_SeeAlso
+///
+/// \section sec_Overview Overview
+///
+/// %MeshPotato is a C++/Python API for volumetric modeling and rendering.
+/// Its purpose is to assist in the creation of tools for volumetric effects.
+///
+/// \section sec_Detail Detailed Description
+///
+/// Checkout @subpage cookBook "CookBook" to get started using @b %MeshPotato.
+///
+/// \section sec_SeeAlso See Also
+///
+/// \li \ref page_Logging
+/// \li \ref page_Versioning
+///
+///
+/// \page page_Logging The Logging System
+///
+/// Overview of logging functionality
+///
+/// \link group_Logging View All Logging Classes \endlink
+///
+///
+/// \page page_Versioning API Versioning
+///
+/// Overview of API Versioning
+///
+/// \link group_Versioning View All Versioning Classes \endlink
+///
+
+/// \defgroup group_Logging Diagnostic logging features
+/// See \ref page_Logging for a detailed description.
+
+/// \defgroup_Versioning Versioning System
+/// See \ref page_Versioning for a detailed description.

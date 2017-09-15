@@ -6,7 +6,7 @@
 // normals and faces.                                                        //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <MPPlugins/pluginapi.h>
+#include <MeshPotato/MPPlugins/pluginapi.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <openvdb/openvdb.h>
 #include <openvdb/tools/VolumeToMesh.h>
-#include <MPUtils/Vector.h>
+#include <MeshPotato/MPUtils/Vector.h>
 using namespace std;
 using namespace MeshPotato::MPPlugins;
 namespace MeshPotato {
@@ -46,7 +46,7 @@ namespace MeshPotato {
 					baseGrid->setGridClass(openvdb::GRID_LEVEL_SET);
 					grid = openvdb::gridPtrCast<openvdb::FloatGrid>(baseGrid);
 					openvdb::tools::VolumeToMesh mesher;
-					mesher.operator()<openvdb::FloatGrid>(grid.operator*());	
+					mesher.operator()<openvdb::FloatGrid>(grid.operator*());
 					std::cout << "points: " << mesher.pointListSize()
 						<< " polys: " << mesher.polygonPoolListSize() << std::endl;
 

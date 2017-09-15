@@ -6,7 +6,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 //#define ABCOUTPUTPLUGIN_SOURCE 1
 
-#include <MPPlugins/pluginapi.h>
+#include <MeshPotato/MPPlugins/pluginapi.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -14,8 +14,6 @@
 #include <list>
 #include <vector>
 #include <MeshPotato/meshpotato.h>
-using namespace MeshPotato::MPPlugins;
-using namespace std;
 
 // Alembic Includes
 #include <Alembic/AbcGeom/All.h>
@@ -23,8 +21,14 @@ using namespace std;
 // the HDF5 implementation, currently the only one available.
 #include <Alembic/AbcCoreHDF5/All.h>
 #include <Alembic/Abc/ErrorHandler.h>
-#include <assert.h>
+#include <Alembic/AbcGeom/OPolyMesh.h>
+#include <Alembic/AbcCoreFactory/IFactory.h>
 
+#include <assert.h>
+using namespace MeshPotato::MPPlugins;
+using namespace std;
+
+using namespace Alembic::AbcGeom;
 
 //#include "../MyEngine/Utilities.h"
 namespace MeshPotato {
@@ -44,11 +48,6 @@ namespace MeshPotato {
 
 
 
-			/// <summary>Gets the name of the graphics driver</summary>
-			virtual bool loadMesh(std::list<std::vector<std::string> > &vertices,
-			std::list<std::vector<std::string> > &normals,
-			std::list<std::vector<std::string> > &faces,
-			MeshPotato::MeshSpec spec);
 			virtual bool writeMesh(const char *meshName);
 
 			virtual const unsigned int getNumberVertices() const{
