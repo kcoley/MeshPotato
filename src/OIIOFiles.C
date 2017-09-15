@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cmath>
 #include <OpenImageIO/imageio.h> 
+#include <OpenImageIO/deepdata.h>
 #include <list>
 #include <ctime>
 #include <sstream>
@@ -224,8 +225,12 @@ void writeOIIOImage( const char* fname, DeepImage& img, float brightness, float 
 	int xres = img.Width(), yres = img.Height();
 	int nchannels = img.Depth();
 	ImageSpec spec (xres, yres, nchannels);
+	
 	TypeDesc channeltypes[] = { TypeDesc::HALF, TypeDesc::HALF,
 		TypeDesc::HALF, TypeDesc::HALF, TypeDesc::FLOAT, TypeDesc::FLOAT };
+	array_view<const TypeDesc> channelTypes(channeltypes);
+	std::vector<std::string> channelnames(spec.channelnames);
+	array_view<const std::string> channelNames(channelnames);
 	spec.z_channel = 4;
 	spec.channelnames[spec.z_channel] = "Z";
 	spec.channelformats.assign (channeltypes+0, channeltypes+nchannels);
@@ -261,25 +266,26 @@ void writeOIIOImage( const char* fname, DeepImage& img, float brightness, float 
 	datetime = oiiotostr(tm.tm_year + 1900) + "-" + oiiotostr(tm.tm_mon + 1) + "-" + oiiotostr(tm.tm_mday) + " " + oiiotostr(tm.tm_hour) + ":" +  oiiotostr(tm.tm_min) + ":" + oiiotostr(tm.tm_sec);
 	spec.attribute("DateTime", datetime );
 
-	deepdata.init (xres*yres, nchannels, channeltypes+0, channeltypes+nchannels);
+	deepdata.init (xres*yres, nchannels, channelTypes, channelNames);
 	for (int y = 0; y < yres; ++y)
 		for (int x = 0; x < xres; ++x)
-			deepdata.nsamples[y*xres+x] = img.value(x,img.Height() - y - 1).size();
-	deepdata.alloc (); // allocate pointers and data
+			deepdata.set_samples(y*xres+x, img.value(x,img.Height() - y - 1).size());
+	//deepdata.alloc (); // allocate pointers and data
 	int pixel = 0;
 	for (int y = 0; y < yres; ++y) {
 		for (int x = 0; x < xres; ++x, ++pixel) {
 			DeepPixelBufferVector pixels = img.getDeepPixelBufferVector(x,img.Height() - y - 1);
 			for (int chan = 0; chan < nchannels; ++chan) {
-				void *ptr = deepdata.pointers[pixel*nchannels + chan];
+				//void *ptr = deepdata.pointers[pixel*nchannels + chan];
 				if (chan < 4) { // RGBA -- it’s HALF data
-					for (int samp = 0; samp < deepdata.nsamples[pixel]; ++samp) {
-						((half *)ptr)[samp] = pixels[samp].color[chan];
+					for (int samp = 0; samp < deepdata.samples(pixel); ++samp) {
+						//((half *)ptr)[samp] = pixels[samp].color[chan];
+						deepdata.set_deep_value(pixel, chan, samp, (half)pixels[samp].color[chan]);
 					}
 				} else {
 					// z channel -- FLOAT data
-					for (int samp = 0; samp < deepdata.nsamples[pixel]; ++samp)
-						((float *)ptr)[samp] = pixels[samp].depth_front;//...value...;
+					for (int samp = 0; samp < deepdata.samples(pixel); ++samp)
+						deepdata.set_deep_value(pixel, chan, samp, (half)pixels[samp].depth_front);
 				}
 			}
 		}
@@ -366,25 +372,25 @@ void writeOIIOImage( const char* fname, DeepImage& img, const map<string,string>
 
 
 
-	deepdata.init (xres*yres, nchannels, channeltypes+0, channeltypes+nchannels);
+	deepdata.init (xres*yres, nchannels, array_view<const TypeDesc>(channeltypes), array_view<const std::string>(spec.channelnames));
 	for (int y = 0; y < yres; ++y)
 		for (int x = 0; x < xres; ++x)
-			deepdata.nsamples[y*xres+x] = img.value(x,img.Height() - y - 1).size();
-	deepdata.alloc (); // allocate pointers and data
+			deepdata.set_samples(y*xres+x, img.value(x,img.Height() - y - 1).size());
+	//deepdata.alloc (); // allocate pointers and data
 	int pixel = 0;
 	for (int y = 0; y < yres; ++y) {
 		for (int x = 0; x < xres; ++x, ++pixel) {
 			DeepPixelBufferVector pixels = img.getDeepPixelBufferVector(x,img.Height() - y - 1);
 			for (int chan = 0; chan < nchannels; ++chan) {
-				void *ptr = deepdata.pointers[pixel*nchannels + chan];
+				//void *ptr = deepdata.pointers[pixel*nchannels + chan];
 				if (chan < 4) { // RGBA -- it’s HALF data
-					for (int samp = 0; samp < deepdata.nsamples[pixel]; ++samp) {
-						((half *)ptr)[samp] = pixels[samp].color[chan];
+					for (int samp = 0; samp < deepdata.samples(pixel); ++samp) {
+						deepdata.set_deep_value(pixel, chan, samp, (half)pixels[samp].color[chan]);
 					}
 				} else {
 					// z channel -- FLOAT data
-					for (int samp = 0; samp < deepdata.nsamples[pixel]; ++samp)
-						((float *)ptr)[samp] = pixels[samp].depth_front;//...value...;
+					for (int samp = 0; samp < deepdata.samples(pixel); ++samp)
+						deepdata.set_deep_value(pixel, chan, samp, (float)pixels[samp].depth_front);
 				}
 			}
 		}

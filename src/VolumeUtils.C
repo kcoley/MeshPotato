@@ -54,6 +54,7 @@ namespace MeshPotato {
 					}
 				}
 			}
+<<<<<<< HEAD:src/VolumeUtils.C
 						
 			// In OpenVDB 3.0, signedFloodFill has been moved to openvdb::tools
 			// for backwards-compatibility, we check the openvdb version number
@@ -64,7 +65,7 @@ namespace MeshPotato {
 			#endif
 			// TODO!
 			// moved in OpenVDB 3.0 to openvdb::tools.
-			//vdbgrid->signedFloodFill();
+
 			openvdb::tools::levelSetRebuild(*vdbgrid);
 			vdbgrid->setGridClass(openvdb::GRID_LEVEL_SET);
 			return vdbgrid;
