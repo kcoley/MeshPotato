@@ -53,7 +53,8 @@ namespace MeshPotato {
 					}
 				}
 			}
-			vdbgrid->signedFloodFill();
+			//openvdb::tools::signedFloodFill(*vdbgrid);
+			//vdbgrid->signedFloodFill();
 			openvdb::tools::levelSetRebuild(*vdbgrid);
 			vdbgrid->setGridClass(openvdb::GRID_LEVEL_SET);
 			return vdbgrid;
