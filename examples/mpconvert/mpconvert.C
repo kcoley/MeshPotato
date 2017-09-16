@@ -1,9 +1,6 @@
-///////////////////////////////////////////////////////////////////////////////
-// Plugin architecture example                                               //
-//                                                                           //
-// This code serves as an example to the plugin architecture discussed in    //
-// the article and can be freely used.                                       //
-///////////////////////////////////////////////////////////////////////////////
+/*
+Converts Mesh from one format to another
+*/
 #include <MeshPotato/MPUtils/CmdLineFind.h>
 #include <MeshPotato/MPUtils/Vector.h>
 #include <MeshPotato/MPUtils/Vector.h>
