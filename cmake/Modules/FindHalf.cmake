@@ -26,7 +26,7 @@
 #  HALF_FOUND        - True if Half found.
 
 # Look for the header file.
-FIND_PATH( HALF_INCLUDE_DIR NAMES OpenEXR/half.h)
+FIND_PATH( HALF_INCLUDE_DIR NAMES half.h)
 
 # Look for the libraries.
 FIND_LIBRARY( HALF_LIBRARY NAMES Half)

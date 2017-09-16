@@ -54,7 +54,6 @@ namespace MeshPotato {
 					}
 				}
 			}
-<<<<<<< HEAD:src/VolumeUtils.C
 						
 			// In OpenVDB 3.0, signedFloodFill has been moved to openvdb::tools
 			// for backwards-compatibility, we check the openvdb version number

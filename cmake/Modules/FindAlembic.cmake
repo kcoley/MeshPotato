@@ -1,105 +1,148 @@
-# Copyright (c) 2013 Esteban Tovagliari
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-
-#  Find Alembic library
+#=============================================================================
+# Copyright 2011, Ivan Busquets.
 #
-#  This module defines
-#  ALEMBIC_INCLUDE_DIRS, where to find samplerate.h, Set when
-#                        ALEMBIC_INCLUDE_DIR is found.
-#  ALEMBIC_LIBRARIES, libraries to link against to use Samplerate.
-#  ALEMBIC_ROOT_DIR, The base directory to search for Samplerate.
-#                    This can also be an environment variable.
-#  ALEMBIC_FOUND, If false, do not try to use Samplerate.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
 #
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#
+#     * Neither the name of Ivan Busquets nor the names of any
+#       other contributors to this software may be used to endorse or
+#       promote products derived from this software without specific prior
+#       written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+#=============================================================================
+#
+# The module defines the following variables:
+#   ALEMBIC_INCLUDE_DIR - path to Alembic headers
+#   ALEMBIC_LIBRARY_DIR - path to Alembic static libs
+#       ALEMBIC_FOUND       - true if the Alembic was found
+#
+# Example usage:
+#   find_package(ALEMBIC)
+#   if(ALEMBIC_FOUND)
+#     message("ALEMBIC found: ${ALEMBIC_LIBRARY_DIR}")
+#   endif()
+#
+#=============================================================================
 
-# If ALEMBIC_ROOT_DIR was defined in the environment, use it.
-IF( NOT ALEMBIC_ROOT_DIR AND NOT $ENV{ALEMBIC_ROOT_DIR} STREQUAL "")
-    SET( ALEMBIC_ROOT_DIR $ENV{ALEMBIC_ROOT_DIR})
-ENDIF()
+set(LIBRARY_PATHS
+    /usr/lib
+    /usr/local/lib
+    /sw/lib
+    /opt/local/lib
+    ${ALEMBIC_DIR}/lib/
+    ${ALEMBIC_DIR}/lib/static)
 
-SET( _alembic_SEARCH_DIRS
-      ${ALEMBIC_ROOT_DIR}
-      /usr/local
-      /sw # Fink
-      /opt/local # DarwinPorts
-      /opt/csw # Blastwave
+# Find Alembic libs
+
+# First look for single Alembic library,
+# as shipped in versions >= 1.6.0
+find_library(ALEMBIC_LIBRARY
+    NAMES Alembic
+    PATHS ${LIBRARY_PATHS}
+  )
+
+# If single library is not found, look for legacy Alembic libraries.
+if(NOT ALEMBIC_LIBRARY)
+    message(STATUS "Single Alembic library not found; looking for legacy libs")
+
+    find_library(ALEMBIC_ABC_LIBRARY
+	NAMES AlembicAbc
+	PATHS ${LIBRARY_PATHS}
     )
 
-FIND_PATH( ALEMBIC_INCLUDE_DIR NAMES Alembic/Abc/All.h HINTS ${_alembic_SEARCH_DIRS} PATH_SUFFIXES include)
+    find_library(ALEMBIC_ABCGEOM_LIBRARY
+	NAMES AlembicAbcGeom
+	PATHS ${LIBRARY_PATHS}
+    )
 
-#libAbcWFObjConvert.so
-#libAlembicAbcOpenGL.so
+    if (PXR_ENABLE_MULTIVERSE_SUPPORT)
+	find_library(ALEMBIC_ABCCOREGIT_LIBRARY
+	    NAMES AlembicAbcCoreGit
+	    PATHS ${LIBRARY_PATHS}
+	)
+    else()
+	set(ALEMBIC_ABCCOREGIT_LIBRARY "")
+    endif()
 
-#libAlembicAbc.so
-#libAlembicAbcCollection.so
-#libAlembicAbcCoreAbstract.so
-#libAlembicAbcCoreHDF5.so
-#libAlembicAbcGeom.so
-#libAlembicAbcMaterial.so
-#libAlembicUtil.so
-#libAlembicAbcCoreFactory.so
+    find_library(ALEMBIC_ABCCOREHDF5_LIBRARY
+	NAMES AlembicAbcCoreHDF5
+	PATHS ${LIBRARY_PATHS}
+    )
 
-#libAlembicOgawa.so
-#libAlembicAbcCoreOgawa.so
+    find_library(ALEMBIC_ABCCOREOGAWA_LIBRARY
+	NAMES AlembicAbcCoreOgawa
+	PATHS ${LIBRARY_PATHS}
+    )
+
+    find_library(ALEMBIC_ABCCOREABSTRACT_LIBRARY
+	NAMES AlembicAbcCoreAbstract
+	PATHS ${LIBRARY_PATHS}
+    )
+
+    find_library(ALEMBIC_UTIL_LIBRARY
+	NAMES AlembicUtil
+	PATHS ${LIBRARY_PATHS}
+    )
+
+    find_library(ALEMBIC_OGAWA_LIBRARY
+	NAMES AlembicOgawa
+	PATHS ${LIBRARY_PATHS}
+    )
+
+    set (ALEMBIC_LIBRARIES
+	${ALEMBIC_ABCGEOM_LIBRARY}
+	${ALEMBIC_ABC_LIBRARY}
+	${ALEMBIC_ABCCOREHDF5_LIBRARY}
+	${ALEMBIC_ABCCOREOGAWA_LIBRARY}
+        ${ALEMBIC_ABCCOREGIT_LIBRARY}
+	${ALEMBIC_ABCCOREABSTRACT_LIBRARY}
+	${ALEMBIC_UTIL_LIBRARY}
+	${ALEMBIC_OGAWA_LIBRARY}
+    )
+
+    get_filename_component(ALEMBIC_LIBRARY_DIR ${ALEMBIC_ABC_LIBRARY} PATH)
+else()
+    set (ALEMBIC_LIBRARIES
+	${ALEMBIC_LIBRARY}
+    )
+
+    get_filename_component(ALEMBIC_LIBRARY_DIR ${ALEMBIC_LIBRARY} PATH)
+endif()
 
 
-FIND_LIBRARY( ALEMBIC_ABC_LIBRARY                   NAMES AlembicAbc HINTS ${_alembic_SEARCH_DIRS} PATH_SUFFIXES lib64 lib)
-FIND_LIBRARY( ALEMBIC_ABCCOLLECTION_LIBRARY         NAMES AlembicAbcCollection HINTS ${_alembic_SEARCH_DIRS} PATH_SUFFIXES lib64 lib)
-FIND_LIBRARY( ALEMBIC_ABCCORE_ABS_LIBRARY           NAMES AlembicAbcCoreAbstract HINTS ${_alembic_SEARCH_DIRS} PATH_SUFFIXES lib64 lib)
-FIND_LIBRARY( ALEMBIC_ABCCORE_HDF5_LIBRARY          NAMES AlembicAbcCoreHDF5 HINTS ${_alembic_SEARCH_DIRS} PATH_SUFFIXES lib64 lib)
-FIND_LIBRARY( ALEMBIC_ABCCORE_OGAWA_LIBRARY         NAMES AlembicAbcCoreOgawa HINTS ${_alembic_SEARCH_DIRS} PATH_SUFFIXES lib64 lib)
-FIND_LIBRARY( ALEMBIC_OGAWA_LIBRARY                 NAMES AlembicOgawa HINTS ${_alembic_SEARCH_DIRS} PATH_SUFFIXES lib64 lib)
-FIND_LIBRARY( ALEMBIC_ABCCORE_ABS_FACTORY_LIBRARY   NAMES AlembicAbcCoreFactory HINTS ${_alembic_SEARCH_DIRS} PATH_SUFFIXES lib64 lib)
-FIND_LIBRARY( ALEMBIC_ABCGEOM_LIBRARY               NAMES AlembicAbcGeom HINTS ${_alembic_SEARCH_DIRS} PATH_SUFFIXES lib64 lib)
-FIND_LIBRARY( ALEMBIC_ABCMATERIAL_LIBRARY           NAMES AlembicAbcMaterial HINTS ${_alembic_SEARCH_DIRS} PATH_SUFFIXES lib64 lib)
-FIND_LIBRARY( ALEMBIC_ABCUTIL_LIBRARY               NAMES AlembicUtil HINTS ${_alembic_SEARCH_DIRS} PATH_SUFFIXES lib64 lib)
+# Find Alembic include dir
+find_path (ALEMBIC_INCLUDE_DIR Alembic/Abc/All.h
+           ${ALEMBIC_DIR}/include
+)
 
-FIND_LIBRARY( ALEMBIC_ABCGL_LIBRARY                 NAMES AlembicAbcOpenGL HINTS ${_alembic_SEARCH_DIRS} PATH_SUFFIXES lib64 lib)
+include(FindPackageHandleStandardArgs)
 
-# handle the QUIETLY and REQUIRED arguments and set ALEMBIC_FOUND to TRUE if
-# all listed variables are TRUE
-INCLUDE( FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS( ALEMBIC DEFAULT_MSG ALEMBIC_ABC_LIBRARY ALEMBIC_INCLUDE_DIR)
-
-IF( ALEMBIC_FOUND)
-    SET( ALEMBIC_LIBRARIES  ${ALEMBIC_ABC_LIBRARY}
-                            ${ALEMBIC_ABCCOLLECTION_LIBRARY}
-                            ${ALEMBIC_ABCCORE_ABS_LIBRARY}
-                            ${ALEMBIC_ABCCORE_HDF5_LIBRARY}
-                            ${ALEMBIC_ABCCORE_OGAWA_LIBRARY}
-                            ${ALEMBIC_OGAWA_LIBRARY}
-                            ${ALEMBIC_ABCCORE_ABS_FACTORY_LIBRARY}
-                            ${ALEMBIC_ABCGEOM_LIBRARY}
-                            ${ALEMBIC_ABCMATERIAL_LIBRARY}
-                            ${ALEMBIC_ABCUTIL_LIBRARY}
-                            )
-
-    SET( ALEMBIC_INCLUDE_DIRS ${ALEMBIC_INCLUDE_DIR})
-ENDIF()
-
-MARK_AS_ADVANCED(   ALEMBIC_INCLUDE_DIR
-                    ALEMBIC_ABC_LIBRARY
-                    ALEMBIC_ABCCOLLECTION_LIBRARY
-                    ALEMBIC_ABCCORE_ABS_LIBRARY
-                    ALEMBIC_ABCCORE_HDF5_LIBRARY
-                    ALEMBIC_ABCGEOM_LIBRARY
-                    ALEMBIC_ABCMATERIAL_LIBRARY
-                    ALEMBIC_ABCUTIL_LIBRARY
-                    )
+find_package_handle_standard_args( "Alembic"
+                  DEFAULT_MSG
+                  ALEMBIC_LIBRARIES
+                  ALEMBIC_LIBRARY_DIR
+                  ALEMBIC_INCLUDE_DIR
+)
+if(NOT ALEMBIC_FOUND)
+    message(WARNING "Try using -D ALEMBIC_DIR=/path/to/alembic")
+endif()
