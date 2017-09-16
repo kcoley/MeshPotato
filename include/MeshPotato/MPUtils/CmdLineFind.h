@@ -28,9 +28,7 @@
 #include <sstream>
 #include <iostream>
 #include <cstdlib>
-#include "LuxVector.h"
 #include "Vector.h"
-using namespace lux;
 namespace MeshPotato{
 namespace MPUtils {
 
@@ -164,15 +162,15 @@ class CmdLineFind
 
 
 
-   const std::vector<Vector> findMultiple( const std::string& tag, const Vector deflt, const std::string help = "no help" )
+   const std::vector<MPVec3> findMultiple( const std::string& tag, const MPVec3 deflt, const std::string help = "no help" )
    {
-      std::vector<Vector> result;
+      std::vector<MPVec3> result;
       std::vector<size_t> locate = find( tag );
       for( size_t i=0;i<locate.size();i++ )
       {
          if( locate[i] < items.size()-1 )
 	 {
-            result.push_back( Vector(   atof( items[locate[i]+1].c_str() ),   atof( items[locate[i]+2].c_str() ),   atof( items[locate[i]+3].c_str() )  ) );
+            result.push_back( MPVec3(   atof( items[locate[i]+1].c_str() ),   atof( items[locate[i]+2].c_str() ),   atof( items[locate[i]+3].c_str() )  ) );
 	 }
 	 else
 	 {
@@ -406,7 +404,7 @@ class CmdLineFind
       cmdLineHelpList.push_back(help);
    }
 
-   void registerTag( const std::string& tag, const Vector& def, const Vector& val, const std::string& help )
+   void registerTag( const std::string& tag, const MPVec3& def, const MPVec3& val, const std::string& help )
    {
       cmdLineList.push_back(tag);
       cmdLineDefaultsList.push_back( tostr( "[ " + tostr(def[0]) + " " + tostr(def[1]) + " " + tostr(def[2]) + " ]" ) );
@@ -470,7 +468,7 @@ class CmdLineFind
       cmdLineHelpList.push_back(help);
    }
 
-   void registerTag( const std::string& tag, const std::vector<Vector>& val, const std::string& help )
+   void registerTag( const std::string& tag, const std::vector<MPVec3>& val, const std::string& help )
    {
       cmdLineList.push_back(tag);
       cmdLineDefaultsList.push_back( "no default" );
